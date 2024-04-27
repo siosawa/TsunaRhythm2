@@ -8,6 +8,7 @@ on:
   push: 
     branches: 
       - feature
+      - main
   pull_request:
     types: [opened]
   pull_request_review_comment:
