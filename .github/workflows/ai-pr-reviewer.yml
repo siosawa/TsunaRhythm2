@@ -5,10 +5,6 @@ permissions:
   pull-requests: write
 
 on:
-  push: 
-    branches: 
-      - feature
-      - main
   pull_request:
     types: [opened]
   pull_request_review_comment:
