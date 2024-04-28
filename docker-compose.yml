@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.0
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 4306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+  backend:
+    tty: true
+    depends_on:
+      - db
+    build:
+      context: ./back/
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./back:/back
+      - gem_data:/usr/local/bundle
+
+  frontend:
+    build:
+      context: ./front/
+      dockerfile: Dockerfile
+    volumes:
+      - ./front/app:/usr/src/app
+    command: 'yarn dev'
+    ports:
+      - '8000:3000'
+volumes:
+  db_data:
+  gem_data:
