@@ -30,16 +30,40 @@ const HomePage = ({ posts }) => {
     );
 };
 
-export async function getStaticProps() {
-    const res = await fetch("http://localhost:3001/api/v1/posts");
-    const posts = await res.json();
-    console.log(posts);
-    return {
-        props: {
-            posts,
-        },
-        revalidate: 60 * 60 * 24, // 24時間
-    };
-}
+// export async function getStaticProps() {
+//     const res = await fetch("http://localhost:3000/api/v1/posts");
+//     const posts = await res.json();
+//     console.log(posts);
+//     return {
+//         props: {
+//             posts,
+//         },
+//         revalidate: 60 * 60 * 24, // 24時間
+//     };
+// }
 
+export async function getStaticProps() {
+    try {
+        const res = await fetch("http://localhost:3000/api/v1/posts");
+
+        if (!res.ok) {
+            throw new Error(`Failed to fetch posts, received status ${res.status}`);
+        }
+
+        const posts = await res.json();
+        return {
+            props: {
+                posts,
+            },
+            revalidate: 60 * 60 * 24, // 24時間
+        };
+    } catch (error) {
+        console.error("Error fetching posts: ", error);
+        return {
+            props: {
+                posts: [],
+            },
+        };
+    }
+}
 export default HomePage;
