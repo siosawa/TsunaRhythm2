@@ -1,45 +1,30 @@
-import styles from "../styles/Home.module.css";
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const HomePage = ({ posts }) => {
+const Example = () => {
+    const [users, setUsers] = useState()
+    useEffect(() => {
+        const getUser = async () => {
+            const res = await axios.get('http://localhost:3000/api/v1/posts')
+            setUsers(res.data);
+        }
+        getUser();
+        // 空の配列がないと無限ループする
+    }, []);
+
     return (
-        <>
-            <div className={styles.homeContainer}>
-                <h1 className="text-3xl font-bold underline">
-                    Hello world!
-                </h1>
-                <div>Welcome to the home page!</div>
-                <Link href="/createPost" className={styles.createButton}>
-                    Create new Post
-                </Link>
-
-                <div>
-                    {posts.map((post) => (
-                        <div key={post.id} className={styles.postCard}>
-                            <Link href={`/posts/${post.id}`} className={styles.postCardBox}>
-                                <h2>{post.title}</h2>
-                            </Link>
-                            <p>{post.content}</p>
-                            <button className={styles.editButton}>編集</button>
-                            <button className={styles.deleteButton}>削除</button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </>
-    );
+        <div>
+            {users?.map(posts => {
+                return (
+                    <div key={posts.id}>
+                        <h1>{posts.title}</h1>
+                        <p>投稿: {posts.content}</p>
+                        <p>送信日時: {posts.created_at}</p>
+                    </div>
+                )
+            })}
+        </div>
+    )
 };
 
-export async function getStaticProps() {
-    const res = await fetch("http://localhost:3000/api/v1/posts");
-    const posts = await res.json();
-    console.log(posts);
-    return {
-        props: {
-            posts,
-        },
-        revalidate: 60 * 60 * 24, // 24時間
-    };
-}
-
-export default HomePage;
+export default Example;
