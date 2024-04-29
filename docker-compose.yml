@@ -20,7 +20,6 @@ services:
     volumes:
       - ./back:/back
       - gem_data:/usr/local/bundle
-
   frontend:
     build:
       context: ./front/
