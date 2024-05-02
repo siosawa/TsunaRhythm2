@@ -41,7 +41,7 @@ module TsunaRhythm
     # frontからのリソース取得を許可する
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins "http://localhost:8000", "https://www.gadgetlink-app.com"
+        origins "http://localhost:8000", "https://www.tsunarhythm.com"
         resource "*",
           headers: :any,
           credentials: true,
@@ -52,5 +52,6 @@ module TsunaRhythm
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     config.action_dispatch.cookies_same_site_protection = nil
+    config.active_storage.variant_processor = :mini_magick
   end
 end
