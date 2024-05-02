@@ -16,7 +16,7 @@ module Api
         # @user = User.first
         @user = User.find(params[:id])
         # アクセスしたパラムズのURLの値をidとしてUserデータベースからアクセスする。
-        @microposts = @user.microposts.paginate(page: params[:page])
+        @posts = @user.posts.paginate(page: params[:page])
         Rails.logger.info "users_controllerのshowアクションが完了しました"
       end
 
