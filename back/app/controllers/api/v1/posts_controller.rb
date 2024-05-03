@@ -14,15 +14,6 @@ module Api
         render json: @post
       end
 
-      def update
-        @post = Post.find(params[:id])
-        if @post.update(post_params)
-          render json: @post
-        else
-          render json: @post.errors, status: :unprocessable_entity
-        end
-      end
-
       def create
         Rails.logger.info 'posts_controllerのcreateアクションが実行されようとしています。'
         @post = current_user.posts.build(post_params)
@@ -35,6 +26,15 @@ module Api
           @feed_items = current_user.feed.paginate(page: params[:page])
           render 'posts/new', status: :unprocessable_entity
           Rails.logger.info "ポストの保存に失敗しました。ユーザーID: #{current_user.id}"
+        end
+      end
+
+      def update
+        @post = Post.find(params[:id])
+        if @post.update(post_params)
+          render json: @post
+        else
+          render json: @post.errors, status: :unprocessable_entity
         end
       end
 

@@ -7,6 +7,8 @@ module Api
 
       def new; end
 
+      def edit; end
+
       def create
         @user = User.find_by(email: params[:password_reset][:email].downcase)
         if @user
@@ -19,8 +21,6 @@ module Api
           render 'new', status: :unprocessable_entity
         end
       end
-
-      def edit; end
 
       def update
         if params[:user][:password].empty?
