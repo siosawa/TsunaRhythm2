@@ -2,7 +2,7 @@ module Api
   module V1
     class PostsController < ApplicationController
       before_action :logged_in_user, only: %i[create destroy]
-      before_action :correct_user,   only: :destroy
+      before_action :correct_user, only: :destroy
 
       def index
         @posts = Post.all
@@ -14,15 +14,6 @@ module Api
         render json: @post
       end
 
-      def update
-        @post = Post.find(params[:id])
-        if @post.update(post_params)
-          render json: @post
-        else
-          render json: @post.errors, status: :unprocessable_entity
-        end
-      end
-    
       def create
         Rails.logger.info 'posts_controllerのcreateアクションが実行されようとしています。'
         @post = current_user.posts.build(post_params)
@@ -37,7 +28,16 @@ module Api
           Rails.logger.info "ポストの保存に失敗しました。ユーザーID: #{current_user.id}"
         end
       end
-    
+
+      def update
+        @post = Post.find(params[:id])
+        if @post.update(post_params)
+          render json: @post
+        else
+          render json: @post.errors, status: :unprocessable_entity
+        end
+      end
+
       def destroy
         # ログ出力のため一時保存
         @post.destroy
@@ -51,19 +51,19 @@ module Api
           redirect_to request.referer, status: :see_other
         end
       end
-    
+
       private
-    
+
       def post_params
         params.require(:post).permit(:content)
       end
-    
+
       def correct_user
         @post = current_user.posts.find_by(id: params[:id])
         redirect_to root_url, status: :see_other if @post.nil?
         Rails.logger.info "ポストが見つかりません。ユーザーID: #{current_user.id}, 指定されたID: #{params[:id]}"
       end
-    
+
       # ログイン済みユーザーかどうか確認
       def logged_in_user
         if logged_in?
