@@ -8,7 +8,7 @@ class ApplicationController < ActionController::API
     return if logged_in?
 
     store_location
-    message = [I18n.t("sessions.flash.danger")]
-    render json: { status: "notLoggedIn", message: message }
+    message = [I18n.t('sessions.flash.danger')]
+    render json: { status: 'notLoggedIn', message: }
   end
 end

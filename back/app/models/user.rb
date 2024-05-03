@@ -1,13 +1,13 @@
 class User < ApplicationRecord
   has_many :posts, dependent: :destroy
 
-  has_many :active_relationships, class_name: "Relationship",
-                                  foreign_key: "follower_id",
+  has_many :active_relationships, class_name: 'Relationship',
+                                  foreign_key: 'follower_id',
                                   dependent: :destroy,
                                   inverse_of: :follower
 
-  has_many :passive_relationships, class_name: "Relationship",
-                                   foreign_key: "followed_id",
+  has_many :passive_relationships, class_name: 'Relationship',
+                                   foreign_key: 'followed_id',
                                    dependent: :destroy,
                                    inverse_of: :followed
 
@@ -41,10 +41,10 @@ class User < ApplicationRecord
   # 渡された文字列のハッシュ値を返す
   def self.digest(string)
     cost = if ActiveModel::SecurePassword.min_cost
-        BCrypt::Engine::MIN_COST
-      else
-        BCrypt::Engine.cost
-      end
+             BCrypt::Engine::MIN_COST
+           else
+             BCrypt::Engine.cost
+           end
     BCrypt::Password.create(string, cost:)
   end
 
@@ -112,7 +112,7 @@ class User < ApplicationRecord
                        WHERE  follower_id = :user_id"
     Post.where("user_id IN (#{following_ids})
                        OR user_id = :user_id", user_id: id)
-      .includes(:user, image_attachment: :blob)
+        .includes(:user, image_attachment: :blob)
   end
 
   # ユーザーをフォローする
