@@ -73,21 +73,21 @@ RSpec.describe "<request>Users" do
       specify "ユーザー数が1件増える" do
         expect do
           post users_path, params: { user: {
-                        name: "Alice",
-                        email: "example@gmail.com",
-                        password: "password",
-                        activated: true,
-                      } }
+                             name: "Alice",
+                             email: "example@gmail.com",
+                             password: "password",
+                             activated: true,
+                           } }
         end.to change(User, :count).by(1)
       end
 
       specify "ルートURLにリダイレクトすること" do
         post users_path, params: { user: {
-                      name: "Bob",
-                      email: "example@gmail.com",
-                      password: "password",
-                      activated: true,
-                    } }
+                           name: "Bob",
+                           email: "example@gmail.com",
+                           password: "password",
+                           activated: true,
+                         } }
         expect(response).to redirect_to(root_url)
       end
     end
@@ -96,21 +96,21 @@ RSpec.describe "<request>Users" do
       specify "ユーザー数が増減しない" do
         expect do
           post users_path, params: { user: {
-                        name: "Alice",
-                        email: "example@gmail.com",
-                        password: "",
-                        activated: true,
-                      } }
+                             name: "Alice",
+                             email: "example@gmail.com",
+                             password: "",
+                             activated: true,
+                           } }
         end.not_to change(User, :count)
       end
 
       specify "新規登録ページが再表示されること" do
         post users_path, params: { user: {
-                      name: "Bob",
-                      email: "example@gmail.com",
-                      password: "",
-                      activated: true,
-                    } }
+                           name: "Bob",
+                           email: "example@gmail.com",
+                           password: "",
+                           activated: true,
+                         } }
         expect(response).to render_template("new")
       end
     end
