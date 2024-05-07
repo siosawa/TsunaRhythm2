@@ -1,3 +1,6 @@
+// 後にdiarys/componentsディレクトリでClientComp.jsを定義してそこで
+// サーバサイドレンダリングが必要な部分だけコンポーネント化してuseClientを実行するのがおそらく望ましい
+"use client"
 import { useEffect, useState } from "react";
 import axios from "axios";
 
