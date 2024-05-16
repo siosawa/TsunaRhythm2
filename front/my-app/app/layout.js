@@ -3,6 +3,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
+import Setting from "./settings/page";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,6 @@ const navList = [
   { label: 'ルーム一覧・作成', href: '/rooms' },
   { label: '日記', href: '/diarys' },
   { label: 'ユーザー', href: '/users' },
-  { label: '設定', href: '/' }
 ];
 
 export default function RootLayout({ children }) {
@@ -35,10 +35,11 @@ export default function RootLayout({ children }) {
                 </li>
               );
             })}
+            < Setting />
           </ul>
         </header>
         {children}
-        <footer className="container sticky top-full h-16 flex items-center border-t">&copy; nino</footer>
+        <footer className="container sticky top-full h-16 flex items-center justify-center border-t ">&copy;sawata</footer>
       </body>
     </html>
   );
