@@ -6,8 +6,11 @@ export default function Home() {
   );
 }
 
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import Link from 'next/link'
+
 const SignIn = () => {
   return (
     <>
@@ -23,10 +26,15 @@ const SignIn = () => {
     <Button className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full">ゲストログイン</Button>
     <p></p>
     <p>アカウントが未設定ですか？</p>
-    <Button className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full">アカウントを新規作成</Button>
+    <Button asChild className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full">
+            <Link href="/signup">
+            アカウントを新規作成
+            </Link>
+    </Button>
     <p className="mb-10"></p>
     </div>
     </>
   );
 };
+
 
