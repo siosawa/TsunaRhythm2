@@ -1,24 +1,15 @@
 module SessionsHelper
-  # 渡されたユーザーでログインする
   def log_in(user)
     session[:user_id] = user.id
-    # セッションリプレイ攻撃から保護する
-    # 詳しくは https://bit.ly/33UvK0w を参照
     session[:session_token] = user.session_token
   end
 
-  # 永続的セッションのためにユーザーをデータベースに記憶する
-  # 引数が必ず必要な方のrememberメソッド
   def remember(user)
     user.remember
     cookies.permanent.encrypted[:user_id] = user.id
     cookies.permanent[:remember_token] = user.remember_token
-    # メソッドが終わったらデータを忘れる。
   end
 
-  # 現在ログイン中のユーザーを返す（いる場合）
-  # AbcSize規定やCyclomaticComplexity、HelperInstanceVariableに引っかかるが
-  # privateメソッドを使って記述すると可読性に影響がでるかも？どうしよう。
   def current_user
     if (user_id = session[:user_id])
       user = User.find_by(id: user_id)
@@ -44,9 +35,9 @@ module SessionsHelper
 
   # 永続的セッションを破棄する
   def forget(user)
-    user.forget # リメンバーダイジェストの削除
-    cookies.delete(:user_id) # クッキーデータ削除
-    cookies.delete(:remember_token) # リメンバートークン削除
+    user.forget
+    cookies.delete(:user_id)
+    cookies.delete(:remember_token)  
   end
 
   # 現在のユーザーをログアウトする

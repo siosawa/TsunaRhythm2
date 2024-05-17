@@ -79,6 +79,7 @@ const SignUp = () => {
           onKeyDown={(e) => handleKeyDown(e, emailRef)}
         />
         <Input 
+          type="email"
           placeholder="メールアドレス" 
           value={email}
           onChange={(e) => setEmail(e.target.value)} 
