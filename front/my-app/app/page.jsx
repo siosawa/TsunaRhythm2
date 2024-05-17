@@ -35,6 +35,7 @@ const SignIn = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           session: { // sessionsコントローラーに合わせてパラメータを送信
             email: email,
