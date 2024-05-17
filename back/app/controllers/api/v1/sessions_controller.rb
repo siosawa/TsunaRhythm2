@@ -1,14 +1,8 @@
 module Api
   module V1
     class SessionsController < ApplicationController
-      # 新しいセッション（ログインフォーム）を表示するアクション。
-      def new
-        Rails.logger.info 'Sessions_Controllerのnewアクションが呼び出されました。'
-      end
-
       def create
         Rails.logger.info 'Sessions_Controllerのcreateアクションが呼び出されました。'
-        Rails.logger.info 'メールアドレスでユーザーを検索しています。'
         user = User.find_by(email: params[:session][:email].downcase)
 
         if user
@@ -33,21 +27,17 @@ module Api
             end
 
             log_in user
-            Rails.logger.info 'ユーザーをログイン状態にしました。リダイレクトを行います。'
-            redirect_to root_url || user
+            Rails.logger.info 'ユーザーをログイン状態にしました。'
+            # リダイレクトの代わりにJSONレスポンスを返す
+            render json: { message: 'ログインに成功しました。', user: user }, status: :ok
           else
             Rails.logger.info 'ユーザーアカウントがアクティブ化されていません。エラーメッセージを設定し、リダイレクトします。'
-            message = 'アカウントがアクティブ化されていません。'
-            message += 'メールでアクティベーションリンクを確認してください。'
-            flash[:warning] = message
-
-            redirect_to login_path
+            render json: { error: 'アカウントがアクティブ化されていません。メールでアクティベーションリンクを確認してください。' }, status: :unprocessable_entity
           end
         else
           Rails.logger.info 'メールアドレスとパスワードの組み合わせが無効です。エラーメッセージを設定し、ログインフォームを再度表示します。'
-
-          flash.now[:danger] = I18n.t('sessions.create.flash.danger')
-          render 'new', status: :unprocessable_entity
+          # フラッシュメッセージの代わりにJSONレスポンスを返す
+          render json: { error: I18n.t('sessions.create.flash.danger') }, status: :unprocessable_entity
         end
 
         Rails.logger.info 'Sessions_Controllerのcreateアクションの処理が完了しました。'
@@ -60,12 +50,12 @@ module Api
           Rails.logger.info 'ユーザーがログイン状態にあるため、ログアウト処理を実行します。'
           log_out
           Rails.logger.info 'ユーザーのログアウト処理が正常に完了しました。'
+          render json: { message: 'ログアウトに成功しました。' }, status: :ok
         else
           Rails.logger.info 'ログインしているユーザーが存在しないため、ログアウト処理は実行されません。'
+          render json: { error: 'ユーザーはログインしていません。' }, status: :unprocessable_entity
         end
 
-        Rails.logger.info 'ユーザーをルートURLにリダイレクトします。ステータスコード303(See Other)で応答します。'
-        redirect_to root_url, status: :see_other
       end
     end
   end
