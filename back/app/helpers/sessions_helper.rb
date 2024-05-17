@@ -44,9 +44,8 @@ module SessionsHelper
 
   # 永続的セッションを破棄する
   def forget(user)
-    user.forget # リメンバーダイジェストの削除
-    cookies.delete(:user_id) # クッキーデータ削除
-    cookies.delete(:remember_token) # リメンバートークン削除
+    user.forget
+    session.delete(:user_id)  # cookiesの代わりにセッションを削除
   end
 
   # 現在のユーザーをログアウトする
