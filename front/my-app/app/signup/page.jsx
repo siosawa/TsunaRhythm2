@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const SignUp = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -18,7 +18,7 @@ const SignUp = () => {
   const submitButtonRef = useRef(null);
 
   const handleKeyDown = (event, ref) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault(); // Enterキーのデフォルト動作を防ぐ
       ref.current.focus();
     }
@@ -28,15 +28,15 @@ const SignUp = () => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません');
+      setError("パスワードが一致しません");
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/users', { 
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           user: {
@@ -50,19 +50,20 @@ const SignUp = () => {
 
       const responseData = await response.json();
       if (!response.ok) {
-        setError(responseData.errors.join(', ') || 'ユーザー登録に失敗しました');
+        setError(
+          responseData.errors.join(", ") || "ユーザー登録に失敗しました",
+        );
         return;
       }
 
-      setSuccess('アカウントが作成されました');
-      setName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      setError('');
-
+      setSuccess("アカウントが作成されました");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setError("");
     } catch (error) {
-      setError('ユーザー登録に失敗しました');
+      setError("ユーザー登録に失敗しました");
     }
   };
 
@@ -72,43 +73,43 @@ const SignUp = () => {
       <form onSubmit={handleSubmit} className="w-full space-y-4">
         {error && <div className="text-red-500">{error}</div>}
         {success && <div className="text-green-500">{success}</div>}
-        <Input 
-          placeholder="アカウントネーム" 
+        <Input
+          placeholder="アカウントネーム"
           value={name}
-          onChange={(e) => setName(e.target.value)} 
+          onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, emailRef)}
         />
-        <Input 
+        <Input
           type="email"
-          placeholder="メールアドレス" 
+          placeholder="メールアドレス"
           value={email}
-          onChange={(e) => setEmail(e.target.value)} 
+          onChange={(e) => setEmail(e.target.value)}
           ref={emailRef}
           onKeyDown={(e) => handleKeyDown(e, passwordRef)}
         />
-        <Input 
-          type="password" 
-          placeholder="パスワード" 
+        <Input
+          type="password"
+          placeholder="パスワード"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           ref={passwordRef}
           onKeyDown={(e) => handleKeyDown(e, confirmPasswordRef)}
         />
-        <Input 
-          type="password" 
-          placeholder="確認用パスワード" 
+        <Input
+          type="password"
+          placeholder="確認用パスワード"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           ref={confirmPasswordRef}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               e.preventDefault(); // Enterキーのデフォルト動作を防ぐ
               handleSubmit(e);
             }
           }}
         />
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full"
           ref={submitButtonRef}
         >

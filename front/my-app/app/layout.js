@@ -1,23 +1,23 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button"
-import Link from 'next/link'
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import Setting from "./settings/page";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const navList = [
-  { label: 'ホーム', href: '/' },
-  { label: 'ルーム一覧・作成', href: '/rooms' },
-  { label: '日記', href: '/diarys' },
-  { label: 'ユーザー', href: '/users' },
+  { label: "ホーム", href: "/" },
+  { label: "ルーム一覧・作成", href: "/rooms" },
+  { label: "日記", href: "/diarys" },
+  { label: "ユーザー", href: "/users" },
 ];
 
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
-      <body className={cn(inter.className, 'min-h-dvh')}>
+      <body className={cn(inter.className, "min-h-dvh")}>
         <header className="container h-16 flex items-center border-b justify-between">
           <h1 className="font-bold">TsunaRhythm</h1>
           <ul className="navList flex gap-4">
@@ -30,11 +30,13 @@ export default function RootLayout({ children }) {
                 </li>
               );
             })}
-            < Setting />
+            <Setting />
           </ul>
         </header>
         {children}
-        <footer className="container sticky top-full h-16 flex items-center justify-center border-t ">&copy;sawata</footer>
+        <footer className="container sticky top-full h-16 flex items-center justify-center border-t ">
+          &copy;sawata
+        </footer>
       </body>
     </html>
   );

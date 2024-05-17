@@ -6,7 +6,7 @@ const Users = () => {
   // ユーザー情報を格納するためのstate
   const [users, setUsers] = useState([]);
   // エラーメッセージを格納するためのstate
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // コンポーネントの初回レンダー時にAPIリクエストを送る
   useEffect(() => {
@@ -15,7 +15,7 @@ const Users = () => {
       try {
         // APIにGETリクエストを送る
         const res = await axios.get("http://localhost:3000/api/v1/users", {
-          withCredentials: true  // クッキーを含める設定
+          withCredentials: true, // クッキーを含める設定
         });
 
         // レスポンスが配列であることを確認する

@@ -3,7 +3,7 @@ module Api
     class UsersController < ApplicationController
       include ActionController::Cookies
       include SessionsHelper
-      
+
       before_action :logged_in_user, only: %i[index edit update destroy following followers]
       before_action :correct_user, only: %i[edit update]
       before_action :admin_user, only: :destroy
@@ -12,7 +12,7 @@ module Api
         @users = User.all
         render json: @users
       end
-      
+
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
         @user = User.find(params[:id])

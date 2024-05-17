@@ -26,9 +26,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./front/my-app:/usr/src/app
-    command: 'yarn dev'
+    command: "yarn dev"
     ports:
-      - '8000:3000'
+      - "8000:3000"
 volumes:
   db_data:
   gem_data:

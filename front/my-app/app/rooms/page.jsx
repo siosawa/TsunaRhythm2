@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const index = () => {
-  return (
-    <div>ルーム一覧・作成ページ</div>
-  )
-}
+  return <div>ルーム一覧・作成ページ</div>;
+};
 
-export default index
+export default index;
