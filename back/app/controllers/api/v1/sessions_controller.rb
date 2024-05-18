@@ -29,7 +29,7 @@ module Api
             log_in user
             Rails.logger.info 'ユーザーをログイン状態にしました。'
             # リダイレクトの代わりにJSONレスポンスを返す
-            render json: { message: 'ログインに成功しました。', user: user }, status: :ok
+            render json: { message: 'ログインに成功しました。', user: }, status: :ok
           else
             Rails.logger.info 'ユーザーアカウントがアクティブ化されていません。エラーメッセージを設定し、リダイレクトします。'
             render json: { error: 'アカウントがアクティブ化されていません。メールでアクティベーションリンクを確認してください。' }, status: :unprocessable_entity
@@ -55,7 +55,6 @@ module Api
           Rails.logger.info 'ログインしているユーザーが存在しないため、ログアウト処理は実行されません。'
           render json: { error: 'ユーザーはログインしていません。' }, status: :unprocessable_entity
         end
-
       end
     end
   end
