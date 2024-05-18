@@ -3,7 +3,7 @@
 export default function Home() {
   return (
     <>
-      <SignIn />
+      <Login />
     </>
   );
 }
@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const SignIn = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
