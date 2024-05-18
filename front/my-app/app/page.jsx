@@ -8,7 +8,7 @@ export default function Home() {
   );
 }
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -19,6 +19,7 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const passwordInputRef = useRef(null);
+  const [isGuestLogin, setIsGuestLogin] = useState(false); 
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -56,6 +57,8 @@ const SignIn = () => {
       setSuccess("ログインに成功しました");
       setError("");
       // ログイン成功後の処理はここに追加（例：リダイレクト）
+      setEmail("");
+      setPassword("");
     } catch (error) {
       setError("ログインに失敗しました");
     }
@@ -64,7 +67,15 @@ const SignIn = () => {
   const handleGuestLogin = () => {
     setEmail("guest@example.com");
     setPassword("guestpassword");
+    setIsGuestLogin(true); // フラグを設定
   };
+
+  useEffect(() => {
+    if (isGuestLogin) {
+      handleSubmit(new Event('submit', { bubbles: true, cancelable: true }));
+      setIsGuestLogin(false); // フラグをリセット
+    }
+  }, [email, password, isGuestLogin]); // isGuestLoginを依存配列に追加
 
   return (
     <>
