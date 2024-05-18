@@ -15,5 +15,6 @@ export default defineConfig({
         globals: true,  // これにより、`test`や`expect`がグローバルに利用可能になります
         environment: "jsdom",  // Reactコンポーネントをテストするために必要です
         include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+        setupFiles: './setupTests.js',  // 追加
     },
 });
