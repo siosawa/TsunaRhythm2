@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-// import '@testing-library/jest-dom'; 
+// import '@testing-library/jest-dom'; はsetupTests.jsで設定しているので不要
 import Login from '@/components/Login';
 
 test('h1タグに「ようこそ!」が存在しているか', () => {
