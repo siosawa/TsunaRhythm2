@@ -9,9 +9,8 @@ Rails.application.routes.draw do
       end
       resources :sessions, only: [:create]
       delete '/logout', to: 'sessions#destroy'
-      resources :account_activations, only: [:edit]
+      # resources :account_activations, only: [:edit]
       resources :posts, only: %i[index show create update destroy]
-      # get '/posts', to: 'static_pages#home'
       resources :password_resets,     only: %i[new create edit update]
       resources :relationships,       only: %i[create destroy]
     end

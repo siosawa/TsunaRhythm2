@@ -17,22 +17,20 @@ class User < ApplicationRecord
 
   # データベースと連携しない、インスタンス変数とほぼ同義のremember_tokenを作成する
   # メソッドを作るメソッド（メタメソッド）を作成する
-  attr_accessor :remember_token, :activation_token, :reset_token
+  attr_accessor :remember_token, :reset_token
 
   # アカウントを追加する直前に行う。渡したメールアドレスを小文字にしたものをセーブする直前に自分自身にコピーする
   # 大文字と小文字で複数メールアドレスを登録できないようにする。大抵のデータベースでは必要ない。
-  before_save   :downcase_email
+  before_save :downcase_email
 
-  # 前提を作り上げる
-  before_create :create_activation_digest # からのインスタンスがデータに保存された時。バリデーションを通過したとき。
-  validates :name,  presence: true, length: { maximum: 50 }
+  validates :name, presence: true, length: { maximum: 50 }
 
   # nameに空白スペースがあるかを検証する。空白スペースがなければtrue
   validates :email, presence: true, length: { maximum: 255 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
   # 大文字は定数（動的に変更されることのない値）として扱われる。
-  validates :email, presence: true, length:     { maximum: 255 },
+  validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false } # 大文字小文字は無視
   has_secure_password # セキュアなパスワード機能を導入。ハッシュ値のログだって見せないよ。
@@ -76,17 +74,6 @@ class User < ApplicationRecord
   # ユーザーのログイン情報を破棄する
   def forget
     update_attribute(:remember_digest, nil)
-  end
-
-  # アカウントを有効にする
-  def activate
-    update_attribute(:activated,    true)
-    update_attribute(:activated_at, Time.zone.now)
-  end
-
-  # 有効化用のメールを送信する
-  def send_activation_email
-    UserMailer.account_activation(self).deliver_now
   end
 
   # パスワード再設定の属性を設定する
@@ -139,11 +126,5 @@ class User < ApplicationRecord
   # メールアドレスをすべて小文字にする
   def downcase_email
     self.email = email.downcase
-  end
-
-  # 有効化トークンとダイジェストを作成および代入する
-  def create_activation_digest
-    self.activation_token  = User.new_token
-    self.activation_digest = User.digest(activation_token)
   end
 end

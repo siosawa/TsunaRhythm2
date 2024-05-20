@@ -13,27 +13,20 @@ module Api
 
         if user&.authenticate(params[:session][:password])
           Rails.logger.info 'パスワードが正しいことが確認されました。'
+          reset_session
 
-          if user.activated?
-            Rails.logger.info 'ユーザーアカウントがアクティブ化されています。'
-            reset_session
-
-            if params[:session][:remember_me] == '1'
-              remember(user)
-              Rails.logger.info 'ユーザーのログイン情報を記憶しました。'
-            else
-              forget(user)
-              Rails.logger.info 'ユーザーのログイン情報を記憶しません。'
-            end
-
-            log_in user
-            Rails.logger.info 'ユーザーをログイン状態にしました。'
-            # リダイレクトの代わりにJSONレスポンスを返す
-            render json: { message: 'ログインに成功しました。', user: }, status: :ok
+          if params[:session][:remember_me] == '1'
+            remember(user)
+            Rails.logger.info 'ユーザーのログイン情報を記憶しました。'
           else
-            Rails.logger.info 'ユーザーアカウントがアクティブ化されていません。エラーメッセージを設定し、リダイレクトします。'
-            render json: { error: 'アカウントがアクティブ化されていません。メールでアクティベーションリンクを確認してください。' }, status: :unprocessable_entity
+            forget(user)
+            Rails.logger.info 'ユーザーのログイン情報を記憶しません。'
           end
+
+          log_in user
+          Rails.logger.info 'ユーザーをログイン状態にしました。'
+          # リダイレクトの代わりにJSONレスポンスを返す
+          render json: { message: 'ログインに成功しました。', user: }, status: :ok
         else
           Rails.logger.info 'メールアドレスとパスワードの組み合わせが無効です。エラーメッセージを設定し、ログインフォームを再度表示します。'
           # フラッシュメッセージの代わりにJSONレスポンスを返す
