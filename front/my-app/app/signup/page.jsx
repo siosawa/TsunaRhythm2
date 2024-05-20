@@ -56,7 +56,6 @@ const SignUp = () => {
       }
 
       // アカウント作成成功
-      setSuccess("アカウントが作成されました");
       setName("");
       setEmail("");
       setPassword("");
@@ -85,7 +84,6 @@ const SignUp = () => {
           return;
         }
 
-        setSuccess("アカウントが作成され、ログインに成功しました");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
@@ -107,7 +105,6 @@ const SignUp = () => {
       <h1 className="text-4xl mb-6">新規作成</h1>
       <form onSubmit={handleSubmit} className="w-full space-y-4">
         {error && <div className="text-red-500">{error}</div>}
-        {success && <div className="text-green-500">{success}</div>}
         <Input
           placeholder="アカウントネーム"
           value={name}
