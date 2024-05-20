@@ -33,6 +33,7 @@ const SignUp = () => {
     }
 
     try {
+      // アカウント作成APIの呼び出し
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
@@ -50,18 +51,52 @@ const SignUp = () => {
 
       const responseData = await response.json();
       if (!response.ok) {
-        setError(
-          responseData.errors.join(", ") || "ユーザー登録に失敗しました",
-        );
+        setError(responseData.errors.join(", ") || "ユーザー登録に失敗しました");
         return;
       }
 
+      // アカウント作成成功
       setSuccess("アカウントが作成されました");
       setName("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
       setError("");
+
+      try {
+        // 自動ログインのためのAPI呼び出し
+        const loginResponse = await fetch("http://localhost:3000/api/v1/sessions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            session: {
+              email: email,
+              password: password,
+            },
+          }),
+        });
+
+        const loginResponseData = await loginResponse.json();
+        if (!loginResponse.ok) {
+          setError(loginResponseData.error || "ログインに失敗しました");
+          return;
+        }
+
+        setSuccess("アカウントが作成され、ログインに成功しました");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+
+        // ログイン成功後の処理（例：リダイレクト）
+        window.location.href = '/diarys'; //一時的に/diarysを使用
+
+      } catch (error) {
+        setError("ログインに失敗しました");
+      }
+
     } catch (error) {
       setError("ユーザー登録に失敗しました");
     }
