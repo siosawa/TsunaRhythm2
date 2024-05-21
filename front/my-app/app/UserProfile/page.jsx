@@ -1,10 +1,35 @@
-const user = {
-  name: 'sawata',
-  following: 14,
-  followers: 12,
-};
+"use client"
+import { useEffect, useState } from "react";
+
+// const user = {
+//   name: 'sawata',
+//   following: 14,
+//   followers: 12,
+// };
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/current_user', {
+          credentials: 'include',
+        });
+        const userData = await response.json();
+        setUser(userData);
+      } catch (error) {
+        console.error('ユーザー情報の取得に失敗しました:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (!user) {
+    return <div>読み込み中...</div>;
+  }
+
   return (
     <div>
       <UserProfile user={user} />
