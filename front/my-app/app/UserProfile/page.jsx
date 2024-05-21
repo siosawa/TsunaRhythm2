@@ -1,6 +1,8 @@
 "use client"
 import { useEffect, useState } from "react";
 import PostInput from "@/app/diarys/components/PostInput"
+import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -45,8 +47,12 @@ const UserProfile = ({ user }) => {
         <div>
           <h1 className="text-4xl font-bold">{user.name}</h1>
           <div className="flex space-x-2">
-            <span>フォロー{user.following}</span>
-            <span>フォロワー{user.followers}</span>
+            <Button variant="ghost" asChild>
+                    <Link href="/following">フォロー{user.following}</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+                    <Link href="/following">フォロワー{user.followers}</Link>
+            </Button>
           </div>
         </div>
       </div>
