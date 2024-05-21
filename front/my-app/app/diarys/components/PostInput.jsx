@@ -5,7 +5,6 @@ const PostInput = ({ onPostSuccess }) => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
   
     const handleSubmit = async (event) => {
       event.preventDefault();
@@ -24,7 +23,7 @@ const PostInput = ({ onPostSuccess }) => {
         );
   
         if (response.status === 201) {
-          setSuccess('ポストが成功しました！');
+
           setTitle('');
           setContent('');
           onPostSuccess(); // 投稿成功時に親コンポーネントの状態を更新
@@ -41,7 +40,6 @@ const PostInput = ({ onPostSuccess }) => {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">新しいポストを作成</h1>
         {error && <div className="text-red-500">{error}</div>}
-        {success && <div className="text-green-500">{success}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="title" className="block text-gray-700">タイトル</label>
