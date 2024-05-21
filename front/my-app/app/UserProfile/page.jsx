@@ -1,7 +1,5 @@
 "use client"
 import { useEffect, useState } from "react";
-
-
 export default function Home() {
   const [user, setUser] = useState(null);
 
@@ -28,6 +26,7 @@ export default function Home() {
   return (
     <div>
       <UserProfile user={user} />
+      <UserPostView posts={user.posts || []}/>
     </div>
   );
 }
@@ -50,6 +49,20 @@ const UserProfile = ({ user }) => {
       <div className="mt-2">
         <label className="block text-gray-700">主なワーク:</label>
       </div>
+    </div>
+  );
+};
+
+const UserPostView = ({ posts }) => {
+  return (
+    <div>
+      {posts.map((post) => (
+        <div key={post.id}>
+          <p>タイトル: {post.title}</p>
+          <p>投稿: {post.content}</p>
+          <p>送信日時: {post.created_at}</p>
+        </div>
+      ))}
     </div>
   );
 };
