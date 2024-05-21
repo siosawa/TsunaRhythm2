@@ -1,11 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
 
-// const user = {
-//   name: 'sawata',
-//   following: 14,
-//   followers: 12,
-// };
 
 export default function Home() {
   const [user, setUser] = useState(null);
