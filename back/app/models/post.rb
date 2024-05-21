@@ -4,8 +4,11 @@ class Post < ApplicationRecord
     attachable.variant :display, resize_to_limit: [500, 500]
   end
   default_scope -> { order(created_at: :desc) }
-  # validates :user_id, presence: true
-  validates :content, presence: true, length: { maximum: 140 }
+  # user_idのバリデーションコメントアウトを解除
+  validates :user_id, presence: true
+  validates :title, presence: true, length: { maximum: 40 }
+  validates :content, presence: true, length: { maximum: 250 }
+
   validates :image, content_type: {
                       in: %w[image/jpeg image/gif image/png],
                       message: -> { I18n.t('activerecord.errors.messages.image_type') }
