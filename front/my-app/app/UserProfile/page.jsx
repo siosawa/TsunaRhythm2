@@ -51,7 +51,7 @@ const UserProfile = ({ user }) => {
                     <Link href="/following">フォロー{user.following}</Link>
             </Button>
             <Button variant="ghost" asChild>
-                    <Link href="/following">フォロワー{user.followers}</Link>
+                    <Link href="/followers">フォロワー{user.followers}</Link>
             </Button>
           </div>
         </div>
