@@ -76,6 +76,19 @@ module Api
         render json: @users
       end
 
+      def current_user_info
+        if logged_in?
+          render json: {
+            id: current_user.id,
+            name: current_user.name,
+            following: current_user.following.count,
+            followers: current_user.followers.count
+          }
+        else
+          render json: { error: 'ログインしていません' }, status: :unauthorized
+        end
+      end
+
       private
 
       def user_params
