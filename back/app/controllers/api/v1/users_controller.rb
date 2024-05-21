@@ -63,17 +63,19 @@ module Api
       end
 
       def following
-        Rails.logger.info 'users_controllerのfollowingアクションを実行しようとしています'
-        @user = User.find(params[:id])
-        @users = @user.following.paginate(page: params[:page])
-        render json: @users
+        user = User.find(params[:id])
+        following = user.following
+        render json: following
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "User not found" }, status: :not_found
       end
 
       def followers
-        Rails.logger.info "#{params[:id]}番のユーザーのfollowersアクションを実行しようとしています"
-        @user = User.find(params[:id])
-        @users = @user.followers.paginate(page: params[:page])
-        render json: @users
+        user = User.find(params[:id])
+        followers = user.followers
+        render json: followers
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "User not found" }, status: :not_found
       end
 
       # マイページで取得するデータ
