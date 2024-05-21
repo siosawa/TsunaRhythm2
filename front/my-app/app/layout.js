@@ -3,7 +3,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Setting from "./settings/page";
+import Settings from "@/components/Settings";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
                 </li>
               );
             })}
-            <Setting />
+            <Settings />
           </ul>
         </header>
         {children}
