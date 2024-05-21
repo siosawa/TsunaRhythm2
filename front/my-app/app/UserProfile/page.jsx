@@ -1,7 +1,13 @@
 "use client"
 import { useEffect, useState } from "react";
+import PostInput from "@/app/diarys/components/PostInput"
+
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [reload, setReload] = useState(false);
+  const handleReload = () => {
+    setReload(!reload);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,7 +32,8 @@ export default function Home() {
   return (
     <div>
       <UserProfile user={user} />
-      <UserPostView posts={user.posts || []}/>
+      <PostInput onPostSuccess={handleReload} />
+      <UserPostView posts={user.posts || []} />
     </div>
   );
 }
