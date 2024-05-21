@@ -23,7 +23,7 @@ const PostInput = ({ onPostSuccess }) => {
           }
         );
   
-        if (response.status === 200) {
+        if (response.status === 201) {
           setSuccess('ポストが成功しました！');
           setTitle('');
           setContent('');
