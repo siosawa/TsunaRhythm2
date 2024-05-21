@@ -12,7 +12,7 @@ global.fetch = vi.fn(() =>
   })
 );
 
-// Login コンポーネントのモック(アカウントを新規作成ボタンのテストで使用)
+// Login コンポーネントのモック
 const LoginMock = () => {
     const navigate = useNavigate();
     
