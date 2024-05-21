@@ -7,6 +7,7 @@ Rails.application.routes.draw do
           get :following, :followers
         end
       end
+      get 'current_user', to: 'users#current_user_info'
       resources :sessions, only: [:create]
       delete '/logout', to: 'sessions#destroy'
       # resources :account_activations, only: [:edit]
