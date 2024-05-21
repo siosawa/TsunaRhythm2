@@ -76,13 +76,15 @@ module Api
         render json: @users
       end
 
+      # マイページで取得するデータ
       def current_user_info
         if logged_in?
           render json: {
             id: current_user.id,
             name: current_user.name,
             following: current_user.following.count,
-            followers: current_user.followers.count
+            followers: current_user.followers.count,
+            posts: current_user.posts
           }
         else
           render json: { error: 'ログインしていません' }, status: :unauthorized
