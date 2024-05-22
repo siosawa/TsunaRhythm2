@@ -48,10 +48,9 @@ const FollowingList = () => {
 
     fetchFollowing();
   }, [userId]);
-
-  const handleUnfollow = async (followedId) => {
+  const handleUnfollow = async (relationshipId, followedId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/relationships/${followedId}`, {
+      const response = await fetch(`http://localhost:3000/api/v1/relationships/${relationshipId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -98,7 +97,7 @@ const FollowingList = () => {
                 <p>{user.email}</p>
               </div>
               {followStates[user.id] ? (
-                <Button variant="ghost" onClick={() => handleUnfollow(user.id)}>
+                <Button variant="ghost" onClick={() => handleUnfollow(user.relationship_id, user.id)}>
                   フォロー解除
                 </Button>
               ) : (
@@ -116,4 +115,4 @@ const FollowingList = () => {
   );
 };
 
-export default FollowingList;
+export default FollowingList ;
