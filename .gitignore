@@ -1,1 +1,4 @@
-back/
+back/log/
+back/storage
+back/tmp
+back/config/master.key
