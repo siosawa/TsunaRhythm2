@@ -31,6 +31,9 @@ const Setting = () => {
     }
   };
 
+  const handleUserProfile = () => {
+    window.location.href = "/UserProfile";
+  }
   return (
     <>
       {error && <div className="text-red-500">{error}</div>}
@@ -38,7 +41,7 @@ const Setting = () => {
         <DropdownMenuTrigger>設定</DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>マイページ</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleUserProfile}>マイページ</DropdownMenuItem>
           <DropdownMenuItem>プロフィール編集</DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogout}>ログアウト</DropdownMenuItem>
         </DropdownMenuContent>

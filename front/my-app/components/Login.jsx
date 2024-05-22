@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -60,7 +60,7 @@ const Login = () => {
     setIsGuestLogin(true); // フラグを設定
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isGuestLogin) {
       handleSubmit(new Event('submit', { bubbles: true, cancelable: true }));
       setIsGuestLogin(false); // フラグをリセット

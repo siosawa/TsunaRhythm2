@@ -20,10 +20,10 @@ module Api
         @post = current_user.posts.build(post_params)
         if @post.save
           message = [I18n.t('posts.create.flash.success')]
-          render json: { status: 'success', message: message }
+          render json: { status: 'success', message: message }, status: :created
         else
           message = @post.errors.full_messages
-          render json: { status: 'failure', message: message }
+          render json: { status: 'failure', message: message }, status: :unprocessable_entity
         end
       end
 
