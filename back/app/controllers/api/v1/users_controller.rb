@@ -101,13 +101,18 @@ module Api
       end
 
       def correct_user
-        @user = User.find(params[:id])
-        redirect_to(root_url, status: :see_other) unless current_user?(@user)
+        @user = User.find_by(id: params[:id])
+        unless current_user?(@user)
+          render json: { status: 'failure', message: '不正なアクセスです' }, status: :forbidden
+        end
       end
-
+      
       def admin_user
-        redirect_to(root_url, status: :see_other) unless current_user.admin?
+        unless current_user.admin?
+          render json: { status: 'failure', message: '管理者権限が必要です' }, status: :forbidden
+        end
       end
+      
     end
   end
 end
