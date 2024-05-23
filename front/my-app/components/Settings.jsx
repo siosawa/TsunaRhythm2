@@ -32,7 +32,7 @@ const Setting = () => {
   };
 
   const handleUserProfile = () => {
-    window.location.href = "/UserProfile";
+    window.location.href = "/userprofile";
   }
   return (
     <>

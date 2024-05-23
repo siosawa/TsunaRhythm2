@@ -4,7 +4,7 @@ import PostInput from "@/app/diarys/components/PostInput"
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default function MyPage() {
   const [user, setUser] = useState(null);
   const [reload, setReload] = useState(false);
   const handleReload = () => {
