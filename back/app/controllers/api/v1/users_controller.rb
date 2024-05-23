@@ -64,10 +64,11 @@ module Api
 
       def following
         user = User.find(params[:id])
-        following = user.following
-        render json: following
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "User not found" }, status: :not_found
+        following_users = user.following.includes(:active_relationships).map do |followed_user|
+          relationship = user.active_relationships.find_by(followed_id: followed_user.id)
+          followed_user.attributes.merge(relationship_id: relationship.id)
+        end
+        render json: following_users
       end
 
       def followers
@@ -100,13 +101,18 @@ module Api
       end
 
       def correct_user
-        @user = User.find(params[:id])
-        redirect_to(root_url, status: :see_other) unless current_user?(@user)
+        @user = User.find_by(id: params[:id])
+        unless current_user?(@user)
+          render json: { status: 'failure', message: '不正なアクセスです' }, status: :forbidden
+        end
       end
-
+      
       def admin_user
-        redirect_to(root_url, status: :see_other) unless current_user.admin?
+        unless current_user.admin?
+          render json: { status: 'failure', message: '管理者権限が必要です' }, status: :forbidden
+        end
       end
+      
     end
   end
 end

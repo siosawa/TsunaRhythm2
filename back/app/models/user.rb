@@ -105,14 +105,15 @@ class User < ApplicationRecord
   # ユーザーをフォローする
   def follow(other_user)
     Rails.logger.info "ユーザー(ID: #{id})がユーザー(ID: #{other_user.id})をフォローしようとしています。"
-    following << other_user unless self == other_user
+    active_relationships.create(followed_id: other_user.id)
     Rails.logger.info "ユーザー(ID: #{id})がユーザー(ID: #{other_user.id})をフォローしました。"
   end
 
   # ユーザーをフォロー解除する
   def unfollow(other_user)
     Rails.logger.info "ユーザー(ID: #{id})がユーザー(ID: #{other_user.id})をフォロー解除しようとしています。"
-    following.delete(other_user)
+    # following.delete(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy
     Rails.logger.info "ユーザー(ID: #{id})がユーザー(ID: #{other_user.id})をフォロー解除しました。"
   end
 
