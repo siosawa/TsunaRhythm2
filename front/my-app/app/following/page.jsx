@@ -35,8 +35,9 @@ const FollowingList = () => {
 
           // 初期フォロー状態を設定
           const initialFollowStates = data.reduce((acc, user) => ({
-            ...acc, 
-            [user.id]: true
+            ...acc,
+            [user.id]: true,
+            [`relationship_${user.id}`]: user.relationship_id // relationship_id を追加
           }), {});
           setFollowStates(initialFollowStates);
           
@@ -48,14 +49,20 @@ const FollowingList = () => {
 
     fetchFollowing();
   }, [userId]);
-  const handleUnfollow = async (relationshipId, followedId) => {
+  
+  const handleUnfollow = async (followedId) => {
+    const relationshipId = followStates[`relationship_${followedId}`]; // relationship_id を followStates から取得
     try {
       const response = await fetch(`http://localhost:3000/api/v1/relationships/${relationshipId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
       if (response.ok) {
-        setFollowStates({ ...followStates, [followedId]: false });
+        setFollowStates({
+          ...followStates,
+          [followedId]: false,
+          [`relationship_${followedId}`]: null // relationship_id をリセット
+        });
       } else {
         console.error('フォロー解除に失敗しました');
       }
@@ -66,7 +73,7 @@ const FollowingList = () => {
 
   const handleFollow = async (followedId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/relationships`, {
+      const response = await fetch('http://localhost:3000/api/v1/relationships', {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({ followed_id: followedId }),
@@ -75,7 +82,13 @@ const FollowingList = () => {
         },
       });
       if (response.ok) {
-        setFollowStates({ ...followStates, [followedId]: true });
+        const data = await response.json();
+        console.log('New relationship ID:', data.relationship_id); // 新しい relationship_id をコンソールに出力
+        setFollowStates({
+          ...followStates,
+          [followedId]: true,
+          [`relationship_${followedId}`]: data.relationship_id // 新しい relationship_id を更新
+        });
       } else {
         console.error('フォローに失敗しました');
       }
@@ -97,7 +110,7 @@ const FollowingList = () => {
                 <p>{user.email}</p>
               </div>
               {followStates[user.id] ? (
-                <Button variant="ghost" onClick={() => handleUnfollow(user.relationship_id, user.id)}>
+                <Button variant="ghost" onClick={() => handleUnfollow(user.id)}>
                   フォロー解除
                 </Button>
               ) : (
@@ -115,4 +128,4 @@ const FollowingList = () => {
   );
 };
 
-export default FollowingList ;
+export default FollowingList;
