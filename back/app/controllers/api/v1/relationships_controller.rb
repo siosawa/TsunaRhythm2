@@ -6,26 +6,45 @@ module Api
       before_action :logged_in_user
 
       def create
-        Rails.logger.info 'RelationshipsControllerのcreateアクションが実行されようとしています。'
-        @user = User.find(params[:followed_id])
-        if current_user.follow(@user)
-          Rails.logger.info "ユーザー(ID: #{current_user.id})がユーザー(ID: #{@user.id})をフォローしました。"
-          render json: { message: 'フォローに成功しました', followed_id: @user.id, follower_id: current_user.id }, status: :created
+        Rails.logger.info "フォロー操作を開始: current_user.id=#{current_user.id}, followed_id=#{params[:followed_id]}"
+        @user = User.find_by(id: params[:followed_id])
+        @relationship = current_user.active_relationships.build(followed_id: @user.id)
+        if @relationship.save
+          Rails.logger.info "フォローが成功しました: relationship.id=#{@relationship.id}"
+          render_relationship_status('create')
         else
-          render json: { error: 'フォローに失敗しました' }, status: :unprocessable_entity
+          Rails.logger.error "フォローに失敗しました: #{@relationship.errors.full_messages}"
+          render json: { status: 'failure', message: 'Unable to follow user' }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        Rails.logger.info 'RelationshipsControllerのdestroyアクションが実行されようとしています。'
-        relationship = Relationship.find(params[:id])
-        @user = relationship.followed
-        if current_user.unfollow(@user)
-          Rails.logger.info "ユーザー(ID: #{current_user.id})がユーザー(ID: #{@user.id})をフォロー解除しました。"
-          render json: { message: 'フォロー解除に成功しました', unfollowed_id: @user.id, unfollower_id: current_user.id }, status: :ok
+        Rails.logger.info "フォロー解除操作を開始: current_user.id=#{current_user.id}, relationship_id=#{params[:id]}"
+        @relationship = current_user.active_relationships.find(params[:id])
+        if @relationship
+          @relationship.destroy
+          Rails.logger.info "フォロー解除が成功しました: relationship.id=#{@relationship.id}"
+          render_relationship_status('destroy')
         else
-          render json: { error: 'フォロー解除に失敗しました' }, status: :unprocessable_entity
+          Rails.logger.error "フォロー解除に失敗しました: relationship_id=#{params[:id]}が見つかりません"
+          render json: { status: 'failure', message: 'Relationship not found' }, status: :not_found
         end
+      end
+
+      private
+
+      def render_relationship_status(action)
+        count = @relationship.followed.followers.size
+        following = current_user.following?(@relationship.followed)
+        message = [I18n.t("relationships.#{action}.flash.success")]
+
+        render json: {
+          status: 'success',
+          message: message,
+          count: count,
+          following: following,
+          relationship_id: @relationship.id
+        }
       end
     end
   end

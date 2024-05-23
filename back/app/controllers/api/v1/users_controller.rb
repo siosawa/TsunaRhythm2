@@ -64,10 +64,11 @@ module Api
 
       def following
         user = User.find(params[:id])
-        following = user.following
-        render json: following
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "User not found" }, status: :not_found
+        following_users = user.following.includes(:active_relationships).map do |followed_user|
+          relationship = user.active_relationships.find_by(followed_id: followed_user.id)
+          followed_user.attributes.merge(relationship_id: relationship.id)
+        end
+        render json: following_users
       end
 
       def followers
