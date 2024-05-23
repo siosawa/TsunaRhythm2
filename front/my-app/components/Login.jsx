@@ -56,7 +56,7 @@ const Login = () => {
 
   const handleGuestLogin = () => {
     setEmail("guest@example.com");
-    setPassword("guestpassword");
+    setPassword("foobar");
     setIsGuestLogin(true); // フラグを設定
   };
 
