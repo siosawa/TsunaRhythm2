@@ -9,7 +9,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const passwordInputRef = useRef(null);
-  const [isGuestLogin, setIsGuestLogin] = useState(false); 
+  const [isGuestLogin, setIsGuestLogin] = useState(false);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -62,7 +62,7 @@ const Login = () => {
 
   useLayoutEffect(() => {
     if (isGuestLogin) {
-      handleSubmit(new Event('submit', { bubbles: true, cancelable: true }));
+      handleSubmit(new Event("submit", { bubbles: true, cancelable: true }));
       setIsGuestLogin(false); // フラグをリセット
     }
   }, [email, password, isGuestLogin]); // isGuestLoginを依存配列に追加

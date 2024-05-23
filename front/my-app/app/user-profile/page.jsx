@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
-import PostInput from "@/app/diarys/components/PostInput"
-import Link from 'next/link';
+import PostInput from "@/app/diarys/components/PostInput";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function MyPage() {
@@ -14,13 +14,16 @@ export default function MyPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/current_user', {
-          credentials: 'include',
-        });
+        const response = await fetch(
+          "http://localhost:3000/api/v1/current_user",
+          {
+            credentials: "include",
+          },
+        );
         const userData = await response.json();
         setUser(userData);
       } catch (error) {
-        console.error('ユーザー情報の取得に失敗しました:', error);
+        console.error("ユーザー情報の取得に失敗しました:", error);
       }
     };
 
@@ -48,16 +51,18 @@ const UserProfile = ({ user }) => {
           <h1 className="text-4xl font-bold">{user.name}</h1>
           <div className="flex space-x-2">
             <Button variant="ghost" asChild>
-                    <Link href="/following">フォロー{user.following}</Link>
+              <Link href="/following">フォロー{user.following}</Link>
             </Button>
             <Button variant="ghost" asChild>
-                    <Link href="/followers">フォロワー{user.followers}</Link>
+              <Link href="/followers">フォロワー{user.followers}</Link>
             </Button>
           </div>
         </div>
       </div>
       <div className="mt-4">
-        <button className="px-4 py-2 bg-gray-200 rounded">プロフィール編集</button>
+        <button className="px-4 py-2 bg-gray-200 rounded">
+          プロフィール編集
+        </button>
       </div>
       <div className="mt-2">
         <label className="block text-gray-700">主なワーク:</label>
