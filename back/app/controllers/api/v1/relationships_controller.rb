@@ -8,6 +8,12 @@ module Api
       def create
         Rails.logger.info "フォロー操作を開始: current_user.id=#{current_user.id}, followed_id=#{params[:followed_id]}"
         @user = User.find_by(id: params[:followed_id])
+        if @user.nil?
+          Rails.logger.error "フォローに失敗しました: followed_id=#{params[:followed_id]}が見つかりません"
+          render json: { status: 'failure', message: 'User not found' }, status: :not_found
+          return
+        end
+
         @relationship = current_user.active_relationships.build(followed_id: @user.id)
         if @relationship.save
           Rails.logger.info "フォローが成功しました: relationship.id=#{@relationship.id}"
@@ -20,7 +26,7 @@ module Api
 
       def destroy
         Rails.logger.info "フォロー解除操作を開始: current_user.id=#{current_user.id}, relationship_id=#{params[:id]}"
-        @relationship = current_user.active_relationships.find(params[:id])
+        @relationship = current_user.active_relationships.find_by(id: params[:id])
         if @relationship
           @relationship.destroy
           Rails.logger.info "フォロー解除が成功しました: relationship.id=#{@relationship.id}"
@@ -34,17 +40,20 @@ module Api
       private
 
       def render_relationship_status(action)
-        count = @relationship.followed.followers.size
         following = current_user.following?(@relationship.followed)
-        message = [I18n.t("relationships.#{action}.flash.success")]
+        message = case action
+                  when 'create'
+                    'フォローが成功しました'
+                  when 'destroy'
+                    'フォロー解除が成功しました'
+                  end
 
         render json: {
-          status: 'success',
-          message: message,
-          count: count,
+          status: 'success',          
           following: following,
-          relationship_id: @relationship.id
-        }
+          relationship_id: @relationship.id,
+          message: message
+        }, status: :ok
       end
     end
   end
