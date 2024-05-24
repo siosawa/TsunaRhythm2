@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import EditPassword from "@/app/edit-profile/components/EditPassword";
+import { FiTriangle } from "react-icons/fi";
 
 const ProfileReadPage = () => {
   const [user, setUser] = useState(null);
+  const [isEditable, setIsEditable] = useState(false); // 編集モードの状態
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,12 +28,26 @@ const ProfileReadPage = () => {
     fetchUserData();
   }, []);
 
-  const [showCurrent, setShowCurrent] = useState(true);
-  const [showEditPassword, setShowEditPassword] = useState(false);
+  const handleEditClick = () => {
+    setIsEditable(true); // 編集モードに切り替える
+  };
 
-  const handleButtonClick = () => {
-    setShowCurrent(false); // 現在のコンポーネントを非表示
-    setShowEditPassword(true); // 新しいコンポーネントを表示
+  const handleSaveClick = (event) => {
+    event.preventDefault(); // フォームのデフォルトの送信を防ぐ
+    setIsEditable(false); // 編集モードを終了
+    // ここでユーザーデータを保存する処理を追加
+  };
+
+  const handlePasswordEditClick = () => {
+    window.location.href = "/edit-password"; 
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   };
 
   return (
@@ -40,20 +55,27 @@ const ProfileReadPage = () => {
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
-          <button className="px-4 py-1 rounded-xl shadow-custom-dark" onClick={handleButtonClick}>
-            編集
-          </button>
+          {isEditable ? (
+            <button className="px-4 py-1 rounded-xl shadow-custom-dark" onClick={handleSaveClick}>
+              保存
+            </button>
+          ) : (
+            <button className="px-4 py-1 rounded-xl shadow-custom-dark" onClick={handleEditClick}>
+              編集
+            </button>
+          )}
         </div>
         <form>
-          {showCurrent && (
             <>
               <div className="mb-4">
                 <div className="relative flex items-center border rounded-xl">
                   <span className="absolute left-2 text-gray-500">ユーザー名</span>
                   <input
                     type="text"
+                    name="name"
                     value={user?.name || ''}
-                    readOnly
+                    onChange={handleInputChange}
+                    readOnly={!isEditable}
                     className="w-full px-4 py-2 border rounded-xl text-right"
                   />
                 </div>
@@ -63,9 +85,11 @@ const ProfileReadPage = () => {
                   <span className="absolute left-2 text-gray-500">メールアドレス</span>
                   <input
                     type="email"
+                    name="email"
                     placeholder="メールアドレス"
                     value={user?.email || ''}
-                    readOnly
+                    onChange={handleInputChange}
+                    readOnly={!isEditable}
                     className="w-full pl-24 pr-4 py-2 text-right border-none"
                   />
                 </div>
@@ -78,8 +102,12 @@ const ProfileReadPage = () => {
                     placeholder="パスワード"
                     value="********"
                     readOnly
-                    className="w-full px-4 py-2 border rounded-xl text-right"
+                    className="w-full px-4 py-2 border rounded-xl text-right pr-7"
                   />
+                  <FiTriangle
+                className="absolute right-2 cursor-pointer transform rotate-90 "
+                onClick={handlePasswordEditClick}
+              />
                 </div>
               </div>
               <div className="mb-4">
@@ -87,9 +115,11 @@ const ProfileReadPage = () => {
                   <span className="absolute left-2 text-gray-500">ワーク</span>
                   <input
                     type="text"
+                    name="work"
                     value={user?.work || ''}
-                    readOnly
-                    className="w-full px-4 py-2 border rounded-xl"
+                    onChange={handleInputChange}
+                    readOnly={!isEditable}
+                    className="w-full px-4 py-2 border rounded-xl text-right pr-7"
                   />
                 </div>
               </div>
@@ -97,24 +127,16 @@ const ProfileReadPage = () => {
                 <div className="relative flex items-center border rounded-xl">
                   <span className="absolute left-2 top-2 text-gray-500">プロフィール文</span>
                   <textarea
+                    name="profileText"
                     value={user?.profileText || ''}
-                    readOnly
-                    className="w-full px-4 py-2 border rounded-xl"
+                    onChange={handleInputChange}
+                    readOnly={!isEditable}
+                    className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
                     rows="4"
                   />
                 </div>
               </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="px-4 py-1 rounded-xl shadow-custom-dark"
-                >
-                  保存
-                </button>
-              </div>
             </>
-          )}
-          {showEditPassword && <EditPassword />}
         </form>
       </div>
     </div>
