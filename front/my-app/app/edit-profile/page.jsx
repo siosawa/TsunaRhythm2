@@ -13,11 +13,11 @@ const ProfileReadPage = () => {
           "http://localhost:3000/api/v1/current_user",
           {
             credentials: "include",
-          },
+          }
         );
         if (response.ok) {
           const userData = await response.json();
-          console.log("Fetched user data:", userData); // JSON形式でログ出力
+          console.log("ユーザーデータを取得しました:", userData); // JSON形式でログ出力
           setUser(userData);
         } 
       } catch (error) {
@@ -32,10 +32,30 @@ const ProfileReadPage = () => {
     setIsEditable(true); // 編集モードに切り替える
   };
 
-  const handleSaveClick = (event) => {
+  const handleSaveClick = async (event) => {
     event.preventDefault(); // フォームのデフォルトの送信を防ぐ
-    setIsEditable(false); // 編集モードを終了
-    // ここでユーザーデータを保存する処理を追加
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/users/${user.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const updatedUserData = await response.json();
+        console.log("ユーザーデータを更新しました:", updatedUserData);
+        setIsEditable(false); // 編集モードを終了
+        await fetchUserData(); // データを再取得
+      } else {
+        console.error("ユーザーデータの更新に失敗しました");
+      }
+    } catch (error) {
+      console.error("ユーザーデータの更新中にエラーが発生しました:", error);
+    }
   };
 
   const handlePasswordEditClick = () => {
@@ -73,6 +93,7 @@ const ProfileReadPage = () => {
                   <input
                     type="text"
                     name="name"
+                    placeholder="ユーザー名"
                     value={user?.name || ''}
                     onChange={handleInputChange}
                     readOnly={!isEditable}
@@ -90,7 +111,7 @@ const ProfileReadPage = () => {
                     value={user?.email || ''}
                     onChange={handleInputChange}
                     readOnly={!isEditable}
-                    className="w-full pl-24 pr-4 py-2 text-right border-none"
+                    className="w-full px-4 py-2 border rounded-xl text-right"
                   />
                 </div>
               </div>
@@ -105,9 +126,9 @@ const ProfileReadPage = () => {
                     className="w-full px-4 py-2 border rounded-xl text-right pr-7"
                   />
                   <FiTriangle
-                className="absolute right-2 cursor-pointer transform rotate-90 "
-                onClick={handlePasswordEditClick}
-              />
+                    className="absolute right-2 cursor-pointer transform rotate-90"
+                    onClick={handlePasswordEditClick}
+                  />
                 </div>
               </div>
               <div className="mb-4">
