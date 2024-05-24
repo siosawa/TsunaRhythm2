@@ -85,6 +85,7 @@ module Api
           render json: {
             id: current_user.id,
             name: current_user.name,
+            email: current_user.email,
             following: current_user.following.count,
             followers: current_user.followers.count,
             posts: current_user.posts
