@@ -50,7 +50,9 @@ const SignUp = () => {
 
       const responseData = await response.json();
       if (!response.ok) {
-        setError(responseData.errors.join(", ") || "ユーザー登録に失敗しました");
+        setError(
+          responseData.errors.join(", ") || "ユーザー登録に失敗しました",
+        );
         return;
       }
 
@@ -63,19 +65,22 @@ const SignUp = () => {
 
       try {
         // 自動ログインのためのAPI呼び出し
-        const loginResponse = await fetch("http://localhost:3000/api/v1/sessions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            session: {
-              email: email,
-              password: password,
+        const loginResponse = await fetch(
+          "http://localhost:3000/api/v1/sessions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-          }),
-        });
+            credentials: "include",
+            body: JSON.stringify({
+              session: {
+                email: email,
+                password: password,
+              },
+            }),
+          },
+        );
 
         const loginResponseData = await loginResponse.json();
         if (!loginResponse.ok) {
@@ -88,12 +93,10 @@ const SignUp = () => {
         setConfirmPassword("");
 
         // ログイン成功後の処理（例：リダイレクト）
-        window.location.href = '/diarys'; //一時的に/diarysを使用
-
+        window.location.href = "/diarys"; //一時的に/diarysを使用
       } catch (error) {
         setError("ログインに失敗しました");
       }
-
     } catch (error) {
       setError("ユーザー登録に失敗しました");
     }
