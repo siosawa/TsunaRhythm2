@@ -150,7 +150,7 @@ const ProfileReadPage = () => {
                   ユーザー名
                 </span>
                 <input
-                  ref={nameInputRef} // 参照を設定
+                  ref={nameInputRef}
                   type="text"
                   name="name"
                   placeholder="ユーザー名"
