@@ -79,6 +79,17 @@ module Api
         render json: { error: "User not found" }, status: :not_found
       end
 
+      # /diarysで取得するデータ
+      def posts_user_info
+        users = User.all.select(:id)
+        render json: {
+          users: users,
+          current_user: {
+            id: current_user.id,
+          }
+        }
+      end
+
       # マイページで取得するデータ
       def current_user_info
         if logged_in?

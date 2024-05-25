@@ -3,8 +3,8 @@ module Api
     class PostsController < ApplicationController
       include ActionController::Cookies
       include SessionsHelper
-      before_action :logged_in_user, only: %i[create destroy]
-      before_action :correct_user, only: :destroy
+      before_action :logged_in_user, only: %i[create destroy update]
+      before_action :correct_user, only: %i[destroy update]
 
       def index
         @posts = Post.all

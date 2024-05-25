@@ -8,11 +8,12 @@ Rails.application.routes.draw do
         end
       end
       get 'current_user', to: 'users#current_user_info'
+      get 'posts_user', to: 'users#posts_user_info'
       resources :sessions, only: [:create]
       delete '/logout', to: 'sessions#destroy'
       # resources :account_activations, only: [:edit]
       resources :posts, only: %i[index show create update destroy]
-      resources :password_resets,     only: %i[new create edit update]
+      resources :password_resets,     only: %i[create edit update]
       resources :relationships,       only: %i[create destroy]
     end
   end
