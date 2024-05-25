@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const PostInput = ({ onPostSuccess }) => {
   const [title, setTitle] = useState("");
@@ -91,12 +93,28 @@ const PostInput = ({ onPostSuccess }) => {
             className="w-full px-3 py-2 border rounded"
           />
         </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          投稿
-        </button>
+        <div className="flex items-center">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            投稿
+          </button>
+          <Button
+            variant="ghost"
+            asChild
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            <Link href="/user-profile">自分の日記</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            asChild
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            <Link href="/diarys">みんなの日記</Link>
+          </Button>
+        </div>
       </form>
     </div>
   );

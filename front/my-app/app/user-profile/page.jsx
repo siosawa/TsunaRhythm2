@@ -64,11 +64,6 @@ const UserProfile = ({ user }) => {
           <Link href="/edit-profile">プロフィール編集</Link>
         </Button>
       </div>
-      <div className="mt-4">
-        <Button variant="ghost" asChild>
-          <Link href="/diarys">みんなの日記</Link>
-        </Button>
-      </div>
       <div className="mt-2">
         <label className="block text-gray-700">主なワーク:</label>
       </div>
