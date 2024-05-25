@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 const ProfileReadPage = () => {
   const [user, setUser] = useState(null);
   const [isEditable, setIsEditable] = useState(false); // 編集モードの状態
+  const [error, setError] = useState(""); // エラーメッセージの状態
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -77,10 +78,18 @@ const ProfileReadPage = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const openDialog = () => setIsDialogOpen(true);
+  const openDialog = () => {
+    setError(""); // ダイアログを開く際にエラーメッセージをリセット
+    setIsDialogOpen(true);
+  };
   const closeDialog = () => setIsDialogOpen(false);
 
   const handleDeleteAccount = async () => {
+    if (user?.id === 60) {
+      setError("ゲストアカウントは退会できません。");
+      return;
+    }
+
     try {
       // 退会処理
       const response = await axios.delete(
@@ -105,7 +114,6 @@ const ProfileReadPage = () => {
     } catch (error) {
       console.error("退会処理に失敗しました:", error);
       setError("退会処理に失敗しました。");
-      closeDialog();
     }
   };
 
@@ -227,6 +235,9 @@ const ProfileReadPage = () => {
                 <p className="mt-2 text-sm text-gray-600">
                   本当に退会しますか？この操作は取り消せません。
                 </p>
+                {error && (
+                  <div className="text-red-500 text-center mb-4">{error}</div>
+                )}
                 <div className="mt-4 flex justify-end space-x-2">
                   <Button variant="ghost" onClick={closeDialog}>
                     キャンセル
