@@ -59,7 +59,7 @@ const PostView = ({ reload }) => {
         { title: newTitle, content: newContent },
         {
           withCredentials: true,
-        },
+        }
       );
       setPosts(
         posts.map((post) =>
@@ -69,8 +69,8 @@ const PostView = ({ reload }) => {
                 title: response.data.title,
                 content: response.data.content,
               }
-            : post,
-        ),
+            : post
+        )
       );
       setEditingPost(null);
     } catch (error) {
@@ -89,7 +89,7 @@ const PostView = ({ reload }) => {
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
-          { locale: ja },
+          { locale: ja }
         );
         return (
           <div key={post.id} className="border-b border-gray-200 py-4">
@@ -136,9 +136,11 @@ const PostView = ({ reload }) => {
                 </div>
               </div>
             ) : (
-              <div>
-                <p className="mb-2 text-gray-800">タイトル: {post.title}</p>
-                <p className="mb-4 text-gray-600">投稿: {post.content}</p>
+              <div className="ml-14">
+                <p className="mb-2 text-gray-800 text-xl font-bold">
+                  {post.title}
+                </p>
+                <p className="mb-4 text-gray-600">{post.content}</p>
                 <div className="space-x-2">
                   {post.user_id === user?.current_user_id && (
                     <>
