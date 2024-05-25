@@ -16,7 +16,7 @@ const ProfileReadPage = () => {
           "http://localhost:3000/api/v1/current_user",
           {
             credentials: "include",
-          }
+          },
         );
         if (response.ok) {
           const userData = await response.json();
@@ -48,7 +48,7 @@ const ProfileReadPage = () => {
           },
           body: JSON.stringify(user),
           credentials: "include",
-        }
+        },
       );
 
       if (response.ok) {
@@ -96,7 +96,7 @@ const ProfileReadPage = () => {
         `http://localhost:3000/api/v1/users/${user.id}`,
         {
           withCredentials: true,
-        }
+        },
       );
       console.log("退会処理が実行されました:", response.data);
 

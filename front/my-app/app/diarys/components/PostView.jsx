@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { format } from 'date-fns';
-import ja from 'date-fns/locale/ja';
+import { format } from "date-fns";
+import ja from "date-fns/locale/ja";
 
 const PostView = ({ reload }) => {
   const [users, setUsers] = useState([]);
@@ -19,12 +19,12 @@ const PostView = ({ reload }) => {
           }),
           axios.get("http://localhost:3000/api/v1/posts", {
             withCredentials: true,
-          })
+          }),
         ]);
 
-        const usersWithCurrentUserId = userRes.data.users.map(user => ({
+        const usersWithCurrentUserId = userRes.data.users.map((user) => ({
           ...user,
-          current_user_id: userRes.data.current_user.id
+          current_user_id: userRes.data.current_user.id,
         }));
         setUsers(usersWithCurrentUserId);
         setPosts(postRes.data);
@@ -40,7 +40,7 @@ const PostView = ({ reload }) => {
       await axios.delete(`http://localhost:3000/api/v1/posts/${postId}`, {
         withCredentials: true,
       });
-      setPosts(posts.filter(post => post.id !== postId));
+      setPosts(posts.filter((post) => post.id !== postId));
     } catch (error) {
       console.error("ポストの削除に失敗しました:", error);
     }
@@ -54,10 +54,24 @@ const PostView = ({ reload }) => {
 
   const handleSave = async (postId) => {
     try {
-      const response = await axios.patch(`http://localhost:3000/api/v1/posts/${postId}`, { title: newTitle, content: newContent }, {
-        withCredentials: true,
-      });
-      setPosts(posts.map(post => post.id === postId ? { ...post, title: response.data.title, content: response.data.content } : post));
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/posts/${postId}`,
+        { title: newTitle, content: newContent },
+        {
+          withCredentials: true,
+        },
+      );
+      setPosts(
+        posts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                title: response.data.title,
+                content: response.data.content,
+              }
+            : post,
+        ),
+      );
       setEditingPost(null);
     } catch (error) {
       console.error("ポストの編集に失敗しました:", error);
@@ -72,7 +86,11 @@ const PostView = ({ reload }) => {
     <div className="max-w-2xl mx-auto p-4">
       {posts.map((post) => {
         const user = users.find((user) => user.id === post.user_id);
-        const formattedDate = format(new Date(post.created_at), 'yyyy/M/d HH:mm', { locale: ja });
+        const formattedDate = format(
+          new Date(post.created_at),
+          "yyyy/M/d HH:mm",
+          { locale: ja },
+        );
         return (
           <div key={post.id} className="border-b border-gray-200 py-4">
             <div className="flex items-center mb-2">
