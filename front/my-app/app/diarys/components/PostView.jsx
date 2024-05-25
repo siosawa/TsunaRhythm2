@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const PostView = ({ reload }) => {
@@ -7,9 +7,6 @@ const PostView = ({ reload }) => {
   const [editingPost, setEditingPost] = useState(null);
   const [newContent, setNewContent] = useState("");
   const [newTitle, setNewTitle] = useState("");
-
-  const contentInputRef = useRef(null);
-  const saveButtonRef = useRef(null);
 
   useEffect(() => {
     const fetchUsersAndPosts = async () => {
@@ -90,11 +87,6 @@ const PostView = ({ reload }) => {
                     type="text"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        contentInputRef.current.focus();
-                      }
-                    }}
                     className="w-full px-3 py-2 border rounded-md"
                   />
                 </label>
@@ -104,19 +96,12 @@ const PostView = ({ reload }) => {
                     type="text"
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        saveButtonRef.current.click();
-                      }
-                    }}
-                    ref={contentInputRef}
                     className="w-full px-3 py-2 border rounded-md"
                   />
                 </label>
                 <div className="space-x-2">
                   <button
                     onClick={() => handleSave(post.id)}
-                    ref={saveButtonRef}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md"
                   >
                     保存
