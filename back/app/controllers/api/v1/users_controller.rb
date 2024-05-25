@@ -81,8 +81,8 @@ module Api
 
       # /diarysで取得するデータ
       def posts_user_info
-        users = User.all.select(:id)
-        render json: {
+        users = User.all.select(:id, :name)
+          render json: {
           users: users,
           current_user: {
             id: current_user.id,
