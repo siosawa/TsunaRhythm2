@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FiTriangle } from "react-icons/fi";
 import axios from "axios"; // 退会処理のためにaxiosを使用
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ const ProfileReadPage = () => {
   const [user, setUser] = useState(null);
   const [isEditable, setIsEditable] = useState(false); // 編集モードの状態
   const [error, setError] = useState(""); // エラーメッセージの状態
+  const nameInputRef = useRef(null); // ユーザー名入力フィールドの参照
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -16,7 +17,7 @@ const ProfileReadPage = () => {
           "http://localhost:3000/api/v1/current_user",
           {
             credentials: "include",
-          },
+          }
         );
         if (response.ok) {
           const userData = await response.json();
@@ -33,6 +34,9 @@ const ProfileReadPage = () => {
 
   const handleEditClick = () => {
     setIsEditable(true); // 編集モードに切り替える
+    setTimeout(() => {
+      nameInputRef.current?.focus(); // ユーザー名入力フィールドにフォーカスを設定
+    }, 0);
   };
 
   const handleSaveClick = async (event) => {
@@ -48,7 +52,7 @@ const ProfileReadPage = () => {
           },
           body: JSON.stringify(user),
           credentials: "include",
-        },
+        }
       );
 
       if (response.ok) {
@@ -96,7 +100,7 @@ const ProfileReadPage = () => {
         `http://localhost:3000/api/v1/users/${user.id}`,
         {
           withCredentials: true,
-        },
+        }
       );
       console.log("退会処理が実行されました:", response.data);
 
@@ -146,6 +150,7 @@ const ProfileReadPage = () => {
                   ユーザー名
                 </span>
                 <input
+                  ref={nameInputRef} // 参照を設定
                   type="text"
                   name="name"
                   placeholder="ユーザー名"
