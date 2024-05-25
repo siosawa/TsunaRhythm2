@@ -60,9 +60,9 @@ const UserProfile = ({ user }) => {
         </div>
       </div>
       <div className="mt-4">
-        <button className="px-4 py-2 bg-gray-200 rounded">
-          プロフィール編集
-        </button>
+        <Button variant="ghost" asChild>
+          <Link href="/edit-profile">プロフィール編集</Link>
+        </Button>
       </div>
       <div className="mt-2">
         <label className="block text-gray-700">主なワーク:</label>
