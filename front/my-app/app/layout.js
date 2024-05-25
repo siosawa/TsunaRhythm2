@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 const navList = [
   { label: "ホーム", href: "/" },
   { label: "ルーム一覧・作成", href: "/rooms" },
-  { label: "日記", href: "/diarys" },
+  { label: "みんなの日記", href: "/diarys" },
   { label: "ユーザー", href: "/users" },
 ];
 
