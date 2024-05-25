@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FiTriangle } from "react-icons/fi";
+import axios from "axios"; // 退会処理のためにaxiosを使用
+import { Button } from "@/components/ui/button";
 
 const ProfileReadPage = () => {
   const [user, setUser] = useState(null);
@@ -19,7 +21,7 @@ const ProfileReadPage = () => {
           const userData = await response.json();
           console.log("ユーザーデータを取得しました:", userData); // JSON形式でログ出力
           setUser(userData);
-        } 
+        }
       } catch (error) {
         console.error("ユーザー情報の取得に失敗しました:", error);
       }
@@ -36,14 +38,17 @@ const ProfileReadPage = () => {
     event.preventDefault(); // フォームのデフォルトの送信を防ぐ
 
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/users/${user.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${user.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+          credentials: "include",
+        }
+      );
 
       if (response.ok) {
         const updatedUserData = await response.json();
@@ -59,7 +64,7 @@ const ProfileReadPage = () => {
   };
 
   const handlePasswordEditClick = () => {
-    window.location.href = "/edit-password"; 
+    window.location.href = "/edit-password";
   };
 
   const handleInputChange = (e) => {
@@ -70,95 +75,170 @@ const ProfileReadPage = () => {
     }));
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const openDialog = () => setIsDialogOpen(true);
+  const closeDialog = () => setIsDialogOpen(false);
+
+  const handleDeleteAccount = async () => {
+    try {
+      // 退会処理
+      const response = await axios.delete(
+        `http://localhost:3000/api/v1/users/${user.id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("退会処理が実行されました:", response.data);
+
+      // クッキー情報を削除
+      document.cookie.split(";").forEach((cookie) => {
+        const [name] = cookie.split("=");
+        document.cookie = `${name}=;expires=${new Date(0).toUTCString()};path=/`;
+      });
+
+      // ダイアログを閉じる（必要に応じて）
+      closeDialog();
+
+      // ルートURLにリダイレクト
+      window.location.href = "/";
+    } catch (error) {
+      console.error("退会処理に失敗しました:", error);
+      setError("退会処理に失敗しました。");
+      closeDialog();
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-start justify-center pt-24">
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
           {isEditable ? (
-            <button className="px-4 py-1 rounded-xl shadow-custom-dark" onClick={handleSaveClick}>
+            <button
+              className="px-4 py-1 rounded-xl shadow-custom-dark"
+              onClick={handleSaveClick}
+            >
               保存
             </button>
           ) : (
-            <button className="px-4 py-1 rounded-xl shadow-custom-dark" onClick={handleEditClick}>
+            <button
+              className="px-4 py-1 rounded-xl shadow-custom-dark"
+              onClick={handleEditClick}
+            >
               編集
             </button>
           )}
         </div>
         <form>
-            <>
-              <div className="mb-4">
-                <div className="relative flex items-center border rounded-xl">
-                  <span className="absolute left-2 text-gray-500">ユーザー名</span>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="ユーザー名"
-                    value={user?.name || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditable}
-                    className="w-full px-4 py-2 border rounded-xl text-right"
-                  />
-                </div>
+          <>
+            <div className="mb-4">
+              <div className="relative flex items-center border rounded-xl">
+                <span className="absolute left-2 text-gray-500">
+                  ユーザー名
+                </span>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="ユーザー名"
+                  value={user?.name || ""}
+                  onChange={handleInputChange}
+                  readOnly={!isEditable}
+                  className="w-full px-4 py-2 border rounded-xl text-right"
+                />
               </div>
-              <div className="mb-4">
-                <div className="relative flex items-center border rounded-xl">
-                  <span className="absolute left-2 text-gray-500">メールアドレス</span>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="メールアドレス"
-                    value={user?.email || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditable}
-                    className="w-full px-4 py-2 border rounded-xl text-right"
-                  />
-                </div>
+            </div>
+            <div className="mb-4">
+              <div className="relative flex items-center border rounded-xl">
+                <span className="absolute left-2 text-gray-500">
+                  メールアドレス
+                </span>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="メールアドレス"
+                  value={user?.email || ""}
+                  onChange={handleInputChange}
+                  readOnly={!isEditable}
+                  className="w-full px-4 py-2 border rounded-xl text-right"
+                />
               </div>
-              <div className="mb-4">
-                <div className="relative flex items-center border rounded-xl">
-                  <span className="absolute left-2 text-gray-500">パスワード</span>
-                  <input
-                    type="password"
-                    placeholder="パスワード"
-                    value="********"
-                    readOnly
-                    className="w-full px-4 py-2 border rounded-xl text-right pr-7"
-                  />
-                  <FiTriangle
-                    className="absolute right-2 cursor-pointer transform rotate-90"
-                    onClick={handlePasswordEditClick}
-                  />
-                </div>
+            </div>
+            <div className="mb-4">
+              <div className="relative flex items-center border rounded-xl">
+                <span className="absolute left-2 text-gray-500">
+                  パスワード
+                </span>
+                <input
+                  type="password"
+                  placeholder="パスワード"
+                  value="********"
+                  readOnly
+                  className="w-full px-4 py-2 border rounded-xl text-right pr-7"
+                />
+                <FiTriangle
+                  className="absolute right-2 cursor-pointer transform rotate-90"
+                  onClick={handlePasswordEditClick}
+                />
               </div>
-              <div className="mb-4">
-                <div className="relative flex items-center border rounded-xl">
-                  <span className="absolute left-2 text-gray-500">ワーク</span>
-                  <input
-                    type="text"
-                    name="work"
-                    value={user?.work || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditable}
-                    className="w-full px-4 py-2 border rounded-xl text-right pr-7"
-                  />
-                </div>
+            </div>
+            <div className="mb-4">
+              <div className="relative flex items-center border rounded-xl">
+                <span className="absolute left-2 text-gray-500">ワーク</span>
+                <input
+                  type="text"
+                  name="work"
+                  value={user?.work || ""}
+                  onChange={handleInputChange}
+                  readOnly={!isEditable}
+                  className="w-full px-4 py-2 border rounded-xl text-right pr-7"
+                />
               </div>
-              <div className="mb-4">
-                <div className="relative flex items-center border rounded-xl">
-                  <span className="absolute left-2 top-2 text-gray-500">プロフィール文</span>
-                  <textarea
-                    name="profileText"
-                    value={user?.profileText || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditable}
-                    className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
-                    rows="4"
-                  />
-                </div>
+            </div>
+            <div className="mb-4">
+              <div className="relative flex items-center border rounded-xl">
+                <span className="absolute left-2 top-2 text-gray-500">
+                  プロフィール文
+                </span>
+                <textarea
+                  name="profileText"
+                  value={user?.profileText || ""}
+                  onChange={handleInputChange}
+                  readOnly={!isEditable}
+                  className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
+                  rows="4"
+                />
               </div>
-            </>
+            </div>
+          </>
         </form>
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            className="bg-gray-800 hover:bg-gray-700 text-white hover:text-gray-300"
+            onClick={openDialog}
+          >
+            退会
+          </Button>
+          {isDialogOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
+                <h3 className="text-lg font-semibold">退会確認</h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  本当に退会しますか？この操作は取り消せません。
+                </p>
+                <div className="mt-4 flex justify-end space-x-2">
+                  <Button variant="ghost" onClick={closeDialog}>
+                    キャンセル
+                  </Button>
+                  <Button variant="destructive" onClick={handleDeleteAccount}>
+                    退会する
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -5,8 +5,7 @@ module Api
       include SessionsHelper
 
       before_action :logged_in_user, only: %i[index edit update destroy following followers]
-      before_action :correct_user, only: %i[edit update]
-      before_action :admin_user, only: :destroy
+      before_action :correct_user, only: %i[edit update destroy]
 
       def index
         @users = User.all
@@ -118,13 +117,6 @@ module Api
           render json: { status: 'failure', message: '不正なアクセスです' }, status: :forbidden
         end
       end
-      
-      def admin_user
-        unless current_user.admin?
-          render json: { status: 'failure', message: '管理者権限が必要です' }, status: :forbidden
-        end
-      end
-      
     end
   end
 end
