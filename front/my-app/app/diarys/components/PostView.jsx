@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import ja from "date-fns/locale/ja";
+import Link from "next/link";
 
 const PostView = ({ reload }) => {
   const [users, setUsers] = useState([]);
@@ -137,10 +138,16 @@ const PostView = ({ reload }) => {
               </div>
             ) : (
               <div className="ml-14">
-                <p className="mb-2 text-gray-800 text-xl font-bold">
-                  {post.title}
+                <Link href={`/diarys/${post.id}`}>
+                  <p className="mb-2 text-gray-800 text-xl font-bold">
+                    {post.title}
+                  </p>
+                </Link>
+                <p className="mb-4 text-gray-600">
+                  {post.content.length > 40
+                    ? `${post.content.slice(0, 430)}...`
+                    : post.content}
                 </p>
-                <p className="mb-4 text-gray-600">{post.content}</p>
                 <div className="space-x-2">
                   {post.user_id === user?.current_user_id && (
                     <>
