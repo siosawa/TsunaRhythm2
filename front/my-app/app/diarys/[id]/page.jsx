@@ -1,55 +1,71 @@
-// app/diarys/[id]/page.jsx
+"use client";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { format } from "date-fns";
+import ja from "date-fns/locale/ja";
+import { useParams } from "next/navigation";
 
-// 特定のポストの詳細情報を取得する関数
-const fetchPostById = async (id) => {
-  console.log(`Fetching post with id: ${id}`);
-  const res = await fetch(`http://localhost:3000/api/v1/posts/${id}`, {
-    withCredentials: true,
-  });
-  if (!res.ok) {
-    console.error(`Error fetching post ${id}: ${res.status}`);
-    throw new Error(`Failed to fetch post: ${res.status}`);
+const PostDetail = () => {
+  const { id } = useParams();
+  const [post, setPost] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPostAndUsers = async () => {
+      try {
+        const postRes = await axios.get(
+          `http://localhost:3000/api/v1/posts/${id}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setPost(postRes.data);
+
+        const userRes = await axios.get(
+          "http://localhost:3000/api/v1/posts_user",
+          {
+            withCredentials: true,
+          }
+        );
+        setUsers(userRes.data.users);
+      } catch (error) {
+        console.error("データの取得に失敗しました:", error);
+        setError(error);
+      }
+    };
+
+    fetchPostAndUsers();
+  }, [id]);
+
+  if (error) {
+    return <div>データの取得に失敗しました: {error.message}</div>;
   }
-  const post = await res.json();
-  console.log(`Fetched post:`, post);
-  return post;
+
+  if (!post || users.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const user = users.find((user) => user.id === post.user_id);
+  const formattedDate = format(new Date(post.created_at), "yyyy/M/d HH:mm", {
+    locale: ja,
+  });
+
+  return (
+    <div className="max-w-2xl mx-auto p-4">
+      <div className="flex items-center mb-4">
+        <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
+        <div>
+          <p className="text-lg font-semibold">
+            {user ? user.name : "Unknown User"}
+          </p>
+          <p className="text-sm text-gray-500">{formattedDate}</p>
+        </div>
+      </div>
+      <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
+      <div className="text-gray-800">{post.content}</div>
+    </div>
+  );
 };
 
-// 動的パラメータを生成する関数
-export async function generateStaticParams() {
-  try {
-    console.log("Fetching all posts for static params");
-    const res = await fetch("http://localhost:3000/api/v1/posts");
-    if (!res.ok) {
-      console.error(`Error fetching posts: ${res.status}`);
-      throw new Error(`Failed to fetch posts: ${res.status}`);
-    }
-    const posts = await res.json();
-    console.log(`Fetched posts:`, posts);
-    return posts.map((post) => ({ id: post.id.toString() }));
-  } catch (error) {
-    console.error(`Error in generateStaticParams:`, error);
-    return []; // エラー発生時は空の配列を返す
-  }
-}
-
-// ページコンポーネントの実装
-export default async function PostPage({ params }) {
-  console.log(`Rendering PostPage for id: ${params.id}`);
-  try {
-    const post = await fetchPostById(params.id);
-    return (
-      <div>
-        <h1>{post.title}</h1>
-        <p>{post.content}</p>
-      </div>
-    );
-  } catch (error) {
-    console.error(`Error rendering PostPage:`, error);
-    return (
-      <div>
-        <h1>Error: {error.message}</h1>
-      </div>
-    );
-  }
-}
+export default PostDetail;
