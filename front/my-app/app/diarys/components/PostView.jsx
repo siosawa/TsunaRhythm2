@@ -96,9 +96,11 @@ const PostView = ({ reload }) => {
           <div key={post.id} className="border-b border-gray-200 py-4">
             <div className="flex items-center mb-2">
               <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
-              <div>
-                <p className="text-lg font-semibold">{user.name}</p>
-                <p className="text-sm text-gray-500">{formattedDate}</p>
+              <div className="flex flex-col">
+                <div className="flex items-center space-x-2">
+                  <p className="text-lg font-semibold">{user.name}</p>
+                  <p className="text-sm text-gray-500">{formattedDate}</p>
+                </div>
               </div>
             </div>
             {editingPost === post.id ? (
