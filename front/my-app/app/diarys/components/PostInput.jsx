@@ -72,29 +72,24 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2">
-        <h1 className="text-2xl font-bold mb-4">新しいポストを作成</h1>
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="title" className="block text-gray-700">
-              タイトル
-            </label>
             <input
+              placeholder="日記タイトル"
               id="title"
               value={title}
               onChange={handleTitleChange}
-              className="w-full px-3 py-2 border rounded focus:w-full focus:h-12 transition-all"
+              className="w-full px-3 py-2 rounded transition-all"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="content" className="block text-gray-700">
-              内容
-            </label>
             <textarea
+              placeholder="ご自由にお書きください"
               id="content"
               value={content}
               onChange={handleContentChange}
-              className="w-full px-3 py-2 border rounded focus:w-full focus:h-96 transition-all"
+              className="w-full px-3 h-96 rounded  transition-all"
             />
           </div>
           <div className="flex items-center justify-end">
@@ -132,7 +127,7 @@ const PostInput = ({ onPostSuccess }) => {
           onClick={openModal}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          新しいポストを作成
+          日記を書く
         </button>
       </div>
       <PostInputModal
