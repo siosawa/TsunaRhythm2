@@ -87,7 +87,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="title"
               value={title}
               onChange={handleTitleChange}
-              className="w-full px-3 py-2 rounded transition-all outline-none"
+              className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
             />
           </div>
           <div className="mb-4">
