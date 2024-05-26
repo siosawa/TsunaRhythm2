@@ -16,6 +16,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
       contentRef.current.focus();
     }
 
+    // モーダルが開いているときにコマンド+エンターで投稿ボタンを発火するイベントリスナーを追加
     const handleKeyDown = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
@@ -39,7 +40,6 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // エラーチェック
     if (title.length > 56) {
       setError("タイトル分は56文字までです");
       return;
@@ -77,15 +77,17 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
+  // タイトルの文字が長すぎる時にエラーを出力
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
     if (e.target.value.length > 56) {
-      setError("タイトル分は56文字までです");
+      setError("タイトル文は56文字までです");
     } else {
       setError("");
     }
   };
 
+  // 投稿内容の文字が長すぎる時にエラーを出力
   const handleContentChange = (e) => {
     setContent(e.target.value);
     if (e.target.value.length > 2050) {
@@ -95,12 +97,14 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
+  // タイトルでエンターきを押した時に投稿ボタンが発火しないように設定
   const handleTitleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
     }
   };
 
+  // 上下の矢印キーでタイトルと内容のフィールド間のフォーカスを移動
   const handleKeyDown = (e, currentRef, nextRef) => {
     if (e.key === "ArrowDown" && nextRef.current) {
       e.preventDefault();
@@ -124,8 +128,8 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="title"
               value={title}
               onChange={handleTitleChange}
-              onKeyPress={handleTitleKeyPress}
-              onKeyDown={(e) => handleKeyDown(e, null, contentRef)}
+              onKeyPress={handleTitleKeyPress} // タイトル入力中にエンターキーを無効化
+              onKeyDown={(e) => handleKeyDown(e, null, contentRef)} // 矢印キーによるフォーカス移動
               ref={titleRef}
               className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
             />
@@ -137,7 +141,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               value={content}
               onChange={handleContentChange}
               ref={contentRef}
-              onKeyDown={(e) => handleKeyDown(e, titleRef, null)}
+              onKeyDown={(e) => handleKeyDown(e, titleRef, null)} // 矢印キーによるフォーカス移動
               className="w-full px-3 h-96 rounded transition-all outline-none"
             />
           </div>
