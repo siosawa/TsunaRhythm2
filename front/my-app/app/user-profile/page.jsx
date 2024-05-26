@@ -18,7 +18,7 @@ export default function MyPage() {
           "http://localhost:3000/api/v1/current_user",
           {
             credentials: "include",
-          },
+          }
         );
         const userData = await response.json();
         setUser(userData);

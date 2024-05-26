@@ -6,8 +6,8 @@ class Post < ApplicationRecord
   default_scope -> { order(created_at: :desc) }
   # user_idのバリデーションコメントアウトを解除
   validates :user_id, presence: true
-  validates :title, presence: true, length: { maximum: 40 }
-  validates :content, presence: true, length: { maximum: 250 }
+  validates :title, presence: true, length: { maximum: 56 }
+  validates :content, presence: true, length: { maximum: 2050 }
 
   validates :image, content_type: {
                       in: %w[image/jpeg image/gif image/png],

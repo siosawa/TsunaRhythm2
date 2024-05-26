@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const PostInput = ({ onPostSuccess }) => {
   const [title, setTitle] = useState("");
@@ -8,6 +10,16 @@ const PostInput = ({ onPostSuccess }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // エラーチェック
+    if (title.length > 56) {
+      setError("タイトル分は56文字までです");
+      return;
+    } else if (content.length > 2050) {
+      setError("投稿は2050文字までです");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/v1/posts",
@@ -19,12 +31,13 @@ const PostInput = ({ onPostSuccess }) => {
         },
         {
           withCredentials: true, // クッキーを含める設定
-        },
+        }
       );
 
       if (response.status === 201) {
         setTitle("");
         setContent("");
+        setError("");
         onPostSuccess(); // 投稿成功時に親コンポーネントの状態を更新
       } else {
         setError("ポストに失敗しました。");
@@ -32,6 +45,24 @@ const PostInput = ({ onPostSuccess }) => {
     } catch (error) {
       console.error("ポストに失敗しました:", error);
       setError("ポストに失敗しました。");
+    }
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+    if (e.target.value.length > 56) {
+      setError("タイトル分は56文字までです");
+    } else {
+      setError("");
+    }
+  };
+
+  const handleContentChange = (e) => {
+    setContent(e.target.value);
+    if (e.target.value.length > 2050) {
+      setError("投稿は2050文字までです");
+    } else {
+      setError("");
     }
   };
 
@@ -47,7 +78,7 @@ const PostInput = ({ onPostSuccess }) => {
           <input
             id="title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={handleTitleChange}
             className="w-full px-3 py-2 border rounded"
           />
         </div>
@@ -58,16 +89,32 @@ const PostInput = ({ onPostSuccess }) => {
           <textarea
             id="content"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={handleContentChange}
             className="w-full px-3 py-2 border rounded"
           />
         </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          投稿
-        </button>
+        <div className="flex items-center">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            投稿
+          </button>
+          <Button
+            variant="ghost"
+            asChild
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            <Link href="/user-profile">自分の日記</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            asChild
+            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            <Link href="/diarys">みんなの日記</Link>
+          </Button>
+        </div>
       </form>
     </div>
   );
