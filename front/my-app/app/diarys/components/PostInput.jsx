@@ -94,6 +94,12 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
+  const handleTitleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -107,6 +113,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="title"
               value={title}
               onChange={handleTitleChange}
+              onKeyPress={handleTitleKeyPress}
               className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
             />
           </div>
