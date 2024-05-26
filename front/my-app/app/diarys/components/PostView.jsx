@@ -127,7 +127,6 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
 };
 
 const PostView = ({ reload }) => {
-  const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -135,29 +134,22 @@ const PostView = ({ reload }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchUsersAndPosts = async () => {
+    const fetchPosts = async () => {
       try {
-        const [userRes, postRes] = await Promise.all([
-          axios.get("http://localhost:3000/api/v1/posts_user", {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/posts?page=${currentPage}`,
+          {
             withCredentials: true,
-          }),
-          axios.get(`http://localhost:3000/api/v1/posts?page=${currentPage}`, {
-            withCredentials: true,
-          }),
-        ]);
+          }
+        );
 
-        const usersWithCurrentUserId = userRes.data.users.map((user) => ({
-          ...user,
-          current_user_id: userRes.data.current_user.id,
-        }));
-        setUsers(usersWithCurrentUserId);
-        setPosts(postRes.data.posts);
-        setTotalPages(postRes.data.total_pages);
+        setPosts(response.data.posts);
+        setTotalPages(response.data.total_pages);
       } catch (error) {
         console.error("データの取得に失敗しました:", error);
       }
     };
-    fetchUsersAndPosts();
+    fetchPosts();
   }, [reload, currentPage]);
 
   const handleDelete = async (postId) => {
@@ -206,10 +198,37 @@ const PostView = ({ reload }) => {
     setCurrentPage(page);
   };
 
+  const renderPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5; // 表示するページ数を制限
+    const halfWindow = Math.floor(maxPagesToShow / 2);
+    let startPage = Math.max(currentPage - halfWindow, 1);
+    let endPage = Math.min(currentPage + halfWindow, totalPages);
+
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) {
+        pages.push("...");
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-4">
       {posts.map((post) => {
-        const user = users.find((user) => user.id === post.user_id);
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
@@ -221,7 +240,7 @@ const PostView = ({ reload }) => {
               <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
               <div className="flex flex-col">
                 <div className="flex items-center space-x-2">
-                  <p className="text-lg font-semibold">{user.name}</p>
+                  <p className="text-lg font-semibold">{post.user.name}</p>
                   <p className="text-sm text-gray-500">{formattedDate}</p>
                 </div>
               </div>
@@ -238,7 +257,7 @@ const PostView = ({ reload }) => {
                   : post.content}
               </div>
               <div className="space-x-2">
-                {post.user_id === user?.current_user_id && (
+                {post.user_id === post.current_user_id && (
                   <>
                     <button
                       onClick={() => handleEditClick(post)}
@@ -260,13 +279,18 @@ const PostView = ({ reload }) => {
         );
       })}
       <div className="flex justify-center space-x-4 mt-4">
-        {Array.from({ length: totalPages }, (_, index) => (
+        {renderPageNumbers().map((page, index) => (
           <button
             key={index}
-            onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 rounded ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-700"}`}
+            onClick={() => page !== "..." && handlePageChange(page)}
+            disabled={page === currentPage}
+            className={`px-4 py-2 rounded ${
+              page === currentPage
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-700"
+            }`}
           >
-            {index + 1}
+            {page}
           </button>
         ))}
       </div>

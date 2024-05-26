@@ -7,28 +7,26 @@ module Api
       before_action :correct_user, only: %i[destroy update]
       
       def index
-        if params[:user_id]
-          begin
-            @user = User.find(params[:user_id])
-            @posts = @user.posts.includes(:user).to_a  # @userの投稿を取得し、ユーザー情報を含めて配列に変換
-          rescue ActiveRecord::RecordNotFound => e
-            render json: { error: "User not found: #{e.message}" }, status: :not_found
-            return
-          end
-        else
-          @posts = Post.includes(:user).to_a  # 全ての投稿を取得し、ユーザー情報を含めて配列に変換
+        user_id = params[:user_id]
+        posts_query = Post.includes(:user)
+        posts_query = posts_query.where(user_id: user_id) if user_id.present?
+      
+        @posts = Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
+      
+        posts_with_current_user_id = @posts.map do |post|
+          post.attributes.merge(
+            user: { name: post.user.name }, 
+            current_user_id: current_user.id
+          )
         end
-    
-        # Kaminari.paginate_arrayを使用してページネーション対応にする
-        @posts = Kaminari.paginate_array(@posts).page(params[:page]).per(5)  # 配列に対してページネーションを適用、1ページあたり1件
-    
+      
         render json: {
-          posts: @posts.as_json(include: { user: { only: [:name] } }),  # ユーザー名を含む投稿データをJSON形式で返す
-          current_page: @posts.current_page,  # 現在のページ番号を返す
-          total_pages: @posts.total_pages  # 全ページ数を返す
+          posts: posts_with_current_user_id,
+          current_page: @posts.current_page,
+          total_pages: @posts.total_pages
         }
       end
-
+    
       def show
         @post = Post.find(params[:id])
         render json: @post
