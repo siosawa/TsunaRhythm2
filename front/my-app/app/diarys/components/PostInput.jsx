@@ -8,6 +8,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const contentRef = useRef(null);
+  const titleRef = useRef(null);
   const submitButtonRef = useRef(null);
 
   useEffect(() => {
@@ -100,6 +101,16 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
+  const handleKeyDown = (e, currentRef, nextRef) => {
+    if (e.key === "ArrowDown" && nextRef.current) {
+      e.preventDefault();
+      nextRef.current.focus();
+    } else if (e.key === "ArrowUp" && currentRef.current) {
+      e.preventDefault();
+      currentRef.current.focus();
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -114,6 +125,8 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               value={title}
               onChange={handleTitleChange}
               onKeyPress={handleTitleKeyPress}
+              onKeyDown={(e) => handleKeyDown(e, null, contentRef)}
+              ref={titleRef}
               className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
             />
           </div>
@@ -124,6 +137,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               value={content}
               onChange={handleContentChange}
               ref={contentRef}
+              onKeyDown={(e) => handleKeyDown(e, titleRef, null)}
               className="w-full px-3 h-96 rounded transition-all outline-none"
             />
           </div>
