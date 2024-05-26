@@ -48,12 +48,15 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
       return;
     }
 
+    // タイトルが空欄の場合、内容の最初の40文字をタイトルとして設定
+    const finalTitle = title || content.slice(0, 40);
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/v1/posts",
         {
           post: {
-            title: title,
+            title: finalTitle,
             content: content,
           },
         },
