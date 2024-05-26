@@ -1,17 +1,45 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const PostInput = ({ onPostSuccess }) => {
+const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+  const contentRef = useRef(null);
+  const titleRef = useRef(null);
+  const submitButtonRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      contentRef.current.focus();
+    }
+
+    // モーダルが開いているときにコマンド+エンターで投稿ボタンを発火するイベントリスナーを追加
+    const handleKeyDown = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+        event.preventDefault();
+        if (submitButtonRef.current) {
+          submitButtonRef.current.click();
+        }
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      window.removeEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // エラーチェック
     if (title.length > 56) {
       setError("タイトル分は56文字までです");
       return;
@@ -20,12 +48,15 @@ const PostInput = ({ onPostSuccess }) => {
       return;
     }
 
+    // タイトルが空欄の場合、内容の最初の40文字をタイトルとして設定
+    const finalTitle = title || content.slice(0, 40);
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/v1/posts",
         {
           post: {
-            title: title,
+            title: finalTitle,
             content: content,
           },
         },
@@ -39,6 +70,7 @@ const PostInput = ({ onPostSuccess }) => {
         setContent("");
         setError("");
         onPostSuccess(); // 投稿成功時に親コンポーネントの状態を更新
+        onClose(); // モーダルを閉じる
       } else {
         setError("ポストに失敗しました。");
       }
@@ -48,15 +80,17 @@ const PostInput = ({ onPostSuccess }) => {
     }
   };
 
+  // タイトルの文字が長すぎる時にエラーを出力
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
     if (e.target.value.length > 56) {
-      setError("タイトル分は56文字までです");
+      setError("タイトル文は56文字までです");
     } else {
       setError("");
     }
   };
 
+  // 投稿内容の文字が長すぎる時にエラーを出力
   const handleContentChange = (e) => {
     setContent(e.target.value);
     if (e.target.value.length > 2050) {
@@ -66,56 +100,114 @@ const PostInput = ({ onPostSuccess }) => {
     }
   };
 
+  // タイトルでエンターキーを押した時に投稿ボタンが発火しないように設定
+  const handleTitleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
+  // 上下の矢印キーでタイトルと内容のフィールド間のフォーカスを移動
+  const handleKeyDown = (e, currentRef, nextRef) => {
+    if (e.key === "ArrowDown" && nextRef.current) {
+      e.preventDefault();
+      nextRef.current.focus();
+    } else if (e.key === "ArrowUp" && currentRef.current) {
+      e.preventDefault();
+      currentRef.current.focus();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2">
+        {error && <div className="text-red-500">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <input
+              placeholder="日記タイトル"
+              id="title"
+              value={title}
+              onChange={handleTitleChange}
+              onKeyPress={handleTitleKeyPress} // タイトル入力中にエンターキーを無効化
+              onKeyDown={(e) => handleKeyDown(e, null, contentRef)} // 矢印キーによるフォーカス移動
+              ref={titleRef}
+              className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <textarea
+              placeholder="ご自由にお書きください"
+              id="content"
+              value={content}
+              onChange={handleContentChange}
+              ref={contentRef}
+              onKeyDown={(e) => handleKeyDown(e, titleRef, null)} // 矢印キーによるフォーカス移動
+              className="w-full px-3 h-96 rounded transition-all outline-none"
+            />
+          </div>
+          <div className="flex items-center justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+            >
+              キャンセル
+            </button>
+            <button
+              type="submit"
+              ref={submitButtonRef}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              投稿
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const PostInput = ({ onPostSuccess }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">新しいポストを作成</h1>
-      {error && <div className="text-red-500">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="title" className="block text-gray-700">
-            タイトル
-          </label>
-          <input
-            id="title"
-            value={title}
-            onChange={handleTitleChange}
-            className="w-full px-3 py-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="content" className="block text-gray-700">
-            内容
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={handleContentChange}
-            className="w-full px-3 py-2 border rounded"
-          />
-        </div>
-        <div className="flex items-center">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-          >
-            投稿
-          </button>
-          <Button
-            variant="ghost"
-            asChild
-            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-          >
-            <Link href="/user-profile">自分の日記</Link>
-          </Button>
-          <Button
-            variant="ghost"
-            asChild
-            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-          >
-            <Link href="/diarys">みんなの日記</Link>
-          </Button>
-        </div>
-      </form>
+      <h1 className="text-2xl font-bold mb-4">ポスト管理</h1>
+      <div className="flex items-center mb-4">
+        <button
+          onClick={openModal}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          日記を書く
+        </button>
+      </div>
+      <PostInputModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onPostSuccess={onPostSuccess}
+      />
+      <div className="flex items-center mt-4">
+        <Button
+          variant="ghost"
+          asChild
+          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+        >
+          <Link href="/user-profile">自分の日記</Link>
+        </Button>
+        <Button
+          variant="ghost"
+          asChild
+          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+        >
+          <Link href="/diarys">みんなの日記</Link>
+        </Button>
+      </div>
     </div>
   );
 };

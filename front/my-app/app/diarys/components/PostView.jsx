@@ -1,15 +1,136 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import ja from "date-fns/locale/ja";
 import Link from "next/link";
 
+const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.content);
+  const [error, setError] = useState("");
+  const contentRef = useRef(null);
+  const titleRef = useRef(null);
+  const submitButtonRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      contentRef.current.focus();
+    }
+
+    const handleKeyDown = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+        event.preventDefault();
+        if (submitButtonRef.current) {
+          submitButtonRef.current.click();
+        }
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      window.removeEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (title.length > 56) {
+      setError("タイトル分は56文字までです");
+      return;
+    } else if (content.length > 2050) {
+      setError("投稿は2050文字までです");
+      return;
+    }
+
+    const finalTitle = title || content.slice(0, 40);
+
+    try {
+      await onSave(post.id, finalTitle, content);
+      onClose();
+    } catch (error) {
+      console.error("ポストの編集に失敗しました:", error);
+      setError("ポストの編集に失敗しました。");
+    }
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+    if (e.target.value.length > 56) {
+      setError("タイトル文は56文字までです");
+    } else {
+      setError("");
+    }
+  };
+
+  const handleContentChange = (e) => {
+    setContent(e.target.value);
+    if (e.target.value.length > 2050) {
+      setError("投稿は2050文字までです");
+    } else {
+      setError("");
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2">
+        {error && <div className="text-red-500">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <input
+              placeholder="日記タイトル"
+              id="title"
+              value={title}
+              onChange={handleTitleChange}
+              ref={titleRef}
+              className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <textarea
+              placeholder="ご自由にお書きください"
+              id="content"
+              value={content}
+              onChange={handleContentChange}
+              ref={contentRef}
+              className="w-full px-3 h-96 rounded transition-all outline-none"
+            />
+          </div>
+          <div className="flex items-center justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+            >
+              キャンセル
+            </button>
+            <button
+              type="submit"
+              ref={submitButtonRef}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              保存
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const PostView = ({ reload }) => {
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [editingPost, setEditingPost] = useState(null);
-  const [newContent, setNewContent] = useState("");
-  const [newTitle, setNewTitle] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUsersAndPosts = async () => {
@@ -48,16 +169,15 @@ const PostView = ({ reload }) => {
   };
 
   const handleEditClick = (post) => {
-    setEditingPost(post.id);
-    setNewContent(post.content);
-    setNewTitle(post.title);
+    setEditingPost(post);
+    setIsModalOpen(true);
   };
 
-  const handleSave = async (postId) => {
+  const handleSave = async (postId, title, content) => {
     try {
       const response = await axios.patch(
         `http://localhost:3000/api/v1/posts/${postId}`,
-        { title: newTitle, content: newContent },
+        { title, content },
         {
           withCredentials: true,
         }
@@ -80,7 +200,7 @@ const PostView = ({ reload }) => {
   };
 
   if (!users.length || !posts.length) {
-    return <div>Loading...</div>; // データがロード中の場合の表示
+    return <div>Loading...</div>;
   }
 
   return (
@@ -96,81 +216,54 @@ const PostView = ({ reload }) => {
           <div key={post.id} className="border-b border-gray-200 py-4">
             <div className="flex items-center mb-2">
               <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
-              <div>
-                <p className="text-lg font-semibold">{user.name}</p>
-                <p className="text-sm text-gray-500">{formattedDate}</p>
+              <div className="flex flex-col">
+                <div className="flex items-center space-x-2">
+                  <p className="text-lg font-semibold">{user.name}</p>
+                  <p className="text-sm text-gray-500">{formattedDate}</p>
+                </div>
               </div>
             </div>
-            {editingPost === post.id ? (
-              <div className="space-y-2">
-                <label className="block">
-                  <span className="text-gray-700">タイトル：</span>
-                  <input
-                    type="text"
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-gray-700">投稿：</span>
-                  <input
-                    type="text"
-                    value={newContent}
-                    onChange={(e) => setNewContent(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </label>
-                <div className="space-x-2">
-                  <button
-                    onClick={() => handleSave(post.id)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                  >
-                    保存
-                  </button>
-                  <button
-                    onClick={() => setEditingPost(null)}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md"
-                  >
-                    キャンセル
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="ml-14">
-                <Link href={`/diarys/${post.id}`}>
-                  <p className="mb-2 text-gray-800 text-xl font-bold">
-                    {post.title}
-                  </p>
-                </Link>
-                <p className="mb-4 text-gray-600">
-                  {post.content.length > 40
-                    ? `${post.content.slice(0, 430)}...`
-                    : post.content}
+            <div className="ml-14">
+              <Link href={`/diarys/${post.id}`}>
+                <p className="mb-2 text-gray-800 text-xl font-bold">
+                  {post.title}
                 </p>
-                <div className="space-x-2">
-                  {post.user_id === user?.current_user_id && (
-                    <>
-                      <button
-                        onClick={() => handleEditClick(post)}
-                        className="px-4 py-2 bg-yellow-500 text-white rounded-md"
-                      >
-                        編集
-                      </button>
-                      <button
-                        onClick={() => handleDelete(post.id)}
-                        className="px-4 py-2 bg-red-500 text-white rounded-md"
-                      >
-                        削除
-                      </button>
-                    </>
-                  )}
-                </div>
+              </Link>
+              <div className="max-h-post-content overflow-auto mb-4 text-gray-600 whitespace-pre-line">
+                {post.content.length > 40
+                  ? `${post.content.slice(0, 430)}...`
+                  : post.content}
               </div>
-            )}
+              <div className="space-x-2">
+                {post.user_id === user?.current_user_id && (
+                  <>
+                    <button
+                      onClick={() => handleEditClick(post)}
+                      className="px-4 py-2 bg-yellow-500 text-white rounded-md"
+                    >
+                      編集
+                    </button>
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="px-4 py-2 bg-red-500 text-white rounded-md"
+                    >
+                      削除
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         );
       })}
+      {editingPost && (
+        <EditPostModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          post={editingPost}
+          onSave={handleSave}
+        />
+      )}
     </div>
   );
 };
