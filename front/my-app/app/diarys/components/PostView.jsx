@@ -142,11 +142,11 @@ const PostView = ({ reload }) => {
                     {post.title}
                   </p>
                 </Link>
-                <p className="mb-4 text-gray-600 whitespace-pre-line">
+                <div className="max-h-post-content overflow-auto mb-4 text-gray-600 whitespace-pre-line">
                   {post.content.length > 40
                     ? `${post.content.slice(0, 430)}...`
                     : post.content}
-                </p>
+                </div>
                 <div className="space-x-2">
                   {post.user_id === user?.current_user_id && (
                     <>
