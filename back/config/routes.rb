@@ -8,7 +8,7 @@ Rails.application.routes.draw do
         end
       end
       get 'current_user', to: 'users#current_user_info'
-      get 'posts_user', to: 'users#posts_user_info'
+      # get 'posts_user', to: 'users#posts_user_info'
       resources :sessions, only: [:create]
       delete '/logout', to: 'sessions#destroy'
       # resources :account_activations, only: [:edit]

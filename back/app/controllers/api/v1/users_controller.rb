@@ -11,6 +11,7 @@ module Api
         @users = User.all
         render json: @users
       end
+      
 
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
@@ -79,15 +80,15 @@ module Api
       end
 
       # /diarysで取得するデータ
-      def posts_user_info
-        users = User.all.select(:id, :name)
-          render json: {
-          users: users,
-          current_user: {
-            id: current_user.id,
-          }
-        }
-      end
+      # def posts_user_info
+      #   users = User.all.select(:id, :name)
+      #     render json: {
+      #     users: users,
+      #     current_user: {
+      #       id: current_user.id,
+      #     }
+      #   }
+      # end
 
       # マイページで取得するデータ
       def current_user_info
