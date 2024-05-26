@@ -5,10 +5,28 @@ module Api
       include SessionsHelper
       before_action :logged_in_user, only: %i[create destroy update]
       before_action :correct_user, only: %i[destroy update]
-
+      
       def index
-        @posts = Post.all
-        render json: @posts
+        if params[:user_id]
+          begin
+            @user = User.find(params[:user_id])
+            @posts = @user.posts.includes(:user).to_a
+          rescue ActiveRecord::RecordNotFound => e
+            render json: { error: "User not found: #{e.message}" }, status: :not_found
+            return
+          end
+        else
+          @posts = Post.includes(:user).to_a
+        end
+    
+        # Kaminari.paginate_arrayを使用してページネーション対応にする
+        @posts = Kaminari.paginate_array(@posts).page(params[:page]).per(1)
+    
+        render json: {
+          posts: @posts.as_json(include: { user: { only: [:name] } }),
+          current_page: @posts.current_page,
+          total_pages: @posts.total_pages
+        }
       end
 
       def show
