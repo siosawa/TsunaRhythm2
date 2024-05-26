@@ -87,7 +87,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="title"
               value={title}
               onChange={handleTitleChange}
-              className="w-full px-3 py-2 rounded transition-all"
+              className="w-full px-3 py-2 rounded transition-all outline-none"
             />
           </div>
           <div className="mb-4">
@@ -97,7 +97,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               value={content}
               onChange={handleContentChange}
               ref={contentRef}
-              className="w-full px-3 h-96 rounded transition-all"
+              className="w-full px-3 h-96 rounded transition-all outline-none"
             />
           </div>
           <div className="flex items-center justify-end">
