@@ -8,11 +8,31 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const contentRef = useRef(null);
+  const submitButtonRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && contentRef.current) {
       contentRef.current.focus();
     }
+
+    const handleKeyDown = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+        event.preventDefault();
+        if (submitButtonRef.current) {
+          submitButtonRef.current.click();
+        }
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      window.removeEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [isOpen]);
 
   const handleSubmit = async (event) => {
@@ -110,6 +130,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
             </button>
             <button
               type="submit"
+              ref={submitButtonRef}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
               投稿
