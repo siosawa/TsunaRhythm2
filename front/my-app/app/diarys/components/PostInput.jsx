@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,13 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      contentRef.current.focus();
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -89,7 +96,8 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="content"
               value={content}
               onChange={handleContentChange}
-              className="w-full px-3 h-96 rounded  transition-all"
+              ref={contentRef}
+              className="w-full px-3 h-96 rounded transition-all"
             />
           </div>
           <div className="flex items-center justify-end">
