@@ -95,6 +95,8 @@ GEM
     bcrypt (3.1.18)
     benchmark (0.3.0)
     bindex (0.8.1)
+    bootsnap (1.16.0)
+      msgpack (~> 1.2)
     builder (3.2.4)
     bullet (7.1.6)
       activesupport (>= 3.0.0)
@@ -198,6 +200,7 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
+    msgpack (1.7.2)
     mysql2 (0.5.6)
     nenv (0.3.0)
     net-imap (0.4.10)
@@ -424,6 +427,7 @@ DEPENDENCIES
   active_storage_validations (= 0.9.8)
   aws-sdk-s3 (= 1.114.0)
   bcrypt (= 3.1.18)
+  bootsnap (>= 1.4.4)
   bullet (>= 7.0.1)
   capybara (= 3.38.0)
   debug (= 1.7.1)
@@ -433,7 +437,7 @@ DEPENDENCIES
   image_processing (= 1.12.2)
   importmap-rails (= 1.1.5)
   jbuilder (= 2.11.5)
-  kaminari
+  kaminari (~> 1.2.2)
   minitest (= 5.18.0)
   minitest-reporters (= 1.6.0)
   mysql2 (~> 0.5.6)
