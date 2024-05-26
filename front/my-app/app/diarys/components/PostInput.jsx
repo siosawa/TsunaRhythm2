@@ -97,7 +97,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
-  // タイトルでエンターきを押した時に投稿ボタンが発火しないように設定
+  // タイトルでエンターキーを押した時に投稿ボタンが発火しないように設定
   const handleTitleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
