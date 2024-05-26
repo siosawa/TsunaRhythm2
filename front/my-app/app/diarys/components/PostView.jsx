@@ -114,8 +114,7 @@ const PostView = ({ reload }) => {
                 </label>
                 <label className="block">
                   <span className="text-gray-700">投稿：</span>
-                  <input
-                    type="text"
+                  <textarea
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
                     className="w-full px-3 py-2 border rounded-md"
@@ -143,7 +142,7 @@ const PostView = ({ reload }) => {
                     {post.title}
                   </p>
                 </Link>
-                <p className="mb-4 text-gray-600">
+                <p className="mb-4 text-gray-600 whitespace-pre-line">
                   {post.content.length > 40
                     ? `${post.content.slice(0, 430)}...`
                     : post.content}
