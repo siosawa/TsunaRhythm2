@@ -7,8 +7,8 @@ const EditPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // success または error を格納
 
-  // useRef フックで現在のパスワード入力フィールドの参照を作成
   const currentPasswordRef = useRef(null);
 
   useEffect(() => {
@@ -40,25 +40,25 @@ const EditPassword = () => {
   const handleSaveClick = async (event) => {
     event.preventDefault();
 
-    // 入力された値をオブジェクトに格納
     const formData = {
       current_password: currentPassword,
       new_password: newPassword,
       confirm_password: confirmPassword,
     };
 
-    // フォームをクリア
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
 
     if (user && user.id === 60) {
       setMessage("ゲストアカウントはパスワードを変更できません");
+      setMessageType("error");
       return;
     }
 
     if (formData.new_password !== formData.confirm_password) {
       setMessage("新しいパスワードと確認用パスワードが一致しません");
+      setMessageType("error");
       return;
     }
 
@@ -81,13 +81,16 @@ const EditPassword = () => {
       if (response.ok) {
         const updatedUserData = await response.json();
         setMessage("パスワードが正常に更新されました");
+        setMessageType("success");
       } else {
         const errorData = await response.json();
         setMessage(errorData.errors.join(", "));
+        setMessageType("error");
       }
     } catch (error) {
       console.error("ユーザーデータの更新中にエラーが発生しました:", error);
       setMessage("パスワードの更新中にエラーが発生しました");
+      setMessageType("error");
     }
   };
 
@@ -139,7 +142,13 @@ const EditPassword = () => {
             </div>
           </div>
           <div className="flex justify-end">
-            {message && <div className="mb-4 text-red-500 pr-6">{message}</div>}
+            {message && (
+              <div
+                className={`mb-4 ${messageType === "success" ? "text-green-500" : "text-red-500"} pr-6`}
+              >
+                {message}
+              </div>
+            )}
             <button
               type="submit"
               className="px-4 py-1 rounded-xl shadow-custom-dark"
