@@ -14,15 +14,6 @@ module Api
         if user&.authenticate(params[:session][:password])
           Rails.logger.info 'パスワードが正しいことが確認されました。'
           reset_session
-
-          if params[:session][:remember_me] == '1'
-            remember(user)
-            Rails.logger.info 'ユーザーのログイン情報を記憶しました。'
-          else
-            forget(user)
-            Rails.logger.info 'ユーザーのログイン情報を記憶しません。'
-          end
-
           log_in user
           Rails.logger.info 'ユーザーをログイン状態にしました。'
           # リダイレクトの代わりにJSONレスポンスを返す
