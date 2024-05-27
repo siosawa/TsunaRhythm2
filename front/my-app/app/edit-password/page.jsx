@@ -32,12 +32,24 @@ const EditPassword = () => {
   const handleSaveClick = async (event) => {
     event.preventDefault();
 
+    // 入力された値をオブジェクトに格納
+    const formData = {
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
+    };
+
+    // フォームをクリア
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
     if (user && user.id === 60) {
       setMessage("ゲストアカウントはパスワードを変更できません");
       return;
     }
 
-    if (newPassword !== confirmPassword) {
+    if (formData.new_password !== formData.confirm_password) {
       setMessage("新しいパスワードと確認用パスワードが一致しません");
       return;
     }
@@ -51,8 +63,8 @@ const EditPassword = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            current_password: currentPassword,
-            new_password: newPassword,
+            current_password: formData.current_password,
+            new_password: formData.new_password,
           }),
           credentials: "include",
         }
