@@ -8,7 +8,7 @@ module Api
       before_action :correct_user, only: %i[edit update destroy]
 
       def index
-        per_page = 1 # 1ページあたりの表示件数
+        per_page = 10 # 1ページあたりの表示件数
         page = params[:page].to_i > 0 ? params[:page].to_i : 1
         
         users = User
