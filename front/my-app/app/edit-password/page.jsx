@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const EditPassword = () => {
   const [user, setUser] = useState(null);
@@ -7,6 +7,9 @@ const EditPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+
+  // useRef フックで現在のパスワード入力フィールドの参照を作成
+  const currentPasswordRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,6 +30,11 @@ const EditPassword = () => {
     };
 
     fetchUserData();
+
+    // ページがロードされたときに現在のパスワード入力フィールドにフォーカス
+    if (currentPasswordRef.current) {
+      currentPasswordRef.current.focus();
+    }
   }, []);
 
   const handleSaveClick = async (event) => {
@@ -99,6 +107,7 @@ const EditPassword = () => {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
+                ref={currentPasswordRef}
                 className="w-full px-4 py-2 border rounded-lg text-right"
               />
             </div>
