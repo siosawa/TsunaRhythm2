@@ -31,7 +31,6 @@ const EditPassword = () => {
 
     fetchUserData();
 
-    // ページがロードされたときに現在のパスワード入力フィールドにフォーカス
     if (currentPasswordRef.current) {
       currentPasswordRef.current.focus();
     }
@@ -81,11 +80,11 @@ const EditPassword = () => {
       if (response.ok) {
         const updatedUserData = await response.json();
         setMessage("パスワードが正常に更新されました");
-        setMessageType("success");
+        setMessageType("success"); // 成功メッセージ
       } else {
         const errorData = await response.json();
         setMessage(errorData.errors.join(", "));
-        setMessageType("error");
+        setMessageType("error"); // エラーメッセージ
       }
     } catch (error) {
       console.error("ユーザーデータの更新中にエラーが発生しました:", error);
@@ -151,7 +150,7 @@ const EditPassword = () => {
             )}
             <button
               type="submit"
-              className="px-4 py-1 rounded-xl shadow-custom-dark"
+              className="px-4 py-1 rounded-xl shadow-custom-dark whitespace-nowrap"
             >
               保存
             </button>
