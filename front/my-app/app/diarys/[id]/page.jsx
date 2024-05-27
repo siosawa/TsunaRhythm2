@@ -8,11 +8,10 @@ import { useParams } from "next/navigation";
 const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
-  const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPostAndUsers = async () => {
+    const fetchPost = async () => {
       try {
         const postRes = await axios.get(
           `http://localhost:3000/api/v1/posts/${id}`,
@@ -21,32 +20,23 @@ const PostDetail = () => {
           }
         );
         setPost(postRes.data);
-
-        const userRes = await axios.get(
-          "http://localhost:3000/api/v1/posts_user",
-          {
-            withCredentials: true,
-          }
-        );
-        setUsers(userRes.data.users);
       } catch (error) {
         console.error("データの取得に失敗しました:", error);
         setError(error);
       }
     };
 
-    fetchPostAndUsers();
+    fetchPost();
   }, [id]);
 
   if (error) {
     return <div>データの取得に失敗しました: {error.message}</div>;
   }
 
-  if (!post || users.length === 0) {
+  if (!post) {
     return <div>Loading...</div>;
   }
 
-  const user = users.find((user) => user.id === post.user_id);
   const formattedDate = format(new Date(post.created_at), "yyyy/M/d HH:mm", {
     locale: ja,
   });
@@ -57,7 +47,7 @@ const PostDetail = () => {
         <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
         <div>
           <p className="text-lg font-semibold">
-            {user ? user.name : "Unknown User"}
+            {post.user ? post.user.name : "Unknown User"}
           </p>
           <p className="text-sm text-gray-500">{formattedDate}</p>
         </div>

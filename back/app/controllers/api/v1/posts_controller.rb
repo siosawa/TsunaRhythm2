@@ -5,12 +5,28 @@ module Api
       include SessionsHelper
       before_action :logged_in_user, only: %i[create destroy update]
       before_action :correct_user, only: %i[destroy update]
-
+      
       def index
-        @posts = Post.all
-        render json: @posts
+        user_id = params[:user_id]
+        posts_query = Post.includes(:user)
+        posts_query = posts_query.where(user_id: user_id) if user_id.present?
+      
+        @posts = Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
+      
+        posts_with_current_user_id = @posts.map do |post|
+          post.attributes.merge(
+            user: { name: post.user.name }, 
+            current_user_id: current_user.id
+          )
+        end
+      
+        render json: {
+          posts: posts_with_current_user_id,
+          current_page: @posts.current_page,
+          total_pages: @posts.total_pages
+        }
       end
-
+    
       def show
         @post = Post.find(params[:id])
         render json: @post

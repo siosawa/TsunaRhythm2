@@ -4,13 +4,30 @@ module Api
       include ActionController::Cookies
       include SessionsHelper
 
-      before_action :logged_in_user, only: %i[index edit update destroy following followers]
-      before_action :correct_user, only: %i[edit update destroy]
+      before_action :logged_in_user, only: %i[index edit update destroy following followers update_password]
+      before_action :correct_user, only: %i[edit update destroy update_password]
 
       def index
-        @users = User.all
-        render json: @users
+        per_page = 10 # 1ページあたりの表示件数
+        page = params[:page].to_i > 0 ? params[:page].to_i : 1
+        
+        users = User
+                  .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count')
+                  .left_joins(:posts)
+                  .group('users.id, users.name, users.created_at')
+                  .limit(per_page)
+                  .offset((page - 1) * per_page)
+      
+        total_users = User.count
+        total_pages = (total_users.to_f / per_page).ceil
+      
+        render json: {
+          users: users.as_json(only: [:id, :name, :created_at], methods: [:posts_count]),
+          total_pages: total_pages,
+          current_page: page
+        }
       end
+      
 
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
@@ -61,6 +78,19 @@ module Api
         end
       end
 
+      # パスワード変更アクション
+      def update_password
+        if current_user.authenticate(params[:current_password])
+          if current_user.update(password: params[:new_password])
+            render json: { message: 'パスワードが正常に更新されました', user: current_user }, status: :ok
+          else
+            render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
+          end
+        else
+          render json: { errors: ['現在のパスワードが間違っています'] }, status: :unprocessable_entity
+        end
+      end
+
       def following
         user = User.find(params[:id])
         following_users = user.following.includes(:active_relationships).map do |followed_user|
@@ -79,15 +109,15 @@ module Api
       end
 
       # /diarysで取得するデータ
-      def posts_user_info
-        users = User.all.select(:id, :name)
-          render json: {
-          users: users,
-          current_user: {
-            id: current_user.id,
-          }
-        }
-      end
+      # def posts_user_info
+      #   users = User.all.select(:id, :name)
+      #     render json: {
+      #     users: users,
+      #     current_user: {
+      #       id: current_user.id,
+      #     }
+      #   }
+      # end
 
       # マイページで取得するデータ
       def current_user_info
