@@ -138,13 +138,15 @@ const EditPassword = () => {
               />
             </div>
           </div>
-          {message && <div className="mb-4 text-red-500">{message}</div>}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-          >
-            保存
-          </button>
+          <div className="flex justify-end">
+            {message && <div className="mb-4 text-red-500 pr-6">{message}</div>}
+            <button
+              type="submit"
+              className="px-4 py-1 rounded-xl shadow-custom-dark"
+            >
+              保存
+            </button>
+          </div>
         </form>
       </div>
     </div>
