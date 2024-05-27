@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       resources :users do
         member do
           get :following, :followers
+          patch :update_password
         end
       end
       get 'current_user', to: 'users#current_user_info'

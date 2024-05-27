@@ -4,8 +4,8 @@ module Api
       include ActionController::Cookies
       include SessionsHelper
 
-      before_action :logged_in_user, only: %i[index edit update destroy following followers]
-      before_action :correct_user, only: %i[edit update destroy]
+      before_action :logged_in_user, only: %i[index edit update destroy following followers update_password]
+      before_action :correct_user, only: %i[edit update destroy update_password]
 
       def index
         per_page = 10 # 1ページあたりの表示件数
@@ -75,6 +75,19 @@ module Api
         else
           Rails.logger.info 'ユーザーの削除に失敗しました。'
           render json: { message: 'ユーザーの削除に失敗しました' }, status: :unprocessable_entity
+        end
+      end
+
+      # パスワード変更アクション
+      def update_password
+        if current_user.authenticate(params[:current_password])
+          if current_user.update(password: params[:new_password])
+            render json: { message: 'パスワードが正常に更新されました', user: current_user }, status: :ok
+          else
+            render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
+          end
+        else
+          render json: { errors: ['現在のパスワードが間違っています'] }, status: :unprocessable_entity
         end
       end
 
