@@ -107,17 +107,6 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
-  // 上下の矢印キーでタイトルと内容のフィールド間のフォーカスを移動
-  const handleKeyDown = (e, currentRef, nextRef) => {
-    if (e.key === "ArrowDown" && nextRef.current) {
-      e.preventDefault();
-      nextRef.current.focus();
-    } else if (e.key === "ArrowUp" && currentRef.current) {
-      e.preventDefault();
-      currentRef.current.focus();
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -131,8 +120,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="title"
               value={title}
               onChange={handleTitleChange}
-              onKeyPress={handleTitleKeyPress} // タイトル入力中にエンターキーを無効化
-              onKeyDown={(e) => handleKeyDown(e, null, contentRef)} // 矢印キーによるフォーカス移動
+              onKeyPress={handleTitleKeyPress}
               ref={titleRef}
               className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
             />
@@ -144,7 +132,6 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               value={content}
               onChange={handleContentChange}
               ref={contentRef}
-              onKeyDown={(e) => handleKeyDown(e, titleRef, null)} // 矢印キーによるフォーカス移動
               className="w-full px-3 h-96 rounded transition-all outline-none"
             />
           </div>
