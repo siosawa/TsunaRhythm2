@@ -8,8 +8,24 @@ module Api
       before_action :correct_user, only: %i[edit update destroy]
 
       def index
-        @users = User.all
-        render json: @users
+        per_page = 1 # 1ページあたりの表示件数
+        page = params[:page].to_i > 0 ? params[:page].to_i : 1
+        
+        users = User
+                  .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count')
+                  .left_joins(:posts)
+                  .group('users.id, users.name, users.created_at')
+                  .limit(per_page)
+                  .offset((page - 1) * per_page)
+      
+        total_users = User.count
+        total_pages = (total_users.to_f / per_page).ceil
+      
+        render json: {
+          users: users.as_json(only: [:id, :name, :created_at], methods: [:posts_count]),
+          total_pages: total_pages,
+          current_page: page
+        }
       end
       
 
