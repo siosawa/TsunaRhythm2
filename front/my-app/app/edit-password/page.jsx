@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const EditPassword = () => {
   const [user, setUser] = useState(null);
@@ -7,6 +7,9 @@ const EditPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // success または error を格納
+
+  const currentPasswordRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,18 +30,34 @@ const EditPassword = () => {
     };
 
     fetchUserData();
+
+    if (currentPasswordRef.current) {
+      currentPasswordRef.current.focus();
+    }
   }, []);
 
   const handleSaveClick = async (event) => {
     event.preventDefault();
 
+    const formData = {
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
+    };
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
     if (user && user.id === 60) {
       setMessage("ゲストアカウントはパスワードを変更できません");
+      setMessageType("error");
       return;
     }
 
-    if (newPassword !== confirmPassword) {
+    if (formData.new_password !== formData.confirm_password) {
       setMessage("新しいパスワードと確認用パスワードが一致しません");
+      setMessageType("error");
       return;
     }
 
@@ -51,8 +70,8 @@ const EditPassword = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            current_password: currentPassword,
-            new_password: newPassword,
+            current_password: formData.current_password,
+            new_password: formData.new_password,
           }),
           credentials: "include",
         }
@@ -61,13 +80,16 @@ const EditPassword = () => {
       if (response.ok) {
         const updatedUserData = await response.json();
         setMessage("パスワードが正常に更新されました");
+        setMessageType("success"); // 成功メッセージ
       } else {
         const errorData = await response.json();
         setMessage(errorData.errors.join(", "));
+        setMessageType("error"); // エラーメッセージ
       }
     } catch (error) {
       console.error("ユーザーデータの更新中にエラーが発生しました:", error);
       setMessage("パスワードの更新中にエラーが発生しました");
+      setMessageType("error");
     }
   };
 
@@ -87,6 +109,7 @@ const EditPassword = () => {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
+                ref={currentPasswordRef}
                 className="w-full px-4 py-2 border rounded-lg text-right"
               />
             </div>
@@ -117,13 +140,21 @@ const EditPassword = () => {
               />
             </div>
           </div>
-          {message && <div className="mb-4 text-red-500">{message}</div>}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-          >
-            保存
-          </button>
+          <div className="flex justify-end">
+            {message && (
+              <div
+                className={`mb-4 ${messageType === "success" ? "text-green-500" : "text-red-500"} pr-6`}
+              >
+                {message}
+              </div>
+            )}
+            <button
+              type="submit"
+              className="px-4 py-1 rounded-xl shadow-custom-dark whitespace-nowrap"
+            >
+              保存
+            </button>
+          </div>
         </form>
       </div>
     </div>

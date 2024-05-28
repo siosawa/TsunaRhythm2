@@ -225,7 +225,7 @@ const ProfileReadPage = () => {
             </div>
           </>
         </form>
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <Button
             variant="ghost"
             className="bg-gray-800 hover:bg-gray-700 text-white hover:text-gray-300"

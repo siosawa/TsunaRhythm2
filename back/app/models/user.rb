@@ -51,16 +51,16 @@ class User < ApplicationRecord
     SecureRandom.urlsafe_base64
   end
 
-  # 永続的セッションのためにユーザーをデータベースに記憶する
-  def remember
-    self.remember_token = User.new_token
-    update_attribute(:remember_digest, User.digest(remember_token))
-    remember_digest
-  end
+  # # 永続的セッションのためにユーザーをデータベースに記憶する
+  # def remember
+  #   self.remember_token = User.new_token
+  #   update_attribute(:remember_digest, User.digest(remember_token))
+  #   remember_digest
+  # end
 
-  # セッションハイジャック防止のためにセッショントークンを返す(記憶ダイジェストを再利用しているのは単に利便性のため)
+  # セッションハイジャック防止のためにセッショントークンを返す(必要ない、もしくは無意味かもしれない)
   def session_token
-    remember_digest || remember
+    # remember_digest || remember
   end
 
   # 渡されたトークンがダイジェストと一致したらtrueを返す
@@ -69,11 +69,6 @@ class User < ApplicationRecord
     return false if digest.nil?
 
     BCrypt::Password.new(digest).is_password?(token)
-  end
-
-  # ユーザーのログイン情報を破棄する
-  def forget
-    update_attribute(:remember_digest, nil)
   end
 
   # パスワード再設定の属性を設定する

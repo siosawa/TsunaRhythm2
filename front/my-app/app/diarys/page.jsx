@@ -1,4 +1,4 @@
-"use client";
+"use client"; // のちのち消したい
 import PostInput from "./components/PostInput";
 import PostView from "./components/PostView";
 import { useState } from "react";

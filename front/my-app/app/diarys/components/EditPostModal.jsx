@@ -1,12 +1,8 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.content);
   const [error, setError] = useState("");
   const contentRef = useRef(null);
   const titleRef = useRef(null);
@@ -17,7 +13,6 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
       contentRef.current.focus();
     }
 
-    // モーダルが開いているときにコマンド+エンターで投稿ボタンを発火するイベントリスナーを追加
     const handleKeyDown = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
@@ -49,39 +44,17 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
       return;
     }
 
-    // タイトルが空欄の場合、内容の最初の40文字をタイトルとして設定
     const finalTitle = title || content.slice(0, 40);
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/posts",
-        {
-          post: {
-            title: finalTitle,
-            content: content,
-          },
-        },
-        {
-          withCredentials: true, // クッキーを含める設定
-        }
-      );
-
-      if (response.status === 201) {
-        setTitle("");
-        setContent("");
-        setError("");
-        onPostSuccess(); // 投稿成功時に親コンポーネントの状態を更新
-        onClose(); // モーダルを閉じる
-      } else {
-        setError("ポストに失敗しました。");
-      }
+      await onSave(post.id, finalTitle, content);
+      onClose();
     } catch (error) {
-      console.error("ポストに失敗しました:", error);
-      setError("ポストに失敗しました。");
+      console.error("ポストの編集に失敗しました:", error);
+      setError("ポストの編集に失敗しました。");
     }
   };
 
-  // タイトルの文字が長すぎる時にエラーを出力
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
     if (e.target.value.length > 56) {
@@ -91,20 +64,12 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
   };
 
-  // 投稿内容の文字が長すぎる時にエラーを出力
   const handleContentChange = (e) => {
     setContent(e.target.value);
     if (e.target.value.length > 2050) {
       setError("投稿は2050文字までです");
     } else {
       setError("");
-    }
-  };
-
-  // タイトルでエンターキーを押した時に投稿ボタンが発火しないように設定
-  const handleTitleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
     }
   };
 
@@ -121,7 +86,6 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               id="title"
               value={title}
               onChange={handleTitleChange}
-              onKeyPress={handleTitleKeyPress}
               ref={titleRef}
               className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
             />
@@ -149,7 +113,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
               ref={submitButtonRef}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
-              投稿
+              保存
             </button>
           </div>
         </form>
@@ -158,46 +122,4 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   );
 };
 
-const PostInput = ({ onPostSuccess }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">ポスト管理</h1>
-      <div className="flex items-center mb-4">
-        <button
-          onClick={openModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          日記を書く
-        </button>
-      </div>
-      <PostInputModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onPostSuccess={onPostSuccess}
-      />
-      <div className="flex items-center mt-4">
-        <Button
-          variant="ghost"
-          asChild
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-        >
-          <Link href="/user-profile">自分の日記</Link>
-        </Button>
-        <Button
-          variant="ghost"
-          asChild
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-        >
-          <Link href="/diarys">みんなの日記</Link>
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-export default PostInput;
+export default EditPostModal;
