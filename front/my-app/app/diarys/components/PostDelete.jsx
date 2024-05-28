@@ -1,3 +1,4 @@
+"use client";
 import axios from "axios";
 
 const PostDelete = ({ postId, posts, setPosts }) => {

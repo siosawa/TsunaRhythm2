@@ -1,3 +1,5 @@
+"use client";
+
 const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
