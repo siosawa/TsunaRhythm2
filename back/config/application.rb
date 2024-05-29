@@ -18,8 +18,6 @@ require 'action_cable/engine'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-Bundler.require(*Rails.groups)
-
 module TsunaRhythm
   class Application < Rails::Application
     # API専用とする
