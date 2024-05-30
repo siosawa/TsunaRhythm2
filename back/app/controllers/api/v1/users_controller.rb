@@ -116,23 +116,23 @@ module Api
       end      
 
       def followers
+        per_page = 10 # 1ページあたりの表示件数
+        page = params[:page].to_i > 0 ? params[:page].to_i : 1
+      
         user = User.find(params[:id])
         followers = user.followers
-        render json: followers
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "User not found" }, status: :not_found
+      
+        # ページネーションの処理
+        total_users = followers.size
+        total_pages = (total_users.to_f / per_page).ceil
+        paginated_users = followers.slice((page - 1) * per_page, per_page)
+      
+        render json: {
+          users: paginated_users,
+          total_pages: total_pages,
+          current_page: page
+        }
       end
-
-      # /diarysで取得するデータ
-      # def posts_user_info
-      #   users = User.all.select(:id, :name)
-      #     render json: {
-      #     users: users,
-      #     current_user: {
-      #       id: current_user.id,
-      #     }
-      #   }
-      # end
 
       # マイページで取得するデータ
       def current_user_info
