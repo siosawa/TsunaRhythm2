@@ -65,7 +65,7 @@ const UserProfile = ({ user }) => {
         </Button>
       </div>
       <div className="mt-2">
-        <label className="block text-gray-700">主なワーク:</label>
+        <label className="block text-gray-700">主なワーク:{user.work}</label>
       </div>
     </div>
   );
