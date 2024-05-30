@@ -67,6 +67,11 @@ const UserProfile = ({ user }) => {
       <div className="mt-2">
         <label className="block text-gray-700">主なワーク:{user.work}</label>
       </div>
+      <div className="mt-2">
+        <label className="block text-gray-700">
+          プロフィール文:{user.profile_text}
+        </label>
+      </div>
     </div>
   );
 };

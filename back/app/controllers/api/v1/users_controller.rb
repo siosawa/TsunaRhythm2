@@ -12,9 +12,9 @@ module Api
         page = params[:page].to_i > 0 ? params[:page].to_i : 1
         
         users = User
-                  .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work')
+                  .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text')
                   .left_joins(:posts)
-                  .group('users.id, users.name, users.created_at, users.work')
+                  .group('users.id, users.name, users.created_at, users.work, users.profile_text')
                   .limit(per_page)
                   .offset((page - 1) * per_page)
       
@@ -22,7 +22,7 @@ module Api
         total_pages = (total_users.to_f / per_page).ceil
       
         render json: {
-          users: users.as_json(only: [:id, :name, :created_at, :work], methods: [:posts_count]),
+          users: users.as_json(only: [:id, :name, :created_at, :work, :profile_text], methods: [:posts_count]),
           total_pages: total_pages,
           current_page: page
         }
@@ -107,7 +107,8 @@ Rails.logger.info 'ユーザーの削除に失敗しました。'
             following: current_user.following.count,
             followers: current_user.followers.count,
             posts: current_user.posts,
-            work: current_user.work
+            work: current_user.work,
+            profile_text: current_user.profile_text
           }
         else
           render json: { error: 'ログインしていません' }, status: :unauthorized
@@ -138,7 +139,7 @@ Rails.logger.info 'ユーザーの削除に失敗しました。'
       end
 
       def user_params
-        params.require(:user).permit(:name, :email, :password, :password_confirmation, :work)
+        params.require(:user).permit(:name, :email, :password, :password_confirmation, :work, :profile_text)
       end
 
       def correct_user

@@ -214,8 +214,8 @@ const ProfileReadPage = () => {
                   プロフィール文
                 </span>
                 <textarea
-                  name="profileText"
-                  value={user?.profileText || ""}
+                  name="profile_text"
+                  value={user?.profile_text || ""}
                   onChange={handleInputChange}
                   readOnly={!isEditable}
                   className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
