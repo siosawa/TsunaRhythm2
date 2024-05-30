@@ -4,3 +4,4 @@ back/tmp
 back/config/master.key
 front/.DS_Store
 .DS_Store
+back/public/uploads
