@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import UsersPagination from "../users/components/UsersComponents";
 
 const FollowingList = () => {
   const [following, setFollowing] = useState([]);
   const [userId, setUserId] = useState(null);
   const [followStates, setFollowStates] = useState({});
+  const [currentPage, setCurrentPage] = useState(1); // 現在のページ
+  const [totalPages, setTotalPages] = useState(1); // 総ページ数
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -31,16 +34,17 @@ const FollowingList = () => {
       if (userId) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/v1/users/${userId}/following`,
+            `http://localhost:3000/api/v1/users/${userId}/following?page=${currentPage}`,
             {
               credentials: "include",
             }
           );
           const data = await response.json();
-          setFollowing(data);
+          setFollowing(data.users);
+          setTotalPages(data.total_pages); // 総ページ数を設定
 
           // 初期フォロー状態を設定
-          const initialFollowStates = data.reduce(
+          const initialFollowStates = data.users.reduce(
             (acc, user) => ({
               ...acc,
               [user.id]: true,
@@ -56,7 +60,7 @@ const FollowingList = () => {
     };
 
     fetchFollowing();
-  }, [userId]);
+  }, [userId, currentPage]); // userId または currentPage が変わるたびに実行
 
   const handleUnfollow = async (followedId) => {
     const relationshipId = followStates[`relationship_${followedId}`]; // relationship_id を followStates から取得
@@ -111,11 +115,17 @@ const FollowingList = () => {
     }
   };
 
+  const handlePageClick = (page) => {
+    if (page !== currentPage && typeof page === "number") {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">フォローしているユーザー</h2>
       <ul>
-        {Array.isArray(following) ? (
+        {following.length > 0 ? (
           following.map((user) => (
             <li
               key={user.id}
@@ -143,6 +153,11 @@ const FollowingList = () => {
           <li>フォローしているユーザーがいません。</li>
         )}
       </ul>
+      <UsersPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageClick}
+      />
     </div>
   );
 };

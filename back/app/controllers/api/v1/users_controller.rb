@@ -92,13 +92,28 @@ module Api
       end
 
       def following
+        per_page = 10 # 1ページあたりの表示件数
+        page = params[:page].to_i > 0 ? params[:page].to_i : 1
+      
         user = User.find(params[:id])
+        
+        # フォローしているユーザーの情報を取得し、relationship_id を追加
         following_users = user.following.includes(:active_relationships).map do |followed_user|
           relationship = user.active_relationships.find_by(followed_id: followed_user.id)
           followed_user.attributes.merge(relationship_id: relationship.id)
         end
-        render json: following_users
-      end
+        
+        # ページネーションの処理
+        total_users = following_users.size
+        total_pages = (total_users.to_f / per_page).ceil
+        paginated_users = following_users.slice((page - 1) * per_page, per_page)
+      
+        render json: {
+          users: paginated_users,
+          total_pages: total_pages,
+          current_page: page
+        }
+      end      
 
       def followers
         user = User.find(params[:id])
