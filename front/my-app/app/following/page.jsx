@@ -14,7 +14,7 @@ const FollowingList = () => {
           "http://localhost:3000/api/v1/current_user",
           {
             credentials: "include",
-          },
+          }
         );
         const userData = await response.json();
         setUserId(userData.id); // 現在のユーザーIDを設定
@@ -34,7 +34,7 @@ const FollowingList = () => {
             `http://localhost:3000/api/v1/users/${userId}/following`,
             {
               credentials: "include",
-            },
+            }
           );
           const data = await response.json();
           setFollowing(data);
@@ -46,7 +46,7 @@ const FollowingList = () => {
               [user.id]: true,
               [`relationship_${user.id}`]: user.relationship_id, // relationship_id を追加
             }),
-            {},
+            {}
           );
           setFollowStates(initialFollowStates);
         } catch (error) {
@@ -66,7 +66,7 @@ const FollowingList = () => {
         {
           method: "DELETE",
           credentials: "include",
-        },
+        }
       );
       if (response.ok) {
         setFollowStates({
@@ -93,7 +93,7 @@ const FollowingList = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -112,19 +112,21 @@ const FollowingList = () => {
   };
 
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">フォローしているユーザー</h2>
       <ul>
         {Array.isArray(following) ? (
           following.map((user) => (
             <li
               key={user.id}
-              className="mb-2 flex justify-between items-center"
+              className="bg-white shadow-md rounded-lg p-6 mb-4 flex justify-between items-center"
             >
               <div>
-                <p>{user.name}</p>
-                <p>{user.id}</p>
-                <p>{user.email}</p>
+                <p className="text-lg font-semibold mb-2">{user.name}</p>
+                <p className="text-gray-600 mb-1">ID: {user.id}</p>
+                <p className="text-gray-600 mb-1">
+                  メールアドレス: {user.email}
+                </p>
               </div>
               {followStates[user.id] ? (
                 <Button variant="ghost" onClick={() => handleUnfollow(user.id)}>
