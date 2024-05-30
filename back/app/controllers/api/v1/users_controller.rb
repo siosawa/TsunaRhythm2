@@ -4,11 +4,11 @@ module Api
       include ActionController::Cookies
       include SessionsHelper
 
-      # before_action :logged_in_user, only: %i[index edit update destroy following followers update_password]
-      # before_action :correct_user, only: %i[edit update destroy update_password]
+      before_action :logged_in_user, only: %i[index edit update destroy following followers update_password]
+      before_action :correct_user, only: %i[edit update destroy update_password]
 
       def index
-        per_page = 10 # 1ページあたりの表示件数
+        per_page = 10
         page = params[:page].to_i > 0 ? params[:page].to_i : 1
         
         users = User
@@ -27,58 +27,57 @@ module Api
           current_page: page
         }
       end
-      
 
       def show
-        Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
+Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
         @user = User.find(params[:id])
         render json: @user
       end
 
       def create
-        Rails.logger.info 'ユーザー作成処理を開始します。'
+Rails.logger.info 'ユーザー作成処理を開始します。'
         @user = User.new(user_params)
         if @user.save
-          Rails.logger.info "ユーザー(ID: #{@user.id})が正常に保存されました。"
+Rails.logger.info "ユーザー(ID: #{@user.id})が正常に保存されました。"
           render json: { message: 'ユーザーが正常に作成されました', user: @user }, status: :created
         else
-          Rails.logger.warn 'ユーザーの保存に失敗しました。'
+Rails.logger.warn 'ユーザーの保存に失敗しました。'
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       def update
-        Rails.logger.info 'users_controllerのupdateアクションを実行しようとしています'
+Rails.logger.info 'users_controllerのupdateアクションを実行しようとしています'
         @user = User.find(params[:id])
         if @user.update(user_params)
-          Rails.logger.info 'ユーザー情報の更新に成功しました。'
+Rails.logger.info 'ユーザー情報の更新に成功しました。'
           render json: { message: 'ユーザー情報の更新に成功しました', user: @user }, status: :ok
         else
-          Rails.logger.info 'ユーザー情報の更新に失敗しました。'
+Rails.logger.info 'ユーザー情報の更新に失敗しました。'
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       def destroy
-        Rails.logger.info 'users_controllerのdestroyアクションを実行しようとしています'
+Rails.logger.info 'users_controllerのdestroyアクションを実行しようとしています'
         user = User.find_by(id: params[:id])
 
         if user.nil?
-          Rails.logger.info 'ユーザーが見つかりませんでした。'
+Rails.logger.info 'ユーザーが見つかりませんでした。'
           render json: { message: 'ユーザーが見つかりませんでした' }, status: :not_found
           return
         end
 
         if user.destroy
-          Rails.logger.info 'ユーザーを削除しました。'
+Rails.logger.info 'ユーザーを削除しました。'
           render json: { message: 'ユーザーを削除しました' }, status: :ok
         else
-          Rails.logger.info 'ユーザーの削除に失敗しました。'
+Rails.logger.info 'ユーザーの削除に失敗しました。'
           render json: { message: 'ユーザーの削除に失敗しました' }, status: :unprocessable_entity
         end
       end
 
-      # パスワード変更アクション
+# パスワード変更アクション
       def update_password
         if current_user.authenticate(params[:current_password])
           if current_user.update(password: params[:new_password])
@@ -92,49 +91,13 @@ module Api
       end
 
       def following
-        per_page = 10 # 1ページあたりの表示件数
-        page = params[:page].to_i > 0 ? params[:page].to_i : 1
-      
-        user = User.find(params[:id])
-        
-        # フォローしているユーザーの情報を取得し、relationship_id を追加
-        following_users = user.following.includes(:active_relationships).map do |followed_user|
-          relationship = user.active_relationships.find_by(followed_id: followed_user.id)
-          followed_user.attributes.merge(relationship_id: relationship.id)
-        end
-        
-        # ページネーションの処理
-        total_users = following_users.size
-        total_pages = (total_users.to_f / per_page).ceil
-        paginated_users = following_users.slice((page - 1) * per_page, per_page)
-      
-        render json: {
-          users: paginated_users,
-          total_pages: total_pages,
-          current_page: page
-        }
-      end      
-
-      def followers
-        per_page = 10 # 1ページあたりの表示件数
-        page = params[:page].to_i > 0 ? params[:page].to_i : 1
-      
-        user = User.find(params[:id])
-        followers = user.followers
-      
-        # ページネーションの処理
-        total_users = followers.size
-        total_pages = (total_users.to_f / per_page).ceil
-        paginated_users = followers.slice((page - 1) * per_page, per_page)
-      
-        render json: {
-          users: paginated_users,
-          total_pages: total_pages,
-          current_page: page
-        }
+        paginate_relationships(:following, :active_relationships, :followed_id)
       end
 
-      # マイページで取得するデータ
+      def followers
+        paginate_relationships(:followers, :passive_relationships, :follower_id)
+      end
+
       def current_user_info
         if logged_in?
           render json: {
@@ -151,6 +114,27 @@ module Api
       end
 
       private
+
+      def paginate_relationships(relationship_type, relationship_model, foreign_key)
+        per_page = 10
+        page = params[:page].to_i > 0 ? params[:page].to_i : 1
+
+        user = User.find(params[:id])
+        relationships = user.send(relationship_type).includes(relationship_model).map do |related_user|
+          relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
+          related_user.attributes.merge(relationship_id: relationship.id)
+        end
+
+        total_users = relationships.size
+        total_pages = (total_users.to_f / per_page).ceil
+        paginated_users = relationships.slice((page - 1) * per_page, per_page)
+
+        render json: {
+          users: paginated_users,
+          total_pages: total_pages,
+          current_page: page
+        }
+      end
 
       def user_params
         params.require(:user).permit(:name, :email, :password, :password_confirmation)
