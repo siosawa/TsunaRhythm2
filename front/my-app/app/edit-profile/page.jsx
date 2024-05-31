@@ -139,20 +139,19 @@ const ProfileReadPage = () => {
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
-          <div>
-            {user && user.avatar && user.avatar.url && (
-              <p>
-                <strong>Avatar:</strong>
-                <Image
-                  src={`http://localhost:3000${user.avatar.url}`} // 完全なURLに修正
-                  alt="User Avatar"
-                  width={96}
-                  height={96}
-                  className="rounded-full"
-                />
-              </p>
-            )}
-          </div>
+        </div>
+        <div className="flex justify-center items-center mb-4">
+          {user && user.avatar && user.avatar.url && (
+            <Image
+              src={`http://localhost:3000${user.avatar.url}`} // 完全なURLに修正
+              alt="User Avatar"
+              width={96}
+              height={96}
+              className="rounded-full"
+            />
+          )}
+        </div>
+        <div className="flex justify-end items-center mb-4">
           {isEditable ? (
             <button
               className="px-4 py-1 rounded-xl shadow-custom-dark"
@@ -268,7 +267,12 @@ const ProfileReadPage = () => {
             </div>
           </>
         </form>
-        <div className="flex justify-start">
+        {user && user.avatar && user.avatar.url && (
+          <div className="text-center mt-4 text-sm text-gray-500">
+            アバターURL: {user.avatar.url}
+          </div>
+        )}
+        <div className="flex justify-start mt-4">
           <Button
             variant="ghost"
             className="bg-gray-800 hover:bg-gray-700 text-white hover:text-gray-300"
