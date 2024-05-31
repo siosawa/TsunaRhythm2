@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -51,7 +50,7 @@ const SignUp = () => {
       const responseData = await response.json();
       if (!response.ok) {
         setError(
-          responseData.errors.join(", ") || "ユーザー登録に失敗しました",
+          responseData.errors.join(", ") || "ユーザー登録に失敗しました"
         );
         return;
       }
@@ -79,7 +78,7 @@ const SignUp = () => {
                 password: password,
               },
             }),
-          },
+          }
         );
 
         const loginResponseData = await loginResponse.json();

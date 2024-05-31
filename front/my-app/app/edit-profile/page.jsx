@@ -77,7 +77,7 @@ const ProfileReadPage = () => {
   };
 
   const handlePasswordEditClick = () => {
-    window.location.href = "/edit-password";
+    window.location.href = "/edit-profile/password";
   };
 
   const handleInputChange = (e) => {

@@ -186,7 +186,7 @@ const PostInput = ({ onPostSuccess }) => {
           asChild
           className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
         >
-          <Link href="/user-profile">自分の日記</Link>
+          <Link href="/mypage">自分の日記</Link>
         </Button>
         <Button
           variant="ghost"

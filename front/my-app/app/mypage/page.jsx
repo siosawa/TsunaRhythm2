@@ -51,10 +51,10 @@ const UserProfile = ({ user }) => {
           <h1 className="text-4xl font-bold">{user.name}</h1>
           <div className="flex space-x-2">
             <Button variant="ghost" asChild>
-              <Link href="/following">フォロー{user.following}</Link>
+              <Link href="mypage/following">フォロー{user.following}</Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link href="/followers">フォロワー{user.followers}</Link>
+              <Link href="mypage/followers">フォロワー{user.followers}</Link>
             </Button>
           </div>
         </div>
