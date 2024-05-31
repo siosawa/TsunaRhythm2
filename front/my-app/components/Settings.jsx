@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Setting = () => {
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   const handleLogout = async () => {
@@ -20,7 +21,10 @@ const Setting = () => {
 
       if (res.ok) {
         // ログアウト成功
-        window.location.href = "/diarys";
+        setMessage("ログアウトに成功しました。");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000); // 2秒後にリダイレクト
       } else {
         const errorData = await res.json();
         setError(errorData.error || "ログアウトに失敗しました。");
@@ -41,6 +45,7 @@ const Setting = () => {
 
   return (
     <>
+      {message && <div className="text-green-500">{message}</div>}
       {error && <div className="text-red-500">{error}</div>}
       <DropdownMenu>
         <DropdownMenuTrigger>設定</DropdownMenuTrigger>
