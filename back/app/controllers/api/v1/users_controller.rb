@@ -106,7 +106,8 @@ module Api
             email: current_user.email,
             following: current_user.following.count,
             followers: current_user.followers.count,
-            posts: current_user.posts,
+            # posts: current_user.posts,
+            posts_count: current_user.posts.count,
             work: current_user.work,
             profile_text: current_user.profile_text,
             avatar: current_user.avatar
@@ -114,6 +115,16 @@ module Api
         else
           render json: { error: 'ログインしていません' }, status: :unauthorized
         end
+      end
+
+      def current_user_posts
+        if logged_in?
+          render json: {
+            posts: current_user.posts,
+          }
+        else
+          render json: { error: 'ログインしていません' }, status: :unauthorized
+        end 
       end
 
       private
