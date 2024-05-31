@@ -140,7 +140,7 @@ const ProfileReadPage = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
           <div>
-            {user && user.avatar.url && (
+            {user && user.avatar && user.avatar.url && (
               <p>
                 <strong>Avatar:</strong>
                 <Image
@@ -185,6 +185,7 @@ const ProfileReadPage = () => {
                   onChange={handleInputChange}
                   readOnly={!isEditable}
                   className="w-full px-4 py-2 border rounded-xl text-right"
+                  autoComplete="name"
                 />
               </div>
             </div>
@@ -201,6 +202,7 @@ const ProfileReadPage = () => {
                   onChange={handleInputChange}
                   readOnly={!isEditable}
                   className="w-full px-4 py-2 border rounded-xl text-right"
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -215,6 +217,7 @@ const ProfileReadPage = () => {
                   value="********"
                   readOnly
                   className="w-full px-4 py-2 border rounded-xl text-right pr-7"
+                  autoComplete="current-password"
                 />
                 <FiTriangle
                   className="absolute right-2 cursor-pointer transform rotate-90"
@@ -232,6 +235,7 @@ const ProfileReadPage = () => {
                   onChange={handleInputChange}
                   readOnly={!isEditable}
                   className="w-full px-4 py-2 border rounded-xl text-right pr-7"
+                  autoComplete="organization-title"
                 />
               </div>
             </div>
@@ -247,6 +251,7 @@ const ProfileReadPage = () => {
                   readOnly={!isEditable}
                   className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
                   rows="4"
+                  autoComplete="off"
                 />
               </div>
             </div>
