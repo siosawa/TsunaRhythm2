@@ -139,7 +139,7 @@ const ProfileReadPage = () => {
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
-          {/* <div>
+          <div>
             {user && user.avatar.url && (
               <p>
                 <strong>Avatar:</strong>
@@ -152,7 +152,7 @@ const ProfileReadPage = () => {
                 />
               </p>
             )}
-          </div> */}
+          </div>
           {isEditable ? (
             <button
               className="px-4 py-1 rounded-xl shadow-custom-dark"
