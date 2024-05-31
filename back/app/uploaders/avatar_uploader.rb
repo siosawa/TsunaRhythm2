@@ -4,7 +4,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
     "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
-  # 受け付け可能なファイルの拡張子を指定
+# 受け付け可能なファイルの拡張子を指定
   def extension_allowlist
     %w(jpg jpeg png)
   end
