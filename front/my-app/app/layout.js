@@ -21,15 +21,13 @@ export default function RootLayout({ children }) {
         <header className="container h-16 flex items-center border-b justify-between">
           <h1 className="font-bold">TsunaRhythm</h1>
           <ul className="navList flex gap-4">
-            {navList.map((item) => {
-              return (
-                <li key={item.label}>
-                  <Button variant="ghost" asChild>
-                    <Link href={item.href}>{item.label}</Link>
-                  </Button>
-                </li>
-              );
-            })}
+            {navList.map((item) => (
+              <li key={item.label}>
+                <Button variant="ghost" asChild>
+                  <Link href={item.href}>{item.label}</Link>
+                </Button>
+              </li>
+            ))}
             <Settings />
           </ul>
         </header>
