@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import UsersPagination from "@/app/users/components/UsersComponents";
 
 const FollowingList = () => {
   const [following, setFollowing] = useState([]);
   const [userId, setUserId] = useState(null);
   const [followStates, setFollowStates] = useState({});
+  const [currentPage, setCurrentPage] = useState(1); // 現在のページ
+  const [totalPages, setTotalPages] = useState(1); // 総ページ数
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -14,7 +17,7 @@ const FollowingList = () => {
           "http://localhost:3000/api/v1/current_user",
           {
             credentials: "include",
-          },
+          }
         );
         const userData = await response.json();
         setUserId(userData.id); // 現在のユーザーIDを設定
@@ -31,22 +34,23 @@ const FollowingList = () => {
       if (userId) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/v1/users/${userId}/following`,
+            `http://localhost:3000/api/v1/users/${userId}/following?page=${currentPage}`,
             {
               credentials: "include",
-            },
+            }
           );
           const data = await response.json();
-          setFollowing(data);
+          setFollowing(data.users);
+          setTotalPages(data.total_pages); // 総ページ数を設定
 
           // 初期フォロー状態を設定
-          const initialFollowStates = data.reduce(
+          const initialFollowStates = data.users.reduce(
             (acc, user) => ({
               ...acc,
               [user.id]: true,
               [`relationship_${user.id}`]: user.relationship_id, // relationship_id を追加
             }),
-            {},
+            {}
           );
           setFollowStates(initialFollowStates);
         } catch (error) {
@@ -56,7 +60,7 @@ const FollowingList = () => {
     };
 
     fetchFollowing();
-  }, [userId]);
+  }, [userId, currentPage]); // userId または currentPage が変わるたびに実行
 
   const handleUnfollow = async (followedId) => {
     const relationshipId = followStates[`relationship_${followedId}`]; // relationship_id を followStates から取得
@@ -66,7 +70,7 @@ const FollowingList = () => {
         {
           method: "DELETE",
           credentials: "include",
-        },
+        }
       );
       if (response.ok) {
         setFollowStates({
@@ -93,7 +97,7 @@ const FollowingList = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -111,20 +115,28 @@ const FollowingList = () => {
     }
   };
 
+  const handlePageClick = (page) => {
+    if (page !== currentPage && typeof page === "number") {
+      setCurrentPage(page);
+    }
+  };
+
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">フォローしているユーザー</h2>
       <ul>
-        {Array.isArray(following) ? (
+        {following.length > 0 ? (
           following.map((user) => (
             <li
               key={user.id}
-              className="mb-2 flex justify-between items-center"
+              className="bg-white shadow-md rounded-lg p-6 mb-4 flex justify-between items-center"
             >
               <div>
-                <p>{user.name}</p>
-                <p>{user.id}</p>
-                <p>{user.email}</p>
+                <p className="text-lg font-semibold mb-2">{user.name}</p>
+                <p className="text-gray-600 mb-1">ID: {user.id}</p>
+                <p className="text-gray-600 mb-1">
+                  メールアドレス: {user.email}
+                </p>
               </div>
               {followStates[user.id] ? (
                 <Button variant="ghost" onClick={() => handleUnfollow(user.id)}>
@@ -141,6 +153,11 @@ const FollowingList = () => {
           <li>フォローしているユーザーがいません。</li>
         )}
       </ul>
+      <UsersPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageClick}
+      />
     </div>
   );
 };

@@ -9,11 +9,16 @@ Rails.application.routes.draw do
         end
       end
       get 'current_user', to: 'users#current_user_info'
+      get 'current_user_posts', to:'users#current_user_posts'
       # get 'posts_user', to: 'users#posts_user_info'
       resources :sessions, only: [:create]
       delete '/logout', to: 'sessions#destroy'
       # resources :account_activations, only: [:edit]
-      resources :posts, only: %i[index show create update destroy]
+      resources :posts, only: %i[index show create update destroy] do
+        collection do
+          get 'user/:user_id', to: 'posts#user_posts'
+        end
+      end
       resources :password_resets,     only: %i[create edit update]
       resources :relationships,       only: %i[create destroy]
     end

@@ -1,3 +1,4 @@
+"use client";
 import { useState, useRef, useLayoutEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,11 +30,8 @@ const Login = () => {
         credentials: "include",
         body: JSON.stringify({
           session: {
-            // sessionsコントローラーに合わせてパラメータを送信
             email: email,
             password: password,
-            // のちのちremember_meの値を追加
-            // remember_me: '1'
           },
         }),
       });
@@ -68,53 +66,53 @@ const Login = () => {
   }, [email, password, isGuestLogin]); // isGuestLoginを依存配列に追加
 
   return (
-    <>
-      <div className="container shadow-lg p-10 max-w-72 flex flex-col items-center space-y-3 fixed top-20 right-0 lg:right-10 2xl:right-72 my-10 mx-10 rounded-2xl">
-        <p></p>
-        <h1 className="text-4xl">ようこそ！</h1>
-        <p></p>
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          {error && <div className="text-red-500">{error}</div>}
-          {success && <div className="text-green-500">{success}</div>}
-          <Input
-            type="email"
-            placeholder="メールアドレス"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          <Input
-            type="password"
-            placeholder="パスワード"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            ref={passwordInputRef}
-          />
-          <Button
-            type="submit"
-            className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full"
-          >
-            ログイン
-          </Button>
-        </form>
-        <p></p>
+    <div className="container shadow-lg p-10 max-w-72 flex flex-col items-center space-y-3 fixed top-20 right-0 lg:right-10 2xl:right-72 my-10 mx-10 rounded-2xl">
+      <p></p>
+      <h1 className="text-4xl">ようこそ！</h1>
+      <p></p>
+      <form onSubmit={handleSubmit} className="w-full space-y-4">
+        {error && <div className="text-red-500">{error}</div>}
+        {success && <div className="text-green-500">{success}</div>}
+        <Input
+          type="email"
+          placeholder="メールアドレス"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoComplete="email" // autocomplete属性を追加
+        />
+        <Input
+          type="password"
+          placeholder="パスワード"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          ref={passwordInputRef}
+          autoComplete="current-password" // autocomplete属性を追加
+        />
         <Button
-          onClick={handleGuestLogin}
+          type="submit"
           className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full"
         >
-          ゲストログイン
+          ログイン
         </Button>
-        <p></p>
-        <p>アカウントが未設定ですか？</p>
-        <Button
-          asChild
-          className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full"
-        >
-          <Link href="/signup">アカウントを新規作成</Link>
-        </Button>
-        <p className="mb-10"></p>
-      </div>
-    </>
+      </form>
+      <p></p>
+      <Button
+        onClick={handleGuestLogin}
+        className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full"
+      >
+        ゲストログイン
+      </Button>
+      <p></p>
+      <p>アカウントが未設定ですか？</p>
+      <Button
+        asChild
+        className="bg-emerald-500 text-white shadow-lg hover:bg-emerald-700 w-full"
+      >
+        <Link href="/signup">アカウントを新規作成</Link>
+      </Button>
+      <p className="mb-10"></p>
+    </div>
   );
 };
 

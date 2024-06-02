@@ -33,8 +33,10 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false } # 大文字小文字は無視
-  has_secure_password # セキュアなパスワード機能を導入。ハッシュ値のログだって見せないよ。
+  has_secure_password # セキュアなパスワード機能を導入。ハッシュ値のログも見せない。
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
+
+  mount_uploader :avatar, AvatarUploader
 
   # 渡された文字列のハッシュ値を返す
   def self.digest(string)
@@ -50,13 +52,6 @@ class User < ApplicationRecord
   def self.new_token
     SecureRandom.urlsafe_base64
   end
-
-  # # 永続的セッションのためにユーザーをデータベースに記憶する
-  # def remember
-  #   self.remember_token = User.new_token
-  #   update_attribute(:remember_digest, User.digest(remember_token))
-  #   remember_digest
-  # end
 
   # セッションハイジャック防止のためにセッショントークンを返す(必要ない、もしくは無意味かもしれない)
   def session_token

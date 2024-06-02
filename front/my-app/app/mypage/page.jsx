@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function MyPage() {
   const [user, setUser] = useState(null);
+  const [userPosts, setUserPosts] = useState(null);
   const [reload, setReload] = useState(false);
   const handleReload = () => {
     setReload(!reload);
@@ -30,6 +31,25 @@ export default function MyPage() {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const fetchUserPostsData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/v1/current_user_posts",
+          {
+            credentials: "include",
+          }
+        );
+        const userPostsData = await response.json();
+        setUserPosts(userPostsData);
+      } catch (error) {
+        console.error("ユーザー情報の取得に失敗しました:", error);
+      }
+    };
+
+    fetchUserPostsData();
+  }, []);
+
   if (!user) {
     return <div>読み込み中...</div>;
   }
@@ -38,7 +58,7 @@ export default function MyPage() {
     <div>
       <UserProfile user={user} />
       <PostInput onPostSuccess={handleReload} />
-      <UserPostView posts={user.posts || []} />
+      <UserPostView posts={userPosts.posts || []} />
     </div>
   );
 }
@@ -51,10 +71,10 @@ const UserProfile = ({ user }) => {
           <h1 className="text-4xl font-bold">{user.name}</h1>
           <div className="flex space-x-2">
             <Button variant="ghost" asChild>
-              <Link href="/following">フォロー{user.following}</Link>
+              <Link href="mypage/following">フォロー{user.following}</Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link href="/followers">フォロワー{user.followers}</Link>
+              <Link href="mypage/followers">フォロワー{user.followers}</Link>
             </Button>
           </div>
         </div>
@@ -65,7 +85,12 @@ const UserProfile = ({ user }) => {
         </Button>
       </div>
       <div className="mt-2">
-        <label className="block text-gray-700">主なワーク:</label>
+        <label className="block text-gray-700">主なワーク:{user.work}</label>
+      </div>
+      <div className="mt-2">
+        <label className="block text-gray-700">
+          プロフィール文:{user.profile_text}
+        </label>
       </div>
     </div>
   );

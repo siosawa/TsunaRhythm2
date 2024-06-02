@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
