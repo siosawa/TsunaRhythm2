@@ -79,13 +79,13 @@ export default function UserPage() {
     const fetchUserPostsData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/posts/users/${id}`,
+          `http://localhost:3000/api/v1/posts/user/${id}`,
           {
             credentials: "include",
           }
         );
         const userPosts = await response.json();
-        setUserPosts(userPosts.posts || []);
+        setUserPosts(userPosts || []);
       } catch (error) {
         console.error("ユーザーポストの取得に失敗しました:", error);
       }

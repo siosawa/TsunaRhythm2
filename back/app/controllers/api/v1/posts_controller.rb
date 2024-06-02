@@ -59,6 +59,12 @@ module Api
         render json: { status: 'success', message: 'ポストが削除されました' }
       end
 
+      def user_posts
+        user_id = params[:user_id]
+        posts = Post.where(user_id: user_id)
+        render json: posts
+      end
+
       private
 
       def post_params
