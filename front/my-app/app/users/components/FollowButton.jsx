@@ -1,3 +1,4 @@
+// UserCardで使用
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
@@ -9,6 +10,19 @@ const FollowButton = ({
   setFollowStates,
   setFollowings,
 }) => {
+  const updateFollowState = (followed, relationshipId = null) => {
+    setFollowStates({
+      ...followStates,
+      [userId]: followed,
+      [`relationship_${userId}`]: relationshipId,
+    });
+    setFollowings((prev) => {
+      const updated = new Set(prev);
+      followed ? updated.add(userId) : updated.delete(userId);
+      return updated;
+    });
+  };
+
   const handleUnfollow = async () => {
     const relationshipId = followStates[`relationship_${userId}`];
     try {
@@ -19,16 +33,7 @@ const FollowButton = ({
         }
       );
       if (response.status === 200) {
-        setFollowStates({
-          ...followStates,
-          [userId]: false,
-          [`relationship_${userId}`]: null,
-        });
-        setFollowings((prev) => {
-          const updated = new Set(prev);
-          updated.delete(userId);
-          return updated;
-        });
+        updateFollowState(false);
       } else {
         console.error("フォロー解除に失敗しました");
       }
@@ -48,12 +53,7 @@ const FollowButton = ({
       );
       if (response.status === 201) {
         const data = response.data;
-        setFollowStates({
-          ...followStates,
-          [userId]: true,
-          [`relationship_${userId}`]: data.relationship_id,
-        });
-        setFollowings((prev) => new Set(prev).add(userId));
+        updateFollowState(true, data.relationship_id);
       } else {
         console.error("フォローに失敗しました");
       }
