@@ -1,3 +1,6 @@
+// PagenationHandlerで使用
+// currentPage、totalPages、onPageChangeのプロパティを受け取り、
+// ユーザーが異なるページに移動できるようにボタンをレンダリング
 "use client";
 import React from "react";
 

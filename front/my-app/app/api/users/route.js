@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
-// export const GET = () => {
-//     return NextResponse.json({ hello: "hello" })
-// }
+
 export async function GET() {
     try {
         const res = await fetch('http://localhost:3000/api/v1/users');
@@ -18,3 +16,11 @@ export async function GET() {
     }
 }
 
+// export async function GET() {
+//   const users = [
+//     { id: 1, name: "User 1", created_at: "2023-01-01", posts_count: 10 },
+//     { id: 2, name: "User 2", created_at: "2023-02-01", posts_count: 20 },
+//     // 他のユーザーのデータ...
+//   ];
+//   return NextResponse.json(users);
+// }

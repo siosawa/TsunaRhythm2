@@ -1,7 +1,14 @@
+import axios from "axios";
+
 export default async function Test() {
-  const users = await fetch("http://localhost:3000/api/v1/users", {
-    next: { revalidate: 10 },
-  }).then((res) => res.json());
+  let users = [];
+  try {
+    const response = await axios.get("/api/users");
+    users = response.data;
+  } catch (error) {
+    console.error("Error fetching users:", error.message || error);
+    return <div>Error fetching users: {error.message || "Unknown error"}</div>;
+  }
 
   return (
     <>
