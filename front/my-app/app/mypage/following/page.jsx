@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import UsersPagination from "@/app/users/components/UsersComponents";
+import UsersPagination from "@/app/users/components/UsersPagination";
 
 const FollowingList = () => {
   const [following, setFollowing] = useState([]);
