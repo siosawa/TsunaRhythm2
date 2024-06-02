@@ -12,9 +12,11 @@ module Api
         page = params[:page].to_i > 0 ? params[:page].to_i : 1
         
         users = User
-                  .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text,users.avatar')
+                  .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text, users.avatar,
+                           (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
+                           (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
                   .left_joins(:posts)
-                  .group('users.id, users.name, users.created_at, users.work, users.profile_text,users.avatar')
+                  .group('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar')
                   .limit(per_page)
                   .offset((page - 1) * per_page)
       
@@ -22,7 +24,7 @@ module Api
         total_pages = (total_users.to_f / per_page).ceil
       
         render json: {
-          users: users.as_json(only: [:id, :name, :created_at, :work, :profile_text, :avatar], methods: [:posts_count]),
+          users: users.as_json(only: [:id, :name, :created_at, :work, :profile_text, :avatar], methods: [:posts_count, :followers_count, :following_count]),
           total_pages: total_pages,
           current_page: page
         }
@@ -30,18 +32,22 @@ module Api
 
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
-        @user = User.find(params[:id])
-        render json: @user
+        @user = User
+                  .select('users.*, 
+                           (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
+                           (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
+                  .find(params[:id])
+        render json: @user.as_json(methods: [:followers_count, :following_count])
       end
 
       def create
         Rails.logger.info 'ユーザー作成処理を開始します。'
         @user = User.new(user_params)
         if @user.save
-        Rails.logger.info "ユーザー(ID: #{@user.id})が正常に保存されました。"
+          Rails.logger.info "ユーザー(ID: #{@user.id})が正常に保存されました。"
           render json: { message: 'ユーザーが正常に作成されました', user: @user }, status: :created
         else
-        Rails.logger.warn 'ユーザーの保存に失敗しました。'
+          Rails.logger.warn 'ユーザーの保存に失敗しました。'
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
