@@ -1,3 +1,5 @@
+// 現在のページとユーザーIDに基づいてユーザー情報とフォロー情報をAPIから取得し
+// 状態を更新
 import { useEffect } from "react";
 import axios from "axios"; // axiosをインポート
 
