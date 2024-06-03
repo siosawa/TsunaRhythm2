@@ -33,12 +33,17 @@ module Api
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
         @user = User
-                  .select('users.*, 
+                  .select('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar,
+                           (SELECT COUNT(1) FROM posts WHERE posts.user_id = users.id) AS posts_count,
                            (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
                            (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
                   .find(params[:id])
-        render json: @user.as_json(methods: [:followers_count, :following_count])
+        render json: @user.as_json(
+          except: [:email, :password_digest]
+        )
       end
+      
+      
 
       def create
         Rails.logger.info 'ユーザー作成処理を開始します。'
@@ -142,7 +147,10 @@ module Api
         user = User.find(params[:id])
         relationships = user.send(relationship_type).includes(relationship_model).map do |related_user|
           relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
-          related_user.attributes.merge(relationship_id: relationship.id)
+          related_user.attributes.merge(relationship_id: relationship.id,
+          followers_count: related_user.followers.count,
+          following_count: related_user.following.count,
+          posts_count: related_user.posts.count)
         end
 
         total_users = relationships.size
