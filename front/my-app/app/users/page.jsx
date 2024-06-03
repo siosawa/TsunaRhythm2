@@ -1,11 +1,9 @@
-// useFetchUsersでフォロー・フォロー解除のためのデータフェッチと
-
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import UserCard from "./components/UserCard";
-import useFetchUsers from "./components/useFetchUsers";
-import PaginationHandler from "./components/PagenationHandler";
+import UserCard from "@/app/users/components/UserCard";
+import FetchUsers from "@/app/users/components/FetchUsers";
+import PaginationHandler from "@/app/users/components/PagenationHandler";
 
 // メインコンポーネント
 const UsersList = () => {
@@ -13,7 +11,7 @@ const UsersList = () => {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [userId, setUserId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [followings, setFollowings] = useState(new Set());
   const [followStates, setFollowStates] = useState({});
 
@@ -27,7 +25,7 @@ const UsersList = () => {
           }
         );
         const userData = response.data;
-        setUserId(userData.id);
+        setCurrentUserId(userData.id);
       } catch (error) {
         console.error("現在のユーザー情報の取得に失敗しました:", error);
       }
@@ -36,9 +34,9 @@ const UsersList = () => {
     fetchCurrentUser();
   }, []);
 
-  useFetchUsers(
+  FetchUsers(
     currentPage,
-    userId,
+    currentUserId,
     setUsers,
     setTotalPages,
     setFollowings,
