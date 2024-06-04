@@ -6,6 +6,7 @@ import Link from "next/link";
 import EditPostModal from "@/app/diarys/components/EditPostModal";
 import PostDelete from "@/app/diarys/components/PostDelete";
 import PostPagination from "@/app/diarys/components/PostPagination";
+import { Button } from "@/components/ui/button";
 
 const PostView = ({ reload }) => {
   const [posts, setPosts] = useState([]);
@@ -102,12 +103,12 @@ const PostView = ({ reload }) => {
               <div className="space-x-2">
                 {post.user_id === post.current_user_id && (
                   <>
-                    <button
+                    <Button
+                      className="text-black bg-transparent hover:bg-gray-100"
                       onClick={() => handleEditClick(post)}
-                      className="px-4 py-2 bg-yellow-500 text-white rounded-md"
                     >
                       編集
-                    </button>
+                    </Button>
                     <PostDelete
                       postId={post.id}
                       posts={posts}
