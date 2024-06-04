@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import UserCard from "@/app/users/components/UserCard";
-import FetchUsers from "@/app/users/components/FetchUsers";
+import FetchFollowing from "@/app/users/[userId]/following/components/FetchFollowing";
 import PaginationHandler from "@/app/users/components/PagenationHandler";
 
 // メインコンポーネント
@@ -34,22 +34,18 @@ const UsersList = () => {
     fetchCurrentUser();
   }, []);
 
-  FetchUsers(
-    currentPage,
-    currentUserId,
-    setUsers,
-    setTotalPages,
-    setFollowings,
-    setFollowStates,
-    setError
-  );
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div className="p-4">
+      <FetchFollowing
+        currentPage={currentPage}
+        currentUserId={currentUserId}
+        setUsers={setUsers}
+        setTotalPages={setTotalPages}
+        setFollowings={setFollowings}
+        setFollowStates={setFollowStates}
+        setError={setError}
+      />
+      {error && <div>{error}</div>}
       {users?.map((user) => (
         <UserCard
           key={user.id}

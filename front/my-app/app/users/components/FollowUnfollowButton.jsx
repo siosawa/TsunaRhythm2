@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 
 // フォロー・フォロー解除コンポーネント
-const FollowButton = ({
+const FollowUnfollowButton = ({
   userId,
   isFollowing,
   followStates,
@@ -72,4 +72,4 @@ const FollowButton = ({
   );
 };
 
-export default FollowButton;
+export default FollowUnfollowButton;

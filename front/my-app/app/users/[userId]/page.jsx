@@ -56,7 +56,7 @@ const UserPostView = ({ posts }) => {
 };
 
 export default function UserPage() {
-  const { id } = useParams();
+  const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
 
@@ -64,7 +64,7 @@ export default function UserPage() {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/users/${id}`,
+          `http://localhost:3000/api/v1/users/${userId}`,
           {
             credentials: "include",
           }
@@ -79,7 +79,7 @@ export default function UserPage() {
     const fetchUserPostsData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/posts/user/${id}`,
+          `http://localhost:3000/api/v1/posts/user/${userId}`,
           {
             credentials: "include",
           }
@@ -93,7 +93,7 @@ export default function UserPage() {
 
     fetchUserData();
     fetchUserPostsData();
-  }, [id]);
+  }, [userId]);
 
   if (!user) return <div>読み込み中...</div>;
 

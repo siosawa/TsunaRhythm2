@@ -1,28 +1,59 @@
-import axios from "axios";
+// app/test/page.jsx
+"use client";
 
-export default async function Test() {
-  let users = [];
-  try {
-    const response = await axios.get("/api/users");
-    users = response.data;
-  } catch (error) {
-    console.error("Error fetching users:", error.message || error);
-    return <div>Error fetching users: {error.message || "Unknown error"}</div>;
+import { useEffect, useState } from "react";
+
+const Home = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/v1/users/59/following?page=1"
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const jsonData = await response.json();
+        console.log(jsonData);
+
+        // Access the 'users' property from the response data
+        if (jsonData.users && Array.isArray(jsonData.users)) {
+          setData(jsonData.users);
+        } else {
+          throw new Error("Data format is not as expected");
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
   }
 
   return (
-    <>
-      <div>SSR Page</div>
+    <div>
+      <h1>Following List</h1>
       <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            <p>ID: {user.id}</p>
-            <p>Name: {user.name}</p>
-            <p>Created At: {new Date(user.created_at).toLocaleString()}</p>
-            <p>Posts Count: {user.posts_count}</p>
-          </li>
+        {data.map((item) => (
+          <li key={item.id}>{item.name}</li>
         ))}
       </ul>
-    </>
+    </div>
   );
-}
+};
+
+export default Home;

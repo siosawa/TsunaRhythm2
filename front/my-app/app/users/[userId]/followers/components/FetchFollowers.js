@@ -1,23 +1,25 @@
-// 現在のページとユーザーIDに基づいてユーザー情報とフォロー情報をAPIから取得し
-// 状態を更新
 import { useEffect } from "react";
-import axios from "axios"; // axiosをインポート
+import axios from "axios";
+import { useParams } from 'next/navigation';
 
 // ユーザー情報取得コンポーネント
-const useFetchUsers = (
+const FetchFollowers = ({
   currentPage,
-  userId,
+  currentUserId,
   setUsers,
   setTotalPages,
   setFollowings,
   setFollowStates,
   setError
-) => {
+}) => {
+  const { userId } = useParams();
+  console.log( userId )
+
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchFollowers = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/v1/users?page=${currentPage}`,
+          `http://localhost:3000/api/v1/users/${userId}/followers?page=${currentPage}`,
           {
             withCredentials: true,
           }
@@ -36,11 +38,11 @@ const useFetchUsers = (
       }
     };
 
-    const fetchFollowing = async () => {
-      if (userId) {
+    const fetchFollowingId = async () => {
+      if (currentUserId) {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/v1/users/${userId}/following`,
+            `http://localhost:3000/api/v1/users/${currentUserId}/following`,
             {
               withCredentials: true,
             }
@@ -62,12 +64,16 @@ const useFetchUsers = (
       }
     };
 
-    fetchUsers();
     if (userId) {
-      fetchFollowing();
+      fetchFollowers();
     }
-  }, [currentPage, userId]);
+    if (currentUserId) {
+      fetchFollowingId();
+    }
+  }, [currentPage, currentUserId, userId]);
+
+  return null; 
 };
 
-export default useFetchUsers; 
+export default FetchFollowers;
 
