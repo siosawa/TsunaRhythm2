@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 const PostDelete = ({ postId, posts, setPosts }) => {
   const handleDelete = async () => {
@@ -14,12 +15,12 @@ const PostDelete = ({ postId, posts, setPosts }) => {
   };
 
   return (
-    <button
+    <Button
       onClick={handleDelete}
-      className="px-4 py-2 bg-red-500 text-white rounded-md"
+      className="text-black bg-transparent hover:bg-gray-100"
     >
       削除
-    </button>
+    </Button>
   );
 };
 
