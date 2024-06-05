@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import ja from "date-fns/locale/ja";
@@ -8,8 +8,9 @@ import PostDelete from "@/app/diarys/components/PostDelete";
 import PostPagination from "@/app/diarys/components/PostPagination";
 import { Button } from "@/components/ui/button";
 import FetchUserPosts from "./FetchUserPosts";
+import UserProfile from "./UserProfile";
 
-const UserPostsView = ({ reload }) => {
+const UserPostsView = ({ reload, user }) => {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -52,8 +53,28 @@ const UserPostsView = ({ reload }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchUserPostsData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/posts/user/${user.id}`,
+          {
+            credentials: "include",
+          }
+        );
+        const userPosts = await response.json();
+        setUserPosts(userPosts.posts || []);
+      } catch (error) {
+        console.error("ユーザーポストの取得に失敗しました:", error);
+      }
+    };
+
+    fetchUserPostsData();
+  }, [user.id, reload]);
+
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="max-w-2xl mx-auto p-4 bg-white rounded-3xl shadow-custom-dark">
+      <UserProfile user={user} /> {/* ここで使用 */}
       {posts.map((post) => {
         const formattedDate = format(
           new Date(post.created_at),
