@@ -45,8 +45,9 @@ const Login = () => {
       setSuccess("ログインに成功しました");
       setError("");
       // ログイン成功後の処理はここに追加（例：リダイレクト）
-      setEmail("");
-      setPassword("");
+      window.location.href = `/rooms`;
+      // setEmail("");
+      // setPassword("");
     } catch (error) {
       setError("ログインに失敗しました");
     }
