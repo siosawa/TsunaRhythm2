@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,26 @@ import {
 const Setting = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    // ユーザー情報を取得する関数
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/v1/current_user", {
+          credentials: "include", // 必要に応じてクッキーを含める
+        });
+        if (res.ok) {
+          const user = await res.json();
+          setUserId(user.id); // ユーザーIDをステートに保存
+        }
+      } catch (err) {
+        console.error("ユーザー情報の取得に失敗しました:", err);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -36,7 +56,11 @@ const Setting = () => {
   };
 
   const handleUserProfile = () => {
-    window.location.href = "/mypage";
+    if (userId) {
+      window.location.href = `/users/${userId}`;
+    } else {
+      setError("ユーザーIDが取得できませんでした。");
+    }
   };
 
   const handleEditProfile = () => {
