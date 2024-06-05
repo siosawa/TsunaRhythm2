@@ -18,25 +18,30 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ja">
       <body className={cn(inter.className, "min-h-dvh relative")}>
-        <header className="container fixed top-0 left-0 right-0 h-16 flex items-center border-b justify-between bg-white z-10"> 
-          <h1 className="font-bold">TsunaRhythm</h1>
-          <ul className="navList flex gap-4">
-            {navList.map((item) => (
-              <li key={item.label}>
-                <Button variant="ghost" asChild>
-                  <Link href={item.href}>{item.label}</Link>
-                </Button>
-              </li>
-            ))}
-            <Settings />
-          </ul>
-        </header>
-        <main className="pt-16 pb-16"> 
-          {children}
-        </main>
-        <footer className="container fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white">
-          &copy;sawata
-        </footer>
+        <video autoPlay muted loop className="fixed top-0 left-0 w-full h-full object-cover z-0">
+          <source src="/background_movie.MP4" type="video/mp4" />
+        </video>
+          <div className="relative z-10">
+          <header className="container fixed top-0 left-0 right-0 h-16 flex items-center border-b justify-between bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
+            <h1 className="font-bold">TsunaRhythm</h1>
+            <ul className="navList flex gap-4">
+              {navList.map((item) => (
+                <li key={item.label}>
+                  <Button variant="ghost" asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </Button>
+                </li>
+              ))}
+              <Settings />
+            </ul>
+          </header>
+          <main className="pt-16 pb-28">
+            {children}
+          </main>
+          <footer className="container fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
+            &copy;sawata
+          </footer>
+        </div>
       </body>
     </html>
   );
