@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import PostInput from "@/app/diarys/components/PostInput";
+import PostView from "@/app/diarys/components/PostView";
 
 const UserProfile = ({ user }) => {
   return (
@@ -41,24 +43,15 @@ const UserProfile = ({ user }) => {
   );
 };
 
-const UserPostView = ({ posts }) => {
-  return (
-    <div>
-      {posts.map((post) => (
-        <div key={post.id} className="mb-4 p-4 border rounded shadow-sm">
-          <p className="font-bold text-lg">タイトル: {post.title}</p>
-          <p>投稿: {post.content}</p>
-          <p className="text-gray-500 text-sm">送信日時: {post.created_at}</p>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export default function UserPage() {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [reload, setReload] = useState(false);
+
+  const handleReload = () => {
+    setReload(!reload);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -85,7 +78,7 @@ export default function UserPage() {
           }
         );
         const userPosts = await response.json();
-        setUserPosts(userPosts || []);
+        setUserPosts(userPosts.posts || []);
       } catch (error) {
         console.error("ユーザーポストの取得に失敗しました:", error);
       }
@@ -93,14 +86,24 @@ export default function UserPage() {
 
     fetchUserData();
     fetchUserPostsData();
-  }, [userId]);
+  }, [userId, reload]);
 
   if (!user) return <div>読み込み中...</div>;
 
   return (
     <div className="container mx-auto p-6">
       <UserProfile user={user} />
-      <UserPostView posts={userPosts} />
+      <div className="flex items-center justify-between mt-4">
+        <PostInput onPostSuccess={handleReload} />
+        <Button
+          variant="ghost"
+          asChild
+          className="bg-blue-500 text-white px-4 py-2 rounded-full"
+        >
+          <Link href="/mypage">自分の日記</Link>
+        </Button>
+      </div>
+      <PostView reload={reload} userId={userId} userPosts={userPosts} />
     </div>
   );
 }
