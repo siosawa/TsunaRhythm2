@@ -63,21 +63,25 @@ export default function RootLayout({ children }) {
         <div className="relative z-10">
           <header className="fixed top-0 left-0 right-0 h-16 px-16 flex items-center border-b justify-between bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
             <h1 className="font-bold">TsunaRhythm</h1>
-            <div className="md:hidden">
-              <Button variant="ghost" onClick={toggleMenu}>
-                <TbMenu size={24} />
-              </Button>
-            </div>
-            <ul className="hidden md:flex gap-4">
-              {navList.map((item) => (
-                <li key={item.label}>
-                  <Button variant="ghost" asChild>
-                    <Link href={item.href}>{item.label}</Link>
+            {currentUser && (
+              <>
+                <div className="md:hidden">
+                  <Button variant="ghost" onClick={toggleMenu}>
+                    <TbMenu size={24} />
                   </Button>
-                </li>
-              ))}
-              <Settings />
-            </ul>
+                </div>
+                <ul className="hidden md:flex gap-4">
+                  {navList.map((item) => (
+                    <li key={item.label}>
+                      <Button variant="ghost" asChild>
+                        <Link href={item.href}>{item.label}</Link>
+                      </Button>
+                    </li>
+                  ))}
+                  <Settings />
+                </ul>
+              </>
+            )}
           </header>
           <main className="pt-16 pb-28">
             {children}
