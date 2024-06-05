@@ -4,6 +4,33 @@ import axios from "axios";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+const PostInput = ({ onPostSuccess }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex items-center mb-4">
+        <Button
+          onClick={openModal}
+          className="bg-green-500 text-white py-4 px-4 rounded-full fixed bottom-20 right-16 w-24 h-24"
+        >
+          日記を書く
+        </Button>
+      </div>
+      <PostInputModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onPostSuccess={onPostSuccess}
+      />
+    </div>
+  );
+};
+
+export default PostInput;
+
 const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -157,47 +184,3 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     </div>
   );
 };
-
-const PostInput = ({ onPostSuccess }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">ポスト管理</h1>
-      <div className="flex items-center mb-4">
-        <button
-          onClick={openModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          日記を書く
-        </button>
-      </div>
-      <PostInputModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onPostSuccess={onPostSuccess}
-      />
-      <div className="flex items-center mt-4">
-        <Button
-          variant="ghost"
-          asChild
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-        >
-          <Link href="/mypage">自分の日記</Link>
-        </Button>
-        <Button
-          variant="ghost"
-          asChild
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-        >
-          <Link href="/diarys">みんなの日記</Link>
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-export default PostInput;

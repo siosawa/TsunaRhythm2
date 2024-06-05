@@ -94,7 +94,7 @@ module Api
         end
       end
 
-# パスワード変更アクション
+      # パスワード変更アクション
       def update_password
         if current_user.authenticate(params[:current_password])
           if current_user.update(password: params[:new_password])

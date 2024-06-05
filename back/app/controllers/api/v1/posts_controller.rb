@@ -61,14 +61,28 @@ module Api
 
       def user_posts
         user_id = params[:user_id]
-        posts = Post.where(user_id: user_id)
-        render json: posts
+        posts_query = Post.where(user_id: user_id).includes(:user)
+        
+        @posts = Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
+        
+        posts_with_current_user_id = @posts.map do |post|
+          post.attributes.merge(
+            user: { name: post.user.name }, 
+            current_user_id: current_user.id
+          )
+        end
+
+        render json: {
+          posts: posts_with_current_user_id,
+          current_page: @posts.current_page,
+          total_pages: @posts.total_pages
+        }
       end
 
       private
 
       def post_params
-        params.require(:post).permit(:title, :content )
+        params.require(:post).permit(:title, :content)
       end
 
       def correct_user
