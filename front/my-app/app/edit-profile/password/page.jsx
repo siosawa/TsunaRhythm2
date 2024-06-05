@@ -95,7 +95,7 @@ const EditPassword = () => {
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-24">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+      <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">パスワード編集</h1>
         </div>

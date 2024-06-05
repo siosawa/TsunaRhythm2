@@ -52,8 +52,8 @@ export default function UserPage() {
   if (!user) return <div>読み込み中...</div>;
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between mt-4">
+    <div className="container mx-auto">
+      <div className="flex items-center justify-between">
         <PostInput onPostSuccess={handleReload} />
       </div>
       <UserPostsView

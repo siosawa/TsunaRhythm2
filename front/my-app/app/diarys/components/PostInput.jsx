@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const PostInput = ({ onPostSuccess }) => {
@@ -139,7 +138,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2">
+      <div className="bg-white p-6 shadow-lg w-11/12 md:w-2/3 lg:w-1/2 rounded-3xl">
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -167,14 +166,14 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+              className="bg-gray-500 text-white px-4 py-2 rounded-3xl mr-2"
             >
               キャンセル
             </button>
             <button
               type="submit"
               ref={submitButtonRef}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-blue-500 text-white px-4 py-2 rounded-3xl"
             >
               投稿
             </button>

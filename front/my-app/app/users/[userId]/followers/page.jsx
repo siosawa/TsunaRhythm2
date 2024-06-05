@@ -35,7 +35,7 @@ const UsersList = () => {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 mt-8">
       <FetchFollowers
         currentPage={currentPage}
         currentUserId={currentUserId}

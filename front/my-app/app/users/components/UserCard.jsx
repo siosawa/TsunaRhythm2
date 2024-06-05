@@ -19,7 +19,7 @@ const UserCard = ({
   return (
     <div
       key={user.id}
-      className="bg-white shadow-md rounded-lg p-6 mb-5 mx-3 flex justify-between items-center md:mx-20 lg:mx-52 2xl:mx-96"
+      className="bg-white shadow-md rounded-3xl p-6 mb-5 mx-3 flex justify-between items-center md:mx-20 lg:mx-52 2xl:mx-96"
     >
       <div>
         <Link href={`/users/${user.id}`}>

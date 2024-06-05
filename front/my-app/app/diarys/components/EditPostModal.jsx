@@ -79,7 +79,7 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2">
+      <div className="bg-white p-6 shadow-lg w-11/12 md:w-2/3 lg:w-1/2 rounded-3xl">
         {error && <div className="text-red-500">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -89,7 +89,7 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
               value={title}
               onChange={handleTitleChange}
               ref={titleRef}
-              className="w-full px-3 py-6 text-3xl rounded transition-all outline-none"
+              className="w-full px-3 py-6 text-3xl transition-all outline-none"
             />
           </div>
           <div className="mb-4">
@@ -99,21 +99,21 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
               value={content}
               onChange={handleContentChange}
               ref={contentRef}
-              className="w-full px-3 h-96 rounded transition-all outline-none"
+              className="w-full px-3 h-96 transition-all outline-none"
             />
           </div>
           <div className="flex items-center justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+              className="bg-gray-500 text-white px-4 py-2 mr-2 rounded-3xl"
             >
               キャンセル
             </button>
             <button
               type="submit"
               ref={submitButtonRef}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-blue-500 text-white px-4 py-2 rounded-3xl"
             >
               保存
             </button>
