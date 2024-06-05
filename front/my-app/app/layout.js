@@ -91,8 +91,8 @@ export default function RootLayout({ children }) {
           </footer>
           {/* ポップアップメニュー */}
           {isMenuOpen && currentUser && (
-            <div className="fixed top-16 left-0 right-0 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm z-30 p-4 flex flex-col gap-4">
-              {navList.map((item) => (
+            <div className={`fixed top-16 right-10 left-10 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm z-30 p-4 flex flex-col gap-4 shadow-custom-dark rounded-b-3xl ${isMenuOpen ? 'animate-slide-down' : ''}`}>           
+               {navList.map((item) => (
                 <Button key={item.label} variant="ghost" asChild onClick={handleMenuClick}>
                   <Link href={item.href}>{item.label}</Link>
                 </Button>
