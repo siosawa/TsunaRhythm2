@@ -1,47 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import PostInput from "@/app/diarys/components/PostInput";
 import UserPostsView from "@/app/users/[userId]/components/UserPostsView";
-
-const UserProfile = ({ user }) => {
-  return (
-    <div className="container mx-auto p-6">
-      <div className="flex items-center space-x-4">
-        <div>
-          <h1 className="text-4xl font-bold">{user.name}</h1>
-          <div className="flex space-x-2">
-            <Button variant="ghost" asChild>
-              <Link href={`/users/${user.id}/following`}>
-                フォロー {user.following_count}
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link href={`/users/${user.id}/followers`}>
-                フォロワー {user.followers_count}
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div className="mt-4">
-        <Button variant="ghost" asChild>
-          <Link href="/edit-profile">プロフィール編集</Link>
-        </Button>
-      </div>
-      <div className="mt-2">
-        <label className="block text-gray-700">主なワーク: {user.work}</label>
-      </div>
-      <div className="mt-2">
-        <label className="block text-gray-700">
-          プロフィール文: {user.profile_text}
-        </label>
-      </div>
-    </div>
-  );
-};
 
 export default function UserPage() {
   const { userId } = useParams();
@@ -92,11 +53,15 @@ export default function UserPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <UserProfile user={user} />
       <div className="flex items-center justify-between mt-4">
         <PostInput onPostSuccess={handleReload} />
       </div>
-      <UserPostsView reload={reload} userId={userId} userPosts={userPosts} />
+      <UserPostsView
+        reload={reload}
+        userId={userId}
+        userPosts={userPosts}
+        user={user}
+      />
     </div>
   );
 }
