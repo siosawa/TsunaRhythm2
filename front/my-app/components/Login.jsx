@@ -67,7 +67,7 @@ const Login = () => {
   }, [email, password, isGuestLogin]); // isGuestLoginを依存配列に追加
 
   return (
-    <div className="container shadow-lg p-10 max-w-72 flex flex-col items-center space-y-3 fixed top-20 right-0 lg:right-10 2xl:right-72 my-10 mx-10 rounded-2xl">
+    <div className="container shadow-lg p-10 max-w-72 flex flex-col items-center space-y-3 fixed top-20 right-0 lg:right-10 2xl:right-72 my-10 mx-10 rounded-2xl bg-white">
       <p></p>
       <h1 className="text-4xl">ようこそ！</h1>
       <p></p>
