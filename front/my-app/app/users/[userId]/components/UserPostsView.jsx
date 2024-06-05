@@ -1,3 +1,5 @@
+// 個別ユーザーのポストを作成しつつ、ユーザー詳細ページをインポートして合体させている。ファイル名は改名した方が良い。
+// ディレクトリ構成のリファクタリングももっとできそう
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
