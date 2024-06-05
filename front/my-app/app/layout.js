@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           <source src="/background_movie.MP4" type="video/mp4" />
         </video>
           <div className="relative z-10">
-          <header className="container fixed top-0 left-0 right-0 h-16 flex items-center border-b justify-between bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
+          <header className="fixed top-0 left-0 right-0 h-16 px-16 flex items-center border-b justify-between bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
             <h1 className="font-bold">TsunaRhythm</h1>
             <ul className="navList flex gap-4">
               {navList.map((item) => (
@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
           <main className="pt-16 pb-28">
             {children}
           </main>
-          <footer className="container fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
+          <footer className="fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
             &copy;sawata
           </footer>
         </div>
