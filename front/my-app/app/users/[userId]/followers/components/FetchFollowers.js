@@ -13,7 +13,6 @@ const FetchFollowers = ({
   setError
 }) => {
   const { userId } = useParams();
-  console.log( userId )
 
   useEffect(() => {
     const fetchFollowers = async () => {
