@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import PostInput from "@/app/diarys/components/PostInput";
-import PostView from "@/app/diarys/components/PostView";
+import UserPostsView from "@/app/users/[userId]/components/UserPostsView";
 
 const UserProfile = ({ user }) => {
   return (
@@ -103,7 +103,7 @@ export default function UserPage() {
           <Link href="/mypage">自分の日記</Link>
         </Button>
       </div>
-      <PostView reload={reload} userId={userId} userPosts={userPosts} />
+      <UserPostsView reload={reload} userId={userId} userPosts={userPosts} />
     </div>
   );
 }
