@@ -8,7 +8,7 @@ import Settings from "@/components/Settings";
 const inter = Inter({ subsets: ["latin"] });
 
 const navList = [
-  { label: "ホーム", href: "/" },
+  { label: "ホーム", href: "/home" }, 
   { label: "ルーム一覧・作成", href: "/rooms" },
   { label: "みんなの日記", href: "/diarys" },
   { label: "ユーザー", href: "/users" },
