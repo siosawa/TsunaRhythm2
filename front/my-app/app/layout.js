@@ -17,7 +17,7 @@ const navList = [
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
-      <body className={cn(inter.className, "min-h-dvh")}>
+      <body className={cn(inter.className, "min-h-dvh relative")}> 
         <header className="container h-16 flex items-center border-b justify-between">
           <h1 className="font-bold">TsunaRhythm</h1>
           <ul className="navList flex gap-4">
@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
           </ul>
         </header>
         {children}
-        <footer className="container sticky top-full h-16 flex items-center justify-center border-t ">
+        <footer className="container fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white">
           &copy;sawata
         </footer>
       </body>
