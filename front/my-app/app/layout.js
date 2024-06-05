@@ -1,9 +1,12 @@
+"use client"
+import { useState } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Settings from "@/components/Settings";
+import { TbMenu } from "react-icons/tb"; // ハンバーガーメニューアイコンをインポート
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,16 +18,27 @@ const navList = [
 ];
 
 export default function RootLayout({ children }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // ハンバーガーメニューの状態を管理
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <html lang="ja">
       <body className={cn(inter.className, "min-h-dvh relative")}>
         <video autoPlay muted loop className="fixed top-0 left-0 w-full h-full object-cover z-0">
           <source src="/background_movie.MP4" type="video/mp4" />
         </video>
-          <div className="relative z-10">
+        <div className="relative z-10">
           <header className="fixed top-0 left-0 right-0 h-16 px-16 flex items-center border-b justify-between bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
             <h1 className="font-bold">TsunaRhythm</h1>
-            <ul className="navList flex gap-4">
+            <div className="md:hidden">
+              <Button variant="ghost" onClick={toggleMenu}>
+                <TbMenu size={24} />
+              </Button>
+            </div>
+            <ul className={`navList flex gap-4 ${isMenuOpen ? 'block' : 'hidden'} md:flex`}>
               {navList.map((item) => (
                 <li key={item.label}>
                   <Button variant="ghost" asChild>
