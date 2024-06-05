@@ -144,7 +144,7 @@ const ProfileReadPage = () => {
           {user && user.avatar && user.avatar.url && (
             <Image
               src={`http://localhost:3000${user.avatar.url}`} // 完全なURLに修正
-              alt="User Avatar"
+              alt={user.name}
               width={96}
               height={96}
               className="rounded-full"
