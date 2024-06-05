@@ -4,8 +4,8 @@ module Api
       include ActionController::Cookies
       include SessionsHelper
 
-      # before_action :logged_in_user, only: %i[index edit update destroy following followers update_password]
-      # before_action :correct_user, only: %i[edit update destroy update_password]
+      before_action :logged_in_user, only: %i[index edit update destroy following followers update_password]
+      before_action :correct_user, only: %i[edit update destroy update_password]
 
       def index
         per_page = 10
