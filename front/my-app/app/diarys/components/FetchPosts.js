@@ -21,7 +21,7 @@ const FetchPosts = ({ currentPage, setPosts, setTotalPages, reload }) => {
     fetchPosts();
   }, [currentPage, reload]);
 
-  return null; // レンダリングする要素がないため、nullを返す
+  return null;
 };
 
 export default FetchPosts;
