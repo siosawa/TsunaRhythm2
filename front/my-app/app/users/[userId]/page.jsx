@@ -95,13 +95,6 @@ export default function UserPage() {
       <UserProfile user={user} />
       <div className="flex items-center justify-between mt-4">
         <PostInput onPostSuccess={handleReload} />
-        <Button
-          variant="ghost"
-          asChild
-          className="bg-blue-500 text-white px-4 py-2 rounded-full"
-        >
-          <Link href="/mypage">自分の日記</Link>
-        </Button>
       </div>
       <UserPostsView reload={reload} userId={userId} userPosts={userPosts} />
     </div>
