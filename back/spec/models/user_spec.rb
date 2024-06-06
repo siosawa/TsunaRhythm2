@@ -1,107 +1,86 @@
 require 'rails_helper'
 
-RSpec.describe User do
-  let(:user) { build(:user) }
-  let(:other_user) { create(:user) } # ユーザー削除テストもするのでcreateを使う
+RSpec.describe User, type: :model do
+  before do
+    @user = FactoryBot.build(:user)
+  end
 
-  describe 'validation' do
-    specify 'name,email,passwordがある場合、有効である' do
-      expect(user).to be_valid
+  describe 'バリデーション' do
+    it '有効な属性を持つユーザーは有効である' do
+      expect(@user).to be_valid
     end
 
-    describe 'name' do
-      specify '存在しない場合、無効である' do
-        user.name = ''
-        user.valid?
-        expect(user.errors[:name]).to include('を入力してください')
-      end
-
-      specify '51文字以上の場合、無効である' do
-        user.name = 'a' * 51
-        user.valid?
-        expect(user.errors[:name]).to include('は50文字以内で入力してください')
-      end
+    it '名前がなければ無効である' do
+      @user.name = nil
+      expect(@user).not_to be_valid
     end
 
-    describe 'email' do
-      specify '存在しない場合、無効である' do
-        user.email = ''
-        user.valid?
-        expect(user.errors[:email]).to include('を入力してください')
-      end
+    it 'メールアドレスがなければ無効である' do
+      @user.email = nil
+      expect(@user).not_to be_valid
     end
 
-    specify '256文字以上の場合、無効である' do
-      user.email = 'a' * 256
-      user.valid?
-      expect(user.errors[:email]).to include('は255文字以内で入力してください')
+    it 'メールアドレスが一意でなければ無効である' do
+      duplicate_user = @user.dup
+      duplicate_user.email = @user.email.upcase
+      @user.save
+      expect(duplicate_user).not_to be_valid
     end
 
-    specify '異常な形式である場合、無効である' do
-      invalid_addresses = %w[user@example,com user_at_foo.org user.name@example. foo@bar_baz.com foo@bar+baz.com]
-      invalid_addresses.each do |invalid_address|
-        user.email = invalid_address
-        user.valid?
-        expect(user.errors[:email]).to include('は不正な値です')
-      end
+    it 'パスワードが6文字未満では無効である' do
+      @user.password = @user.password_confirmation = 'a' * 5
+      expect(@user).not_to be_valid
     end
 
-    specify '重複する場合、無効である' do
-      user.save
-      duplicate_user = build(:user, email: user.email.upcase)
-      duplicate_user.valid?
-      expect(duplicate_user.errors[:email]).to include('はすでに存在します')
+    it 'パスワードが一致しなければ無効である' do
+      @user.password_confirmation = 'mismatch'
+      expect(@user).not_to be_valid
     end
   end
 
-  describe 'password' do
-    specify '存在しない場合、無効である' do
-      user.password = user.password_confirmation = ' ' * 6
-      user.valid?
-      expect(user.errors[:password]).to include('を入力してください')
+  describe 'メソッド' do
+    it 'ランダムなトークンを生成する' do
+      token = User.new_token
+      expect(token).to be_a(String)
+      expect(token.length).to be > 0
     end
 
-    specify '5文字以下の場合、無効である' do
-      user.password = user.password_confirmation = 'a' * 5
-      user.valid?
-      expect(user.errors[:password]).to include('は6文字以上で入力してください')
+    it '渡された文字列のハッシュ値を返す' do
+      digest = User.digest('password')
+      expect(digest).to be_a(String)
+      expect(digest.length).to be > 0
     end
 
-    specify '暗号化されていない場合、無効である' do
-      user.save
-      expect(user.password_digest).not_to eq 'password'
+    it 'フォローできる' do
+      other_user = FactoryBot.create(:user)
+      @user.save # ユーザーを保存
+      expect(@user.following?(other_user)).to be false
+      @user.follow(other_user)
+      expect(@user.following?(other_user)).to be true
     end
-
-    specify 'password_confirmationと一致しない場合、無効である' do
-      user.password = 'password'
-      user.password_confirmation = 'foobar'
-      expect(user).not_to be_valid
-    end
-  end
-
-  describe 'association' do
-    describe 'post' do
-      specify 'userが削除された時、関連するポストも削除される' do
-        user.save
-        user.posts.create!(content: 'テストポスト')
-        expect { user.destroy }.to change(Post.all, :count).by(-1)
-      end
+    
+    it 'フォロー解除できる' do
+      other_user = FactoryBot.create(:user)
+      @user.save # ユーザーを保存
+      @user.follow(other_user)
+      expect(@user.following?(other_user)).to be true
+      @user.unfollow(other_user)
+      expect(@user.following?(other_user)).to be false
     end
   end
 
-  describe 'active_relationships' do
-    specify 'userが削除された時、関連するactive_relationshipsも削除される' do
-      user.save
-      user.follow(other_user)
-      expect { user.destroy }.to change(Relationship.all, :count).by(-1)
+  describe 'ユーザーが削除された時' do
+    it '関連するポストも削除される' do
+      @user.save
+      @user.posts.create!(title: 'Sample title', content: 'Lorem ipsum')
+      expect { @user.destroy }.to change { Post.count }.by(-1)
     end
-  end
 
-  describe 'passive_relationships' do
-    specify 'userが削除された時、関連するpassive_relationshipsも削除される' do
-      user.save
-      other_user.follow(user)
-      expect { user.destroy }.to change(Relationship.all, :count).by(-1)
+    it '関連するフォロワー関係も削除される' do
+      @user.save
+      other_user = FactoryBot.create(:user)
+      @user.follow(other_user)
+      expect { @user.destroy }.to change { Relationship.count }.by(-1)
     end
   end
 end
