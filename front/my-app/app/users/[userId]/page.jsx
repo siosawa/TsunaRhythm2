@@ -9,9 +9,15 @@ export default function UserPage() {
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [reload, setReload] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const handleReload = () => {
     setReload(!reload);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
   useEffect(() => {
@@ -33,13 +39,14 @@ export default function UserPage() {
     const fetchUserPostsData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/posts/user/${userId}`,
+          `http://localhost:3000/api/v1/posts/user/${userId}?page=${currentPage}`,
           {
             credentials: "include",
           }
         );
         const userPosts = await response.json();
         setUserPosts(userPosts.posts || []);
+        setTotalPages(userPosts.total_pages || 1);
       } catch (error) {
         console.error("ユーザーポストの取得に失敗しました:", error);
       }
@@ -47,7 +54,7 @@ export default function UserPage() {
 
     fetchUserData();
     fetchUserPostsData();
-  }, [userId, reload]);
+  }, [userId, reload, currentPage]);
 
   if (!user) return <div>読み込み中...</div>;
 
@@ -61,6 +68,9 @@ export default function UserPage() {
         userId={userId}
         userPosts={userPosts}
         user={user}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
     </div>
   );

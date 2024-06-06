@@ -9,7 +9,6 @@ import EditPostModal from "@/app/diarys/components/EditPostModal";
 import PostDelete from "@/app/diarys/components/PostDelete";
 import PostPagination from "@/app/diarys/components/PostPagination";
 import { Button } from "@/components/ui/button";
-import FetchUserPosts from "./FetchUserPosts";
 import UserProfile from "./UserProfile";
 
 const UserPostsView = ({ reload, user }) => {
@@ -59,24 +58,25 @@ const UserPostsView = ({ reload, user }) => {
     const fetchUserPostsData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/posts/user/${user.id}`,
+          `http://localhost:3000/api/v1/posts/user/${user.id}?page=${currentPage}`,
           {
             credentials: "include",
           }
         );
         const userPosts = await response.json();
-        setUserPosts(userPosts.posts || []);
+        setPosts(userPosts.posts || []);
+        setTotalPages(userPosts.total_pages || 1);
       } catch (error) {
         console.error("ユーザーポストの取得に失敗しました:", error);
       }
     };
 
     fetchUserPostsData();
-  }, [user.id, reload]);
+  }, [user.id, reload, currentPage]);
 
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white rounded-3xl shadow-custom-dark">
-      <UserProfile user={user} /> {/* ここで使用 */}
+      <UserProfile user={user} />
       {posts.map((post) => {
         const formattedDate = format(
           new Date(post.created_at),
@@ -126,12 +126,6 @@ const UserPostsView = ({ reload, user }) => {
           </div>
         );
       })}
-      <FetchUserPosts
-        currentPage={currentPage}
-        setPosts={setPosts}
-        setTotalPages={setTotalPages}
-        reload={reload}
-      />
       <PostPagination
         currentPage={currentPage}
         totalPages={totalPages}
