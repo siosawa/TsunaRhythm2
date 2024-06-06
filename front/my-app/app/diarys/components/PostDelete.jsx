@@ -46,10 +46,18 @@ const PostDelete = ({ postId, posts, setPosts }) => {
               <div className="text-red-500 text-center mb-4">{error}</div>
             )}
             <div className="mt-4 flex justify-end space-x-2">
-              <Button variant="ghost" onClick={closeDialog}>
+              <Button
+                variant="secondary"
+                className="bg-gray-200 hover:bg-gray-300 rounded-3xl"
+                onClick={closeDialog}
+              >
                 キャンセル
               </Button>
-              <Button variant="destructive" onClick={handleDelete}>
+              <Button
+                variant="destructive"
+                className="rounded-3xl  bg-red-600 hover:bg-red-700"
+                onClick={handleDelete}
+              >
                 削除する
               </Button>
             </div>

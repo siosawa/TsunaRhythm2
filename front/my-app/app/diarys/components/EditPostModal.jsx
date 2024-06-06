@@ -106,14 +106,14 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 mr-2 rounded-3xl"
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mr-2 rounded-3xl"
             >
               キャンセル
             </button>
             <button
               type="submit"
               ref={submitButtonRef}
-              className="bg-blue-500 text-white px-4 py-2 rounded-3xl"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-3xl"
             >
               保存
             </button>
