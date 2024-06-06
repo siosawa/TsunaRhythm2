@@ -1,48 +1,40 @@
 require 'rails_helper'
 
-RSpec.describe Relationship do
-  let(:user) { create(:user) }
-  let(:other_user) { create(:user) }
-  let!(:active_relationship) { user.active_relationships.create(followed_id: other_user.id) }
-  let!(:passive_relationship) { user.passive_relationships.create(follower_id: other_user.id) }
+RSpec.describe Relationship, type: :model do
+  before do
+    @user1 = FactoryBot.create(:user)
+    @user2 = FactoryBot.create(:user)
+    @relationship = FactoryBot.build(:relationship, follower: @user1, followed: @user2)
+  end
 
-  describe 'validation' do
-    specify 'followed_idがある場合、有効である' do
-      expect(active_relationship).to be_valid
+  describe 'バリデーション' do
+    it '有効な属性を持つリレーションシップは有効である' do
+      expect(@relationship).to be_valid
     end
 
-    specify 'follower_idがある場合、有効である' do
-      expect(passive_relationship).to be_valid
+    it 'フォロワーIDがなければ無効である' do
+      @relationship.follower_id = nil
+      expect(@relationship).not_to be_valid
     end
 
-    describe 'followed_id' do
-      specify '存在しない場合、無効である' do
-        active_relationship.followed_id = ''
-        active_relationship.valid?
-        expect(active_relationship.errors[:followed_id]).to include('を入力してください')
-      end
+    it 'フォロイーIDがなければ無効である' do
+      @relationship.followed_id = nil
+      expect(@relationship).not_to be_valid
     end
 
-    describe 'follower_id' do
-      specify '存在しない場合、無効である' do
-        passive_relationship.follower_id = ''
-        passive_relationship.valid?
-        expect(passive_relationship.errors[:follower_id]).to include('を入力してください')
-      end
+    it '同じフォロワーとフォロイーの組み合わせは一意でなければ無効である' do
+      @relationship.save
+      duplicate_relationship = @relationship.dup
+      expect(duplicate_relationship).not_to be_valid
     end
 
-    describe 'uniqueness' do
-      specify 'followed_id,follower_idの組み合わせが重複する場合、無効である' do
-        duplicate_active_relationship = user.active_relationships.build(followed_id: other_user.id)
-        duplicate_active_relationship.valid?
-        expect(duplicate_active_relationship.errors[:follower_id]).to include('はすでに存在します')
-      end
+    # Relationshipモデルがfollowerとfollowedという2つの関連付けを持っていることを確認
+    it 'フォロワーに属している' do
+      expect(@relationship.follower).to eq(@user1)
+    end
 
-      specify 'follower_id,followed_idの組み合わせが重複する場合、無効である' do
-        duplicate_passive_relationship = user.passive_relationships.build(follower_id: other_user.id)
-        duplicate_passive_relationship.valid?
-        expect(duplicate_passive_relationship.errors[:followed_id]).to include('はすでに存在します')
-      end
+    it 'フォロイーに属している' do
+      expect(@relationship.followed).to eq(@user2)
     end
   end
 end
