@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :post do
     user
-    content { Faker::Lorem.paragraph_by_chars(number: 100) }
-    created_at { 10.minutes.ago }
+    title   { Faker::Lorem.characters(number: 56) }
+    content { Faker::Lorem.characters(number: 2050) }
   end
 end
