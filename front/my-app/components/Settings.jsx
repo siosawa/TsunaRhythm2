@@ -69,7 +69,7 @@ const Setting = () => {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full hover:bg-emerald-500 hover:text-white"
+                className="w-full hover:hover:bg-sky-400 hover:text-white"
               >
                 <NavigationMenuLink onClick={handleUserProfile}>
                   マイページ
@@ -78,7 +78,7 @@ const Setting = () => {
               <Button
                 variant="ghost"
                 asChil
-                className="hover:bg-emerald-500 hover:text-white"
+                className="hover:hover:bg-sky-400 hover:text-white"
               >
                 <NavigationMenuLink onClick={handleEditProfile}>
                   プロフィール編集
@@ -87,7 +87,7 @@ const Setting = () => {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full hover:bg-emerald-500 hover:text-white"
+                className="w-full hover:hover:bg-sky-400 hover:text-white"
               >
                 <NavigationMenuLink onClick={handleLogout}>
                   ログアウト

@@ -86,7 +86,7 @@ const PostView = ({ reload }) => {
               {post.user_id === post.current_user_id && (
                 <div className="flex justify-end space-x-3 mr-3">
                   <Button
-                    className="bg-sky-500 hover:bg-sky-600"
+                    className="bg-emerald-500 hover:bg-emerald-600"
                     onClick={() => handleEditClick(post)}
                   >
                     編集

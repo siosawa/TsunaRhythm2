@@ -14,7 +14,7 @@ const PostInput = ({ onPostSuccess }) => {
       <div className="flex items-center mb-4">
         <Button
           onClick={openModal}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-full fixed bottom-20 right-16 w-24 h-24"
+          className="bg-emerald-500 hover:bg-emerald-600 text-white py-4 px-4 rounded-full fixed bottom-20 right-16 w-24 h-24"
         >
           日記を書く
         </Button>
