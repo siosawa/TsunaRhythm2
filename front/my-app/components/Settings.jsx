@@ -1,16 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const Setting = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [userId, setUserId] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -36,30 +40,63 @@ const Setting = () => {
   };
 
   const handleUserProfile = () => {
-    window.location.href = "/mypage";
+    if (userId) {
+      window.location.href = `/users/${userId}`;
+    } else {
+      setError("ユーザーIDが取得できませんでした。");
+    }
   };
 
   const handleEditProfile = () => {
     window.location.href = "/edit-profile";
   };
 
+  // CurrentUserのデータを受け取り、idを抽出して設定
+  const handleSetCurrentUser = (userData) => {
+    setUserId(userData.id);
+  };
+
   return (
     <>
+      <FetchCurrentUser setCurrentUser={handleSetCurrentUser} />
       {message && <div className="text-green-500">{message}</div>}
       {error && <div className="text-red-500">{error}</div>}
-      <DropdownMenu>
-        <DropdownMenuTrigger>設定</DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleUserProfile}>
-            マイページ
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleEditProfile}>
-            プロフィール編集
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleLogout}>ログアウト</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>設定</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <Button
+                variant="ghost"
+                asChild
+                className="w-full hover:hover:bg-sky-400 hover:text-white"
+              >
+                <NavigationMenuLink onClick={handleUserProfile}>
+                  マイページ
+                </NavigationMenuLink>
+              </Button>
+              <Button
+                variant="ghost"
+                asChil
+                className="hover:hover:bg-sky-400 hover:text-white"
+              >
+                <NavigationMenuLink onClick={handleEditProfile}>
+                  プロフィール編集
+                </NavigationMenuLink>
+              </Button>
+              <Button
+                variant="ghost"
+                asChild
+                className="w-full hover:hover:bg-sky-400 hover:text-white"
+              >
+                <NavigationMenuLink onClick={handleLogout}>
+                  ログアウト
+                </NavigationMenuLink>
+              </Button>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     </>
   );
 };

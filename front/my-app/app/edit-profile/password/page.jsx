@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const EditPassword = () => {
   const [user, setUser] = useState(null);
@@ -7,30 +8,12 @@ const EditPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // success または error を格納
+  const [messageType, setMessageType] = useState("");
 
   const currentPasswordRef = useRef(null);
 
+  // コンポーネントがマウントされたときにカーソルを自動的に付ける
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/api/v1/current_user",
-          {
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        }
-      } catch (error) {
-        console.error("ユーザー情報の取得に失敗しました:", error);
-      }
-    };
-
-    fetchUserData();
-
     if (currentPasswordRef.current) {
       currentPasswordRef.current.focus();
     }
@@ -80,11 +63,11 @@ const EditPassword = () => {
       if (response.ok) {
         const updatedUserData = await response.json();
         setMessage("パスワードが正常に更新されました");
-        setMessageType("success"); // 成功メッセージ
+        setMessageType("success");
       } else {
         const errorData = await response.json();
         setMessage(errorData.errors.join(", "));
-        setMessageType("error"); // エラーメッセージ
+        setMessageType("error");
       }
     } catch (error) {
       console.error("ユーザーデータの更新中にエラーが発生しました:", error);
@@ -95,7 +78,8 @@ const EditPassword = () => {
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-24">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+      <FetchCurrentUser setCurrentUser={setUser} />
+      <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">パスワード編集</h1>
         </div>

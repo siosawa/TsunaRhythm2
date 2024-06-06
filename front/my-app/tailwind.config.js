@@ -69,13 +69,18 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "slide-down": {
+          "0%": { transform: "translateY(-100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "slide-down": "slide-down 0.5s ease-out forwards",
       },
       maxHeight: {
-        'post-content': '200px', // ポストのコンテンツ部分の最大高さを設定
+        "post-content": "200px", // ポストのコンテンツ部分の最大高さを設定
       },
     },
   },

@@ -19,29 +19,31 @@ const UserCard = ({
   return (
     <div
       key={user.id}
-      className="bg-white shadow-md rounded-lg p-6 mb-4 flex justify-between items-center"
+      className="bg-white shadow-md rounded-3xl p-6 mb-5 mx-3 flex justify-between items-center md:mx-20 lg:mx-52 2xl:mx-96"
     >
       <div>
         <Link href={`/users/${user.id}`}>
           <Button className="text-lg font-semibold mb-2 hover:underline bg-transparent text-black hover:bg-transparent">
-            名前: {user.name}
+            {user.name}
           </Button>
         </Link>
         <Link href={`/users/${user.id}/following`}>
           <Button className="text-lg font-semibold mb-2 hover:underline bg-transparent text-black hover:bg-transparent">
-            フォロー数: {user.following_count}
+            フォロー {user.following_count}
           </Button>
         </Link>
         <Link href={`/users/${user.id}/followers`}>
           <Button className="text-lg font-semibold mb-2 hover:underline bg-transparent text-black hover:bg-transparent">
-            フォロワー数: {user.followers_count}
+            フォロワー {user.followers_count}
           </Button>
         </Link>
-        <p className="text-gray-600 mb-1">ポスト数: {user.posts_count}</p>
-        <p className="text-gray-600 mb-1">ワーク: {user.work}</p>
-        <p className="text-gray-600">
-          アカウント作成日: {new Date(user.created_at).toLocaleDateString()}
+        <p className="text-gray-600 mb-1">
+          ポスト数: {user.posts_count} ワーク: {user.work}
         </p>
+        <p className="text-gray-800 mb-1">{user.profile_text}</p>
+        {/* <p className="text-gray-600">
+          アカウント作成日: {new Date(user.created_at).toLocaleDateString()}
+        </p> */}
       </div>
       <FollowUnfollowButton
         userId={user.id}
