@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import UserCard from "@/app/users/components/UserCard";
 import FetchFollowing from "@/app/users/[userId]/following/components/FetchFollowing";
 import PaginationHandler from "@/app/users/components/PagenationHandler";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 // メインコンポーネント
 const UsersList = () => {
@@ -15,27 +15,14 @@ const UsersList = () => {
   const [followings, setFollowings] = useState(new Set());
   const [followStates, setFollowStates] = useState({});
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/v1/current_user",
-          {
-            withCredentials: true,
-          }
-        );
-        const userData = response.data;
-        setCurrentUserId(userData.id);
-      } catch (error) {
-        console.error("現在のユーザー情報の取得に失敗しました:", error);
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
+  // CurrentUserのデータを受け取り、idを抽出して設定
+  const handleSetCurrentUser = (userData) => {
+    setCurrentUserId(userData.id);
+  };
 
   return (
     <div className="p-4 mt-8">
+      <FetchCurrentUser setCurrentUser={handleSetCurrentUser} />
       <FetchFollowing
         currentPage={currentPage}
         currentUserId={currentUserId}
