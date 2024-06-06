@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { FiTriangle } from "react-icons/fi";
 import axios from "axios"; // 退会処理のためにaxiosを使用
 import Image from "next/image"; // Next.jsのImageコンポーネントをインポート
 import { Button } from "@/components/ui/button";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const ProfileReadPage = () => {
   const [user, setUser] = useState(null);
@@ -11,28 +12,6 @@ const ProfileReadPage = () => {
   const [error, setError] = useState(""); // エラーメッセージの状態
   const nameInputRef = useRef(null); // ユーザー名入力フィールドの参照
   const [avatar, setAvatar] = useState(null);
-
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:3000/api/v1/current_user",
-        {
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const userData = await response.json();
-        console.log("ユーザーデータを取得しました:", userData); // JSON形式でログ出力
-        setUser(userData);
-      }
-    } catch (error) {
-      console.error("ユーザー情報の取得に失敗しました:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   const handleEditClick = () => {
     setIsEditable(true); // 編集モードに切り替える
@@ -136,6 +115,7 @@ const ProfileReadPage = () => {
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-24 ">
+      <FetchCurrentUser setCurrentUser={setUser} />
       <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
