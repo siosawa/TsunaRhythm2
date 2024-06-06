@@ -23,7 +23,7 @@ class User < ApplicationRecord
   # 大文字と小文字で複数メールアドレスを登録できないようにする。大抵のデータベースでは必要ない。
   before_save :downcase_email
 
-  validates :name, presence: true, length: { maximum: 50 }
+  validates :name, presence: true, length: { maximum: 25 }
 
   # nameに空白スペースがあるかを検証する。空白スペースがなければtrue
   validates :email, presence: true, length: { maximum: 255 }
