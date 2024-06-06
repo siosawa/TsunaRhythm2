@@ -56,12 +56,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ja">
       <body className={cn(inter.className, "min-h-dvh relative")}>
-        <FetchCurrentUser setCurrentUser={setCurrentUser} /> {/* ユーザー情報を取得 */}
+        <FetchCurrentUser setCurrentUser={setCurrentUser} /> 
         <video autoPlay muted loop className="fixed top-0 left-0 w-full h-full object-cover z-0">
           <source src="/background_movie.MP4" type="video/mp4" />
         </video>
         <div className="relative z-10">
-          <header className="fixed top-0 left-0 right-0 h-16 px-16 flex items-center border-b justify-between bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
+          <header className="fixed top-0 left-0 right-0 h-16 px-16 flex items-center border-b justify-between rounded-3xl mx-12 my-3 bg-white backdrop-filter backdrop-blur-sm z-20">
             <h1 className="font-bold">TsunaRhythm</h1>
             {currentUser && (
               <>
@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
                 <ul className="hidden md:flex gap-4">
                   {navList.map((item) => (
                     <li key={item.label}>
-                      <Button variant="ghost" asChild>
+                      <Button variant="ghost" className="hover:bg-emerald-500 hover:text-white" asChild>
                         <Link href={item.href}>{item.label}</Link>
                       </Button>
                     </li>
@@ -91,19 +91,19 @@ export default function RootLayout({ children }) {
           </footer>
           {/* ポップアップメニュー */}
           {isMenuOpen && currentUser && (
-            <div className={`fixed top-16 right-10 left-10 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm z-30 p-4 flex flex-col gap-4 shadow-custom-dark rounded-b-3xl ${isMenuOpen ? 'animate-slide-down' : ''}`}>           
+            <div className={`fixed top-16 right-10 left-10 bg-white backdrop-filter backdrop-blur-sm z-30 p-4 flex flex-col gap-4 shadow-custom-dark rounded-3xl ${isMenuOpen ? 'animate-slide-down' : ''}`}>           
                {navList.map((item) => (
-                <Button key={item.label} variant="ghost" asChild onClick={handleMenuClick}>
+                <Button key={item.label} variant="ghost" className="hover:bg-emerald-500 hover:text-white" asChild onClick={handleMenuClick}>
                   <Link href={item.href}>{item.label}</Link>
                 </Button>
               ))}
-              <Button variant="ghost" asChild onClick={handleMenuClick}>
+              <Button variant="ghost" className="hover:bg-emerald-500 hover:text-white" asChild onClick={handleMenuClick}>
                 <Link href={`/users/${currentUser.id}`}>マイページ</Link>
               </Button>
-              <Button variant="ghost" asChild onClick={handleMenuClick}>
+              <Button variant="ghost" className="hover:bg-emerald-500 hover:text-white" asChild onClick={handleMenuClick}>
                 <Link href="/edit-profile">プロフィール編集</Link>
               </Button>
-              <Button variant="ghost" onClick={() => { handleLogout(); handleMenuClick(); }}>
+              <Button variant="ghost" className="hover:bg-emerald-500 hover:text-white" onClick={() => { handleLogout(); handleMenuClick(); }}>
                 ログアウト
               </Button>
             </div>

@@ -64,21 +64,31 @@ const Setting = () => {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="bg-transparent hover:bg-variant-ghost">
-              設定
-            </NavigationMenuTrigger>
+            <NavigationMenuTrigger>設定</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <Button variant="ghost" asChild className="w-full">
+              <Button
+                variant="ghost"
+                asChild
+                className="w-full hover:bg-emerald-500 hover:text-white"
+              >
                 <NavigationMenuLink onClick={handleUserProfile}>
                   マイページ
                 </NavigationMenuLink>
               </Button>
-              <Button variant="ghost" asChild>
+              <Button
+                variant="ghost"
+                asChil
+                className="hover:bg-emerald-500 hover:text-white"
+              >
                 <NavigationMenuLink onClick={handleEditProfile}>
                   プロフィール編集
                 </NavigationMenuLink>
               </Button>
-              <Button variant="ghost" asChild className="w-full">
+              <Button
+                variant="ghost"
+                asChild
+                className="w-full hover:bg-emerald-500 hover:text-white"
+              >
                 <NavigationMenuLink onClick={handleLogout}>
                   ログアウト
                 </NavigationMenuLink>
