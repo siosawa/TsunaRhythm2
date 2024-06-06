@@ -17,7 +17,7 @@ const PostDelete = ({ postId, posts, setPosts }) => {
   return (
     <Button
       onClick={handleDelete}
-      className="text-black bg-transparent hover:bg-gray-100"
+      className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-3xl"
     >
       削除
     </Button>
