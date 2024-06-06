@@ -20,11 +20,11 @@ gem 'stimulus-rails', '1.2.1'
 gem 'turbo-rails', '1.4.0'
 # gem 'will_paginate', '3.3.1'
 # gem "sqlite3",       "1.6.1"
-gem 'mysql2', '~> 0.5.6'
-gem 'rack-cors', require: 'rack/cors'
-gem 'kaminari', '~> 1.2.2'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'carrierwave', '~> 2.0'
+gem 'kaminari', '~> 1.2.2'
+gem 'mysql2', '~> 0.5.6'
+gem 'rack-cors', require: 'rack/cors'
 
 group :production do
   gem 'aws-sdk-s3', '1.114.0', require: false
