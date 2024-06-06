@@ -11,16 +11,11 @@ import PostPagination from "@/app/diarys/components/PostPagination";
 import { Button } from "@/components/ui/button";
 import UserProfile from "./UserProfile";
 
-const UserPostsView = ({ reload, user }) => {
+const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
   const [posts, setPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [editingPost, setEditingPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
 
   const handleEditClick = (post) => {
     setEditingPost(post);
@@ -129,7 +124,7 @@ const UserPostsView = ({ reload, user }) => {
       <PostPagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={handlePageChange}
+        onPageChange={onPageChange}
       />
       {editingPost && (
         <EditPostModal
