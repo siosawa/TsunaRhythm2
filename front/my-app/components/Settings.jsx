@@ -1,36 +1,20 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const Setting = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    // ユーザー情報を取得する関数
-    const fetchCurrentUser = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/v1/current_user", {
-          credentials: "include", // 必要に応じてクッキーを含める
-        });
-        if (res.ok) {
-          const user = await res.json();
-          setUserId(user.id); // ユーザーIDをステートに保存
-        }
-      } catch (err) {
-        console.error("ユーザー情報の取得に失敗しました:", err);
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -67,23 +51,42 @@ const Setting = () => {
     window.location.href = "/edit-profile";
   };
 
+  // CurrentUserのデータを受け取り、idを抽出して設定
+  const handleSetCurrentUser = (userData) => {
+    setUserId(userData.id);
+  };
+
   return (
     <>
+      <FetchCurrentUser setCurrentUser={handleSetCurrentUser} />
       {message && <div className="text-green-500">{message}</div>}
       {error && <div className="text-red-500">{error}</div>}
-      <DropdownMenu>
-        <DropdownMenuTrigger>設定</DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleUserProfile}>
-            マイページ
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleEditProfile}>
-            プロフィール編集
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleLogout}>ログアウト</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className="bg-transparent hover:bg-variant-ghost">
+              設定
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <Button variant="ghost" asChild className="w-full">
+                <NavigationMenuLink onClick={handleUserProfile}>
+                  マイページ
+                </NavigationMenuLink>
+              </Button>
+              <Button variant="ghost" asChild>
+                <NavigationMenuLink onClick={handleEditProfile}>
+                  プロフィール編集
+                </NavigationMenuLink>
+              </Button>
+              <Button variant="ghost" asChild className="w-full">
+                <NavigationMenuLink onClick={handleLogout}>
+                  ログアウト
+                </NavigationMenuLink>
+              </Button>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     </>
   );
 };
