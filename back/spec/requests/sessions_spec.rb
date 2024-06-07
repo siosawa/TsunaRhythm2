@@ -6,7 +6,7 @@ RSpec.describe 'Sessions', type: :request do
 
   describe 'POST #create' do
     context '存在するユーザー' do
-      specify 'ログインが成功する' do
+      it 'ログインが成功する' do
         session_params = { email: user.email, password: user.password }
         post '/api/v1/sessions', params: { session: session_params }
         expect(response).to have_http_status(:ok)
@@ -17,7 +17,7 @@ RSpec.describe 'Sessions', type: :request do
     end
 
     context '存在しないユーザー' do
-      specify 'ログインが失敗する' do
+      it 'ログインが失敗する' do
         session_params = { email: unregistered_user.email, password: unregistered_user.password }
         post '/api/v1/sessions', params: { session: session_params }
         json = JSON.parse(response.body)
@@ -29,7 +29,7 @@ RSpec.describe 'Sessions', type: :request do
   end
 
   describe 'DELETE #destroy' do
-    specify 'ログアウトが成功する' do
+    it 'ログアウトが成功する' do
       session_params = { email: user.email, password: user.password}
       post '/api/v1/sessions', params: { session: session_params }
 
@@ -40,7 +40,7 @@ RSpec.describe 'Sessions', type: :request do
       expect(json['message']).to eq('ログアウトに成功しました。')
     end
 
-    specify 'ログインしていない場合のログアウト' do
+    it 'ログインしていない場合のログアウト' do
       delete '/api/v1/logout'
       json = JSON.parse(response.body)
 
