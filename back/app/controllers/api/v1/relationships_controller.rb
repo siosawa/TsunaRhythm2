@@ -17,7 +17,6 @@ module Api
           render json: { status: 'failure', message: 'Unable to follow user' }, status: :unprocessable_entity
         end
       end
-      
 
       def destroy
         Rails.logger.info "フォロー解除操作を開始: current_user.id=#{current_user.id}, relationship_id=#{params[:id]}"
@@ -44,10 +43,10 @@ module Api
                   end
 
         render json: {
-          status: 'success',          
-          following: following,
+          status: 'success',
+          following:,
           relationship_id: @relationship.id,
-          message: message
+          message:
         }, status: :ok
       end
     end
