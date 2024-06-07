@@ -29,8 +29,8 @@ RSpec.describe Post do
       expect(post).not_to be_valid
     end
 
-    it 'コンテンツがなければ無効である' do
-      post.content = nil
+    it 'コンテンツが空文字であれば無効である' do
+      post.content = ''
       expect(post).not_to be_valid
     end
 
