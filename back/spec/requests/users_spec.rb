@@ -3,14 +3,15 @@ require 'rails_helper'
 RSpec.describe 'Users' do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
+  let(:first_other_user) { create(:user) }
+  let(:second_other_user) { create(:user) }
 
   describe 'GET #index' do
-    before do
-      user1 = create(:user)
-      create(:user)
+    let(:first_user) { create(:user) }
 
-      # ログイン
-      login(user1)
+    before do
+      create(:user)
+      login(first_user)
     end
 
     it 'リクエストが成功する' do
@@ -39,10 +40,8 @@ RSpec.describe 'Users' do
   describe 'GET #following' do
     before do
       login(user)
-      @other_user1 = create(:user)
-      @other_user2 = create(:user)
-      post '/api/v1/relationships', params: { followed_id: @other_user1.id }
-      post '/api/v1/relationships', params: { followed_id: @other_user2.id }
+      post '/api/v1/relationships', params: { followed_id: first_other_user.id }
+      post '/api/v1/relationships', params: { followed_id: second_other_user.id }
     end
 
     it 'リクエストが成功する' do
@@ -59,19 +58,17 @@ RSpec.describe 'Users' do
   describe 'GET #followers' do
     before do
       login(user)
-      @other_user1 = create(:user)
-      @other_user2 = create(:user)
-      post '/api/v1/relationships', params: { followed_id: @other_user1.id }
-      post '/api/v1/relationships', params: { followed_id: @other_user2.id }
+      post '/api/v1/relationships', params: { followed_id: first_other_user.id }
+      post '/api/v1/relationships', params: { followed_id: second_other_user.id }
     end
 
     it 'リクエストが成功する' do
-      get "/api/v1/users/#{@other_user1.id}/followers"
+      get "/api/v1/users/#{first_other_user.id}/followers"
       expect(response).to have_http_status(:ok)
     end
 
     it '要求通りの情報を返す' do
-      get "/api/v1/users/#{@other_user1.id}/followers"
+      get "/api/v1/users/#{first_other_user.id}/followers"
       expect(json['users'].length).to eq(1)
     end
   end
