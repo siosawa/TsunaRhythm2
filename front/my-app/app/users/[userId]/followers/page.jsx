@@ -5,7 +5,6 @@ import FetchFollowers from "@/app/users/[userId]/followers/components/FetchFollo
 import PaginationHandler from "@/app/users/components/PagenationHandler";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// メインコンポーネント
 const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
@@ -15,7 +14,6 @@ const UsersList = () => {
   const [followings, setFollowings] = useState(new Set());
   const [followStates, setFollowStates] = useState({});
 
-  // CurrentUserのデータを受け取り、idを抽出して設定
   const handleSetCurrentUser = (userData) => {
     setCurrentUserId(userData.id);
   };

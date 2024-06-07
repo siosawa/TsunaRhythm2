@@ -21,7 +21,6 @@ const PostDelete = ({ postId, posts, setPosts }) => {
   };
 
   const openDialog = () => {
-    setError(""); // ダイアログを開く際にエラーメッセージをリセット
     setIsDialogOpen(true);
   };
 

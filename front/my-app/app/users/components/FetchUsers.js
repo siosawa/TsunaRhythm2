@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios"; 
 
-// ユーザー情報取得コンポーネント
 const FetchUsers = (
   currentPage,
   currentUserId,

@@ -2,19 +2,19 @@
 import { useState, useRef } from "react";
 import { FiTriangle } from "react-icons/fi";
 import axios from "axios"; // 退会処理のためにaxiosを使用
-import Image from "next/image"; // Next.jsのImageコンポーネントをインポート
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const ProfileReadPage = () => {
   const [user, setUser] = useState(null);
-  const [isEditable, setIsEditable] = useState(false); // 編集モードの状態
-  const [error, setError] = useState(""); // エラーメッセージの状態
-  const nameInputRef = useRef(null); // ユーザー名入力フィールドの参照
+  const [isEditable, setIsEditable] = useState(false);
+  const [error, setError] = useState("");
+  const nameInputRef = useRef(null);
   const [avatar, setAvatar] = useState(null);
 
   const handleEditClick = () => {
-    setIsEditable(true); // 編集モードに切り替える
+    setIsEditable(true);
     setTimeout(() => {
       nameInputRef.current?.focus(); // ユーザー名入力フィールドにフォーカスを設定
     }, 0);
@@ -45,7 +45,7 @@ const ProfileReadPage = () => {
       if (response.ok) {
         const updatedUserData = await response.json();
         console.log("ユーザーデータを更新しました:", updatedUserData);
-        setIsEditable(false); // 編集モードを終了
+        setIsEditable(false);
         await fetchUserData(); // データを再取得
       } else {
         console.error("ユーザーデータの更新に失敗しました");
@@ -87,7 +87,6 @@ const ProfileReadPage = () => {
     }
 
     try {
-      // 退会処理
       const response = await axios.delete(
         `http://localhost:3000/api/v1/users/${user.id}`,
         {
@@ -102,7 +101,7 @@ const ProfileReadPage = () => {
         document.cookie = `${name}=;expires=${new Date(0).toUTCString()};path=/`;
       });
 
-      // ダイアログを閉じる（必要に応じて）
+      // ダイアログを閉じる(念のため)
       closeDialog();
 
       // ルートURLにリダイレクト
@@ -123,7 +122,7 @@ const ProfileReadPage = () => {
         <div className="flex justify-center items-center mb-4">
           {user && user.avatar && user.avatar.url && (
             <Image
-              src={`http://localhost:3000${user.avatar.url}`} // 完全なURLに修正
+              src={`http://localhost:3000${user.avatar.url}`}
               alt={user.name}
               width={96}
               height={96}

@@ -41,9 +41,6 @@ const UserCard = ({
           ポスト数: {user.posts_count} ワーク: {user.work}
         </p>
         <p className="text-gray-800 mb-1">{user.profile_text}</p>
-        {/* <p className="text-gray-600">
-          アカウント作成日: {new Date(user.created_at).toLocaleDateString()}
-        </p> */}
       </div>
       <FollowUnfollowButton
         userId={user.id}
