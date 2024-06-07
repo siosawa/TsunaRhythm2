@@ -18,17 +18,12 @@ RSpec.describe 'Relationships' do
     end
 
     context 'ログインしている状態' do
-      before do
-        session_params = { email: user.email, password: user.password }
-        post '/api/v1/sessions', params: { session: session_params }
-      end
+      before { log_in(user) }
 
-      context '成功の場合' do
-        it 'フォローフォロワーの関係の数が１件増える' do
-          expect do
-            post '/api/v1/relationships', params: { followed_id: target_user.id }
-          end.to change(Relationship.all, :count).by(1)
-        end
+      it 'フォローフォロワーの関係の数が１件増える' do
+        expect do
+          post '/api/v1/relationships', params: { followed_id: target_user.id }
+        end.to change(Relationship.all, :count).by(1)
       end
     end
   end
@@ -48,28 +43,28 @@ RSpec.describe 'Relationships' do
 
     context 'ログインしている状態' do
       before do
-        session_params = { email: user.email, password: user.password }
-        post '/api/v1/sessions', params: { session: session_params }
+        log_in(user)
         post '/api/v1/relationships', params: { followed_id: target_user.id }
         @relationship = Relationship.last
       end
 
-      context '成功の場合' do
-        it 'フォローフォロワーの関係の数が１件減る' do
-          expect do
-            delete "/api/v1/relationships/#{@relationship.id}", params: { followed_id: @relationship.followed_id }
-          end.to change(Relationship.all, :count).by(-1)
-        end
+      it 'フォローフォロワーの関係の数が１件減る' do
+        expect do
+          delete "/api/v1/relationships/#{@relationship.id}", params: { followed_id: @relationship.followed_id }
+        end.to change(Relationship.all, :count).by(-1)
       end
 
-      context '失敗の場合' do
-        it 'フォローしていないユーザーのフォロー解除をしようとすると操作失敗の情報を返す' do
-          delete "/api/v1/relationships/#{other_user.id}", params: { followed_id: other_user.id }
-          json = response.parsed_body
-          expect(response).to have_http_status(:not_found)
-          expect(json['status']).to eq('failure')
-        end
+      it 'フォローしていないユーザーのフォロー解除をしようとすると操作失敗の情報を返す' do
+        delete "/api/v1/relationships/#{other_user.id}", params: { followed_id: other_user.id }
+        json = response.parsed_body
+        expect(response).to have_http_status(:not_found)
+        expect(json['status']).to eq('failure')
       end
     end
+  end
+
+  def log_in(user)
+    session_params = { email: user.email, password: user.password }
+    post '/api/v1/sessions', params: { session: session_params }
   end
 end
