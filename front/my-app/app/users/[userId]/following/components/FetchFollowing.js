@@ -42,7 +42,7 @@ const FetchFollowing = ({
       if (currentUserId) {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/v1/users/60/following`,
+            `http://localhost:3000/api/v1/users/${currentUserId}/following`,
             {
               withCredentials: true,
             }
