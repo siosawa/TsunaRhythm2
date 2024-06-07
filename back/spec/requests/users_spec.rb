@@ -6,11 +6,11 @@ RSpec.describe 'Users', type: :request do
 
   describe 'GET #index' do
     before do
-      @user1 = create(:user)
-      @user2 = create(:user)
+      user1 = create(:user)
+      user2 = create(:user)
 
       # ログイン
-      post '/api/v1/sessions', params: { session: { email: @user1.email, password: @user1.password } }
+      login(user1)
     end
 
     it 'リクエストが成功する' do
