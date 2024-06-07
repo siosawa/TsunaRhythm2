@@ -15,7 +15,7 @@ module Api
           Rails.logger.info "フォローが成功しました: relationship.id=#{@relationship.id}"
           render json: { status: 'success', relationship_id: @relationship.id }, status: :created
         else
-          log_and_render_error('ユーザーをフォローできません', @relationship.errors.full_messages.join(", "))
+          log_and_render_error('ユーザーをフォローできません', @relationship.errors.full_messages.join(', '))
         end
       end
 
@@ -38,14 +38,14 @@ module Api
         message = action == 'create' ? 'フォローが成功しました' : 'フォロー解除が成功しました'
         render json: {
           status: 'success',
-          following: following,
+          following:,
           relationship_id: @relationship.id,
-          message: message
+          message:
         }, status: :ok
       end
 
       def find_user(id)
-        User.find_by(id: id)
+        User.find_by(id:)
       end
 
       def build_relationship(user)
@@ -54,7 +54,7 @@ module Api
 
       def log_and_render_error(message, errors)
         Rails.logger.error "#{message}: #{errors}"
-        render json: { status: 'failure', message: message }, status: :unprocessable_entity
+        render json: { status: 'failure', message: }, status: :unprocessable_entity
       end
     end
   end
