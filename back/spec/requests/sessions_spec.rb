@@ -30,7 +30,7 @@ RSpec.describe 'Sessions', type: :request do
 
   describe 'DELETE #destroy' do
     it 'ログアウトが成功する' do
-      session_params = { email: user.email, password: user.password}
+      session_params = { email: user.email, password: user.password }
       post '/api/v1/sessions', params: { session: session_params }
 
       delete '/api/v1/logout'

@@ -1,12 +1,12 @@
 # spec/requests/posts_spec.rb
 require 'rails_helper'
 
-RSpec.describe "Posts", type: :request do
+RSpec.describe 'Posts', type: :request do
   describe 'GET /api/v1/posts' do
-    let(:user) { create(:user, name: "ゲスト") }
+    let(:user) { create(:user, name: 'ゲスト') }
 
     before do
-      create_list(:post, 3, user: user)
+      create_list(:post, 3, user:)
       allow_any_instance_of(Api::V1::PostsController).to receive(:current_user).and_return(user)
     end
 
@@ -29,9 +29,9 @@ RSpec.describe "Posts", type: :request do
     end
 
     it '新しいポストを作成する' do
-      expect {
+      expect do
         post '/api/v1/posts', params: valid_params
-      }.to change(Post, :count).by(1)
+      end.to change(Post, :count).by(1)
       expect(response).to have_http_status(:created)
       json = JSON.parse(response.body)
       expect(json['status']).to eq('success')
@@ -41,7 +41,7 @@ RSpec.describe "Posts", type: :request do
 
   describe 'PUT /api/v1/posts/:id' do
     let(:user) { create(:user) }
-    let(:post_record) { create(:post, user: user) }
+    let(:post_record) { create(:post, user:) }
     let(:valid_params) { { post: { title: '更新されたタイトル', content: '更新された内容' } } }
 
     before do
@@ -59,16 +59,16 @@ RSpec.describe "Posts", type: :request do
 
   describe 'DELETE /api/v1/posts/:id' do
     let(:user) { create(:user) }
-    let!(:post_record) { create(:post, user: user) }
+    let!(:post_record) { create(:post, user:) }
 
     before do
       allow_any_instance_of(Api::V1::PostsController).to receive(:current_user).and_return(user)
     end
 
     it '既存のポストを削除する' do
-      expect {
+      expect do
         delete "/api/v1/posts/#{post_record.id}"
-      }.to change(Post, :count).by(-1)
+      end.to change(Post, :count).by(-1)
       expect(response).to have_http_status(:no_content)
     end
   end
