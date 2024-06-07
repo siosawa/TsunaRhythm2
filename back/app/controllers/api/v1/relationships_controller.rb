@@ -6,7 +6,6 @@ module Api
       before_action :logged_in_user
 
       def create
-        Rails.logger.info "フォロー操作を開始: current_user.id=#{current_user.id}, followed_id=#{params[:followed_id]}"
         @user = find_user(params[:followed_id])
         return render json: { status: 'failure', message: 'ユーザーが見つかりません' }, status: :not_found unless @user
 
@@ -20,7 +19,6 @@ module Api
       end
 
       def destroy
-        Rails.logger.info "フォロー解除操作を開始: current_user.id=#{current_user.id}, relationship_id=#{params[:id]}"
         @relationship = current_user.active_relationships.find_by(id: params[:id])
         if @relationship
           @relationship.destroy
