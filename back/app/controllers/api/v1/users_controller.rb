@@ -10,7 +10,7 @@ module Api
       def index
         per_page = 10
         # pageパラメータが存在しない場合はnilとする
-        page = params[:page] ? params[:page].to_i : nil
+        page = params[:page]&.to_i
 
         users = User
                 .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text, users.avatar,
@@ -147,7 +147,7 @@ module Api
 
       def paginate_relationships(relationship_type, relationship_model, foreign_key)
         per_page = 10
-        page = params[:page] ? params[:page].to_i : nil
+        page = params[:page]&.to_i
 
         user = User.find(params[:id])
         relationships = user.send(relationship_type).includes(relationship_model).map do |related_user|
