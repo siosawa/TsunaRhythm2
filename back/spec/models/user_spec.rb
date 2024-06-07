@@ -40,28 +40,40 @@ RSpec.describe User do
     it 'ランダムなトークンを生成する' do
       token = described_class.new_token
       expect(token).to be_a(String)
+    end
+
+    it 'ランダムなトークンの長さが0より大きい' do
+      token = described_class.new_token
       expect(token.length).to be > 0
     end
 
     it '渡された文字列のハッシュ値を返す' do
       digest = described_class.digest('password')
       expect(digest).to be_a(String)
+    end
+
+    it 'ハッシュ値の長さが0より大きい' do
+      digest = described_class.digest('password')
       expect(digest.length).to be > 0
     end
 
     it 'フォローできる' do
       other_user = create(:user)
       user.save
-      expect(user.following?(other_user)).to be false
       user.follow(other_user)
       expect(user.following?(other_user)).to be true
+    end
+
+    it 'フォロー中でないことを確認' do
+      other_user = create(:user)
+      user.save
+      expect(user.following?(other_user)).to be false
     end
 
     it 'フォロー解除できる' do
       other_user = create(:user)
       user.save
       user.follow(other_user)
-      expect(user.following?(other_user)).to be true
       user.unfollow(other_user)
       expect(user.following?(other_user)).to be false
     end
