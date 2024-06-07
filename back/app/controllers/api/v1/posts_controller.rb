@@ -39,7 +39,7 @@ module Api
         @post = Post.find(params[:id])
         @post.destroy
         Rails.logger.info "ポストが削除されました。ユーザーID: #{current_user.id}"
-        render json: { status: 'success', message: 'ポストが削除されました' }, status: :no_content
+        head :no_content
       end
 
       def user_posts
