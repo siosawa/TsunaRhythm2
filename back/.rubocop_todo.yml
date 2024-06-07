@@ -1,64 +1,29 @@
-# この設定ファイルは `rubocop --auto-gen-config` コマンドにより
-# 2024-06-06 09:46:50 UTC に RuboCop バージョン 1.63.4 を使用して生成されました。
-# ユーザーがコードベースから違反を修正するに従って、この設定記録を
-# 一つずつ削除することを目指しています。
-# 対象コードの変更や、RuboCop の新バージョンのインストールにより
-# 再生成が必要となる場合があります。
+# 残りは全てusers_controller.rbの記述
+# この設定は`rubocop --auto-gen-config`によって2024-06-07 15:12:13 UTCに
+# 生成されました。使用されているRuboCopのバージョンは1.63.3です。
+# ポイントは、ユーザーがコードベースから違反を削除するにつれて、これらの設定レコードを
+# 一つずつ削除することにあります。
+# 注意すべき点は、検査対象のコードの変更や新しいバージョンのRuboCopのインストールにより
+# このファイルを再生成する必要があるかもしれないということです。
 
-# 違反件数: 1
-# このコップは安全でない自動修正をサポートしています（--autocorrect-all オプション）。
-# 設定パラメータ: AutoCorrect。
-Lint/UselessAssignment:
-  Exclude:
-    - "app/helpers/sessions_helper.rb" # 不要な代入が行われているファイルを除外
-
-# 違反件数: 8
-# 設定パラメータ: AllowedMethods, AllowedPatterns, CountRepeatedAttributes。
+# 違反数: 3
+# 設定パラメータ: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
 Metrics/AbcSize:
-  Max: 34 # メソッドのABCサイズが大きすぎるため、最大値を34に設定
+  Max: 32
 
-# 違反件数: 1
-# 設定パラメータ: CountComments, CountAsOne。
+# 違反数: 1
+# 設定パラメータ: CountComments, CountAsOne.
 Metrics/ClassLength:
-  Max: 156 # クラスの長さが長すぎるため、最大値を156に設定
+  Max: 156
 
-# 違反件数: 8
-# 設定パラメータ: CountComments, CountAsOne, AllowedMethods, AllowedPatterns。
+# 違反数: 4
+# 設定パラメータ: CountComments, CountAsOne, AllowedMethods, AllowedPatterns.
 Metrics/MethodLength:
-  Max: 24 # メソッドの長さが長すぎるため、最大値を24に設定
+  Max: 24
 
-# 違反件数: 1
-Naming/AccessorMethodName:
-  Exclude:
-    - "app/controllers/api/v1/password_resets_controller.rb" # アクセサーメソッドの命名規則違反のファイルを除外
-
-# 違反件数: 2
-# 設定パラメータ: Include。
-# Include: app/controllers/**/*.rb, app/mailers/**/*.rb
-Rails/LexicallyScopedActionFilter:
-  Exclude:
-    - "app/controllers/api/v1/users_controller.rb" # アクションフィルターのスコープ違反のファイルを除外
-
-# 違反件数: 3
-# このコップは安全でない自動修正をサポートしています（--autocorrect-all オプション）。
-Rails/RedundantPresenceValidationOnBelongsTo:
-  Exclude:
-    - "app/models/post.rb" # belongs_toの冗長なpresence検証が行われているファイルを除外
-    - "app/models/relationship.rb"
-
-# 違反件数: 3
-# このコップは安全でない自動修正をサポートしています（--autocorrect-all オプション）。
-# 設定パラメータ: ConvertCodeThatCanStartToReturnNil, AllowedMethods, MaxChainLength。
-# AllowedMethods: present?, blank?, presence, try, try!
-Style/SafeNavigation:
-  Exclude:
-    - "app/controllers/api/v1/password_resets_controller.rb" # 安全ナビゲーション演算子の使用違反のファイルを除外
-    - "app/controllers/api/v1/users_controller.rb"
-
-# 違反件数: 5
-# このコップは安全な自動修正をサポートしています（--autocorrect オプション）。
-# 設定パラメータ: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, AllowedPatterns。
+# 違反数: 5
+# このコップは安全な自動修正（--autocorrect）をサポートします。
+# 設定パラメータ: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, AllowedPatterns.
 # URISchemes: http, https
 Layout/LineLength:
-  Max: 142 # 行の長さが長すぎるため、最大値を142に設定
-
+  Max: 142

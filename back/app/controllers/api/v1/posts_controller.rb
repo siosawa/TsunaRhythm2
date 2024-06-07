@@ -7,24 +7,9 @@ module Api
       before_action :correct_user, only: %i[destroy update]
 
       def index
-        user_id = params[:user_id]
-        posts_query = Post.includes(:user)
-        posts_query = posts_query.where(user_id:) if user_id.present?
-
-        @posts = Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
-
-        posts_with_current_user_id = @posts.map do |post|
-          post.attributes.merge(
-            user: { name: post.user.name },
-            current_user_id: current_user.id
-          )
-        end
-
-        render json: {
-          posts: posts_with_current_user_id,
-          current_page: @posts.current_page,
-          total_pages: @posts.total_pages
-        }
+        @posts = fetch_posts
+        posts_with_current_user_id = add_current_user_id(@posts)
+        render json: build_response(posts_with_current_user_id, @posts)
       end
 
       def show
@@ -35,11 +20,9 @@ module Api
       def create
         @post = current_user.posts.build(post_params)
         if @post.save
-          message = [I18n.t('posts.create.flash.success')]
-          render json: { status: 'success', message: }, status: :created
+          render json: { status: 'success', message: [I18n.t('posts.create.flash.success')] }, status: :created
         else
-          message = @post.errors.full_messages
-          render json: { status: 'failure', message: }, status: :unprocessable_entity
+          render json: { status: 'failure', message: @post.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
@@ -56,30 +39,46 @@ module Api
         @post = Post.find(params[:id])
         @post.destroy
         Rails.logger.info "ポストが削除されました。ユーザーID: #{current_user.id}"
-        render json: { status: 'success', message: 'ポストが削除されました' }, status: :no_content
+        head :no_content
       end
 
       def user_posts
+        @posts = fetch_user_posts
+        posts_with_current_user_id = add_current_user_id(@posts)
+        render json: build_response(posts_with_current_user_id, @posts)
+      end
+
+      private
+
+      def fetch_posts
+        user_id = params[:user_id]
+        posts_query = Post.includes(:user)
+        posts_query = posts_query.where(user_id:) if user_id.present?
+        Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
+      end
+
+      def fetch_user_posts
         user_id = params[:user_id]
         posts_query = Post.where(user_id:).includes(:user)
+        Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
+      end
 
-        @posts = Kaminari.paginate_array(posts_query.to_a).page(params[:page]).per(10)
-
-        posts_with_current_user_id = @posts.map do |post|
+      def add_current_user_id(posts)
+        posts.map do |post|
           post.attributes.merge(
             user: { name: post.user.name },
             current_user_id: current_user.id
           )
         end
-
-        render json: {
-          posts: posts_with_current_user_id,
-          current_page: @posts.current_page,
-          total_pages: @posts.total_pages
-        }
       end
 
-      private
+      def build_response(posts, paginated_posts)
+        {
+          posts:,
+          current_page: paginated_posts.current_page,
+          total_pages: paginated_posts.total_pages
+        }
+      end
 
       def post_params
         params.require(:post).permit(:title, :content)

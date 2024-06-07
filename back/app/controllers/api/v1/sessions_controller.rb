@@ -5,26 +5,13 @@ module Api
         Rails.logger.info 'Sessions_Controllerのcreateアクションが呼び出されました。'
         user = User.find_by(email: params[:session][:email].downcase)
 
-        if user
-          Rails.logger.info 'ユーザーが見つかりました。パスワードの認証を試みます。'
-        else
-          Rails.logger.info '指定されたメールアドレスのユーザーが見つかりませんでした。'
-        end
-
         if user&.authenticate(params[:session][:password])
-          Rails.logger.info 'パスワードが正しいことが確認されました。'
           reset_session
           log_in user
-          Rails.logger.info 'ユーザーをログイン状態にしました。'
-          # リダイレクトの代わりにJSONレスポンスを返す
           render json: { message: 'ログインに成功しました。', user: }, status: :ok
         else
-          Rails.logger.info 'メールアドレスとパスワードの組み合わせが無効です。エラーメッセージを設定し、ログインフォームを再度表示します。'
-          # フラッシュメッセージの代わりにJSONレスポンスを返す
           render json: { error: I18n.t('sessions.create.flash.danger') }, status: :unprocessable_entity
         end
-
-        Rails.logger.info 'Sessions_Controllerのcreateアクションの処理が完了しました。'
       end
 
       def destroy
