@@ -10,7 +10,7 @@ RSpec.describe 'Users', type: :request do
       @user2 = create(:user)
 
       # ログイン
-      post '/api/v1/sessions', params: { session: { email: @user1.email, password: @user2.password } }
+      post '/api/v1/sessions', params: { session: { email: @user1.email, password: @user1.password } }
     end
 
     it 'リクエストが成功する' do
