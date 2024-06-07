@@ -54,7 +54,7 @@ module Api
 
       def log_and_render_error(message, errors)
         Rails.logger.error "#{message}: #{errors}"
-        render json: { status: 'failure', message: }, status: :unprocessable_entity
+        render json: { status: 'failure', message: }, status: :not_found
       end
     end
   end

@@ -66,7 +66,6 @@ RSpec.describe 'Relationships' do
         it 'フォローしていないユーザーのフォロー解除をしようとすると操作失敗の情報を返す' do
           delete "/api/v1/relationships/#{other_user.id}", params: { followed_id: other_user.id }
           json = response.parsed_body
-
           expect(response).to have_http_status(:not_found)
           expect(json['status']).to eq('failure')
         end
