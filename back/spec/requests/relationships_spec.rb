@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Relationships', type: :request do
+RSpec.describe 'Relationships' do
   let(:user) { create(:user) }
   let(:target_user) { create(:user) }
   let(:other_user) { create(:user) }
@@ -9,7 +9,7 @@ RSpec.describe 'Relationships', type: :request do
     context 'ログインしていない状態' do
       it 'ログイン画面へ遷移するための情報を返す' do
         post '/api/v1/relationships', params: { followed_id: target_user.id }
-        json = JSON.parse(response.body)
+        json = response.parsed_body
 
         expect(response).to have_http_status(:ok)
         expect(json['status']).to eq('notLoggedIn')
@@ -36,9 +36,9 @@ RSpec.describe 'Relationships', type: :request do
   describe 'DELETE #destroy' do
     context 'ログインしていない状態' do
       it 'ログイン画面へ遷移するための情報を返す' do
-        relationship = Relationship.create(follower_id: user.id, followed_id: target_user.id)
+        Relationship.create(follower_id: user.id, followed_id: target_user.id)
         delete "/api/v1/relationships/#{target_user.id}", params: { followed_id: target_user.id }
-        json = JSON.parse(response.body)
+        json = response.parsed_body
 
         expect(response).to have_http_status(:ok)
         expect(json['status']).to eq('notLoggedIn')
@@ -65,7 +65,7 @@ RSpec.describe 'Relationships', type: :request do
       context '失敗の場合' do
         it 'フォローしていないユーザーのフォロー解除をしようとすると操作失敗の情報を返す' do
           delete "/api/v1/relationships/#{other_user.id}", params: { followed_id: other_user.id }
-          json = JSON.parse(response.body)
+          json = response.parsed_body
 
           expect(response).to have_http_status(:not_found)
           expect(json['status']).to eq('failure')

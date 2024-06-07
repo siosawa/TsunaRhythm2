@@ -1,7 +1,7 @@
 # spec/requests/posts_spec.rb
 require 'rails_helper'
 
-RSpec.describe 'Posts', type: :request do
+RSpec.describe 'Posts' do
   describe 'GET /api/v1/posts' do
     let(:user) { create(:user, name: 'ゲスト') }
 
@@ -13,7 +13,7 @@ RSpec.describe 'Posts', type: :request do
     it 'ポストを正常に取得する' do
       get '/api/v1/posts'
       expect(response).to have_http_status(:success)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['posts'].length).to eq(3)
       expect(json['posts'][0]['user']['name']).to eq('ゲスト')
       expect(json['posts'][0]['current_user_id']).to eq(user.id)
@@ -33,7 +33,7 @@ RSpec.describe 'Posts', type: :request do
         post '/api/v1/posts', params: valid_params
       end.to change(Post, :count).by(1)
       expect(response).to have_http_status(:created)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['status']).to eq('success')
       expect(json['message']).to include('投稿が完了しました')
     end
@@ -51,7 +51,7 @@ RSpec.describe 'Posts', type: :request do
     it '既存のポストを更新する' do
       put "/api/v1/posts/#{post_record.id}", params: valid_params
       expect(response).to have_http_status(:ok)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['title']).to eq('更新されたタイトル')
       expect(json['content']).to eq('更新された内容')
     end

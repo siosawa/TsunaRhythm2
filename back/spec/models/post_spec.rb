@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe Post, type: :model do
+RSpec.describe Post do
   before do
-    @user = FactoryBot.create(:user)
-    @post = FactoryBot.build(:post, user: @user)
+    @user = create(:user)
+    @post = build(:post, user: @user)
   end
 
   describe 'バリデーション' do
@@ -46,9 +46,9 @@ RSpec.describe Post, type: :model do
     end
 
     it 'ポストが作成日時の降順で並ぶ' do
-      post1 = FactoryBot.create(:post, user: @user, created_at: 1.day.ago)
-      post2 = FactoryBot.create(:post, user: @user, created_at: 1.hour.ago)
-      expect(Post.all).to eq([post2, post1])
+      post1 = create(:post, user: @user, created_at: 1.day.ago)
+      post2 = create(:post, user: @user, created_at: 1.hour.ago)
+      expect(described_class.all).to eq([post2, post1])
     end
   end
 end

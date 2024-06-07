@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe 'Users', type: :request do
+RSpec.describe 'Users' do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
 
   describe 'GET #index' do
     before do
       user1 = create(:user)
-      user2 = create(:user)
+      create(:user)
 
       # ログイン
       login(user1)
@@ -168,7 +168,7 @@ RSpec.describe 'Users', type: :request do
 end
 
 def json
-  JSON.parse(response.body)
+  response.parsed_body
 end
 
 def login(user)

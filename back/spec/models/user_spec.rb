@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
+RSpec.describe User do
   before do
-    @user = FactoryBot.build(:user)
+    @user = build(:user)
   end
 
   describe 'バリデーション' do
@@ -40,19 +40,19 @@ RSpec.describe User, type: :model do
 
   describe 'メソッド' do
     it 'ランダムなトークンを生成する' do
-      token = User.new_token
+      token = described_class.new_token
       expect(token).to be_a(String)
       expect(token.length).to be > 0
     end
 
     it '渡された文字列のハッシュ値を返す' do
-      digest = User.digest('password')
+      digest = described_class.digest('password')
       expect(digest).to be_a(String)
       expect(digest.length).to be > 0
     end
 
     it 'フォローできる' do
-      other_user = FactoryBot.create(:user)
+      other_user = create(:user)
       @user.save # ユーザーを保存
       expect(@user.following?(other_user)).to be false
       @user.follow(other_user)
@@ -60,7 +60,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'フォロー解除できる' do
-      other_user = FactoryBot.create(:user)
+      other_user = create(:user)
       @user.save # ユーザーを保存
       @user.follow(other_user)
       expect(@user.following?(other_user)).to be true
@@ -73,14 +73,14 @@ RSpec.describe User, type: :model do
     it '関連するポストも削除される' do
       @user.save
       @user.posts.create!(title: 'Sample title', content: 'Lorem ipsum')
-      expect { @user.destroy }.to change { Post.count }.by(-1)
+      expect { @user.destroy }.to change(Post, :count).by(-1)
     end
 
     it '関連するフォロワー関係も削除される' do
       @user.save
-      other_user = FactoryBot.create(:user)
+      other_user = create(:user)
       @user.follow(other_user)
-      expect { @user.destroy }.to change { Relationship.count }.by(-1)
+      expect { @user.destroy }.to change(Relationship, :count).by(-1)
     end
   end
 end

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Relationship, type: :model do
+RSpec.describe Relationship do
   before do
-    @user1 = FactoryBot.create(:user)
-    @user2 = FactoryBot.create(:user)
-    @relationship = FactoryBot.build(:relationship, follower: @user1, followed: @user2)
+    @user1 = create(:user)
+    @user2 = create(:user)
+    @relationship = build(:relationship, follower: @user1, followed: @user2)
   end
 
   describe 'バリデーション' do
