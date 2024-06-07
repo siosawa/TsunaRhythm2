@@ -58,7 +58,7 @@ RSpec.describe User, type: :model do
       @user.follow(other_user)
       expect(@user.following?(other_user)).to be true
     end
-    
+
     it 'フォロー解除できる' do
       other_user = FactoryBot.create(:user)
       @user.save # ユーザーを保存
