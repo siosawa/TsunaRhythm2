@@ -15,24 +15,19 @@ class User < ApplicationRecord
 
   has_many :followers, through: :passive_relationships, source: :follower
 
-  # データベースと連携しない、インスタンス変数とほぼ同義のremember_tokenを作成する
-  # メソッドを作るメソッド（メタメソッド）を作成する
-  attr_accessor :remember_token, :reset_token
+  # attr_accessor :remember_token, :reset_token
 
-  # アカウントを追加する直前に行う。渡したメールアドレスを小文字にしたものをセーブする直前に自分自身にコピーする
   # 大文字と小文字で複数メールアドレスを登録できないようにする。大抵のデータベースでは必要ない。
   before_save :downcase_email
 
   validates :name, presence: true, length: { maximum: 25 }
 
-  # nameに空白スペースがあるかを検証する。空白スペースがなければtrue
   validates :email, presence: true, length: { maximum: 255 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
-  # 大文字は定数（動的に変更されることのない値）として扱われる。
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
-                    uniqueness: { case_sensitive: false } # 大文字小文字は無視
+                    uniqueness: { case_sensitive: false } 
   has_secure_password # セキュアなパスワード機能を導入。ハッシュ値のログも見せない。
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
