@@ -1,27 +1,62 @@
-name: CI
+name: Run RSpec and RuboCop
 
 on:
   push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
-  test:
+  RSpec:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-    services:
-      db:
-        image: mysql:8.0
-        options: >-
-          --health-cmd "mysqladmin ping --silent"
-        ports:
-          - 4306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: password
-        command: >
-          --character-set-server=utf8mb4
-          --collation-server=utf8mb4_unicode_ci
+    steps:
+      - name: コードをチェックアウト
+        uses: actions/checkout@v3
 
+      - name: MySQLのセットアップ
+        run: |
+          docker pull mysql:8.0
+          docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -d -p 4306:3306 mysql:8.0 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+          until docker exec mysql mysqladmin ping --silent; do
+            echo "Waiting for MySQL to be up..."
+            sleep 2
+          done
+
+      - name: Rubyをセットアップ
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+
+      - name: Bundlerとgemをインストール
+        working-directory: back
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+      - name: Yarnをインストール
+        working-directory: back
+        run: yarn install --check-files
+
+      - name: データベースの作成とマイグレーション
+        working-directory: back
+        run: |
+          cp config/database.yml config/database.yml.bak
+          sed -i 's/host: db/host: 127.0.0.1/' config/database.yml
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
+
+      - name: RSpecを実行
+        working-directory: back
+        run: bundle exec rspec
+
+      - name: オリジナルのdatabase.ymlを復元
+        run: |
+          cd back
+          mv config/database.yml.bak config/database.yml
+
+  RuboCop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
@@ -31,30 +66,12 @@ jobs:
         with:
           ruby-version: 3.3.0
 
-      - name: 依存関係をインストール
+      - name: Bundlerとgemをインストール
+        working-directory: back
         run: |
-          cd back
           gem install bundler
-          bundle install
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
 
-      - name: データベースをセットアップ
-        env:
-          RAILS_ENV: test
-        run: |
-          cd back
-          cp config/database.yml config/database.yml.bak
-          sed -i 's/host: db/host: 127.0.0.1/' config/database.yml
-          bundle exec rails db:create
-          bundle exec rails db:migrate
-
-      - name: テストを実行
-        env:
-          RAILS_ENV: test
-        run: |
-          cd back
-          bundle exec rspec
-
-      - name: オリジナルのdatabase.ymlを復元
-        run: |
-          cd back
-          mv config/database.yml.bak config/database.yml
+      - name: RuboCopを実行
+        working-directory: back
+        run: bundle exec rubocop
