@@ -9,18 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    services:
+      db:
+        image: mysql:8.0
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 4306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
-
-      - name: MySQLのセットアップ
-        run: |
-          docker pull mysql:8.0
-          docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -d -p 4306:3306 mysql:8.0 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-          until docker exec mysql mysqladmin ping --silent; do
-            echo "Waiting for MySQL to be up..."
-            sleep 2
-          done
 
       - name: Rubyをセットアップ
         uses: ruby/setup-ruby@v1
@@ -39,14 +43,18 @@ jobs:
 
       - name: データベースの作成とマイグレーション
         working-directory: back
+        env:
+          RAILS_ENV: test
         run: |
           cp config/database.yml config/database.yml.bak
           sed -i 's/host: db/host: 127.0.0.1/' config/database.yml
-          bundle exec rails db:create RAILS_ENV=test
-          bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rails db:create
+          bundle exec rails db:migrate
 
       - name: RSpecを実行
         working-directory: back
+        env:
+          RAILS_ENV: test
         run: bundle exec rspec
 
       - name: オリジナルのdatabase.ymlを復元
