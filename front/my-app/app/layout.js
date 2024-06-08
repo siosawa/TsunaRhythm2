@@ -18,10 +18,9 @@ const navList = [
 ];
 
 export default function RootLayout({ children }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
-  const [currentUser, setCurrentUser] = useState(null); 
-  const [message, setMessage] = useState(""); 
-  const [error, setError] = useState(""); 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [error, setError] = useState("");
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -35,10 +34,8 @@ export default function RootLayout({ children }) {
       });
 
       if (res.ok) {
-        setMessage("ログアウトに成功しました。");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000); // 2秒後にリダイレクト
+        setCurrentUser(null);
+        window.location.href = "/";
       } else {
         const errorData = await res.json();
         setError(errorData.error || "ログアウトに失敗しました。");
@@ -97,19 +94,18 @@ export default function RootLayout({ children }) {
                   <Link href={item.href}>{item.label}</Link>
                 </Button>
               ))}
-              <Button variant="ghost" className="hover:hover:bg-sky-400 hover:text-white" asChild onClick={handleMenuClick}>
+              <Button variant="ghost" className="hover:bg-sky-400 hover:text-white" asChild onClick={handleMenuClick}>
                 <Link href={`/users/${currentUser.id}`}>マイページ</Link>
               </Button>
-              <Button variant="ghost" className="hover:hover:bg-sky-400 hover:text-white" asChild onClick={handleMenuClick}>
+              <Button variant="ghost" className="hover:bg-sky-400 hover:text-white" asChild onClick={handleMenuClick}>
                 <Link href="/edit-profile">プロフィール編集</Link>
               </Button>
-              <Button variant="ghost" className="hover:hover:bg-sky-400 hover:text-white" onClick={() => { handleLogout(); handleMenuClick(); }}>
+              <Button variant="ghost" className="hover:bg-sky-400 hover:text-white" onClick={() => { handleLogout(); handleMenuClick(); }}>
                 ログアウト
               </Button>
             </div>
           )}
         </div>
-        {message && <div className="fixed top-0 left-0 right-0 p-4 bg-green-500 text-white">{message}</div>}
         {error && <div className="fixed top-0 left-0 right-0 p-4 bg-red-500 text-white">{error}</div>}
       </body>
     </html>

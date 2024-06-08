@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const Setting = () => {
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [userId, setUserId] = useState(null);
 
@@ -24,10 +23,7 @@ const Setting = () => {
       });
 
       if (res.ok) {
-        setMessage("ログアウトに成功しました。");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000); // 2秒後にリダイレクト
+        window.location.href = "/";
       } else {
         const errorData = await res.json();
         setError(errorData.error || "ログアウトに失敗しました。");
@@ -57,7 +53,6 @@ const Setting = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={handleSetCurrentUser} />
-      {message && <div className="text-green-500">{message}</div>}
       {error && <div className="text-red-500">{error}</div>}
       <NavigationMenu>
         <NavigationMenuList>
@@ -67,7 +62,7 @@ const Setting = () => {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full hover:hover:bg-sky-400 hover:text-white"
+                className="w-full hover:bg-sky-400 hover:text-white"
               >
                 <NavigationMenuLink onClick={handleUserProfile}>
                   マイページ
@@ -75,8 +70,8 @@ const Setting = () => {
               </Button>
               <Button
                 variant="ghost"
-                asChil
-                className="hover:hover:bg-sky-400 hover:text-white"
+                asChild
+                className="hover:bg-sky-400 hover:text-white"
               >
                 <NavigationMenuLink onClick={handleEditProfile}>
                   プロフィール編集
@@ -85,7 +80,7 @@ const Setting = () => {
               <Button
                 variant="ghost"
                 asChild
-                className="w-full hover:hover:bg-sky-400 hover:text-white"
+                className="w-full hover:bg-sky-400 hover:text-white"
               >
                 <NavigationMenuLink onClick={handleLogout}>
                   ログアウト
