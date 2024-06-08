@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   has_many :posts, dependent: :destroy
 
@@ -27,7 +29,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
-                    uniqueness: { case_sensitive: false } 
+                    uniqueness: { case_sensitive: false }
   has_secure_password # セキュアなパスワード機能を導入。ハッシュ値のログも見せない。
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 

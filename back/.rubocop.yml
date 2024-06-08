@@ -29,8 +29,8 @@ Style/Documentation:
   Enabled: false
 
 # 文字列リテラルをimmutableにするマジックコメントfrozen_string_literal: trueは使用しない
-Style/FrozenStringLiteralComment:
-  Enabled: false
+# Style/FrozenStringLiteralComment:
+#   Enabled: false
 
 # ユーザーパスワードとパスワード確認のバリデーションをスキップする必要があるため、update_attributeの使用を許可
 Rails/SkipsModelValidations:
