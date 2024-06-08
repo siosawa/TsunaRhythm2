@@ -1,4 +1,8 @@
-// extendsに'next/babel'を追記する
 {
   "extends": ["next", "next/core-web-vitals", "prettier", "next/babel"]
 }
+// 下記にしたらnpm run lintが動くがFetch○○.jsなどでnext/babelが見つからないエラーになる
+// しかし上記にしたら下記で指摘されている赤い波線が消える
+// {
+//   "extends": ["next","prettier"]
+// }
