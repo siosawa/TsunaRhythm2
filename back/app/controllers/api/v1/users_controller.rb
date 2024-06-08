@@ -11,26 +11,18 @@ module Api
 
       def index
         per_page = 10
-        page = params[:page]&.to_i
-      
+        page = params[:page]&.to_i || 1
+    
         users = fetch_users_with_counts
-      
-        if page
-          users = users.limit(per_page).offset((page - 1) * per_page)
-          total_users = User.count
-          total_pages = (total_users.to_f / per_page).ceil
-        else
-          total_pages = 1
-          page = 1
-        end
-      
+        paginated_users, total_pages = index_paginate(users, per_page, page)
+    
         render json: {
-          users: users.as_json(only: %i[id name created_at work profile_text avatar],
-                               methods: %i[posts_count followers_count following_count]),
+          users: paginated_users.as_json(only: %i[id name created_at work profile_text avatar],
+                                         methods: %i[posts_count followers_count following_count]),
           total_pages: total_pages,
           current_page: page
         }
-      end          
+      end      
 
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
@@ -134,6 +126,14 @@ module Api
       end
 
       private
+          
+      def index_paginate(users, per_page, page)
+        total_users = users.length
+        paginated_users = users.limit(per_page).offset((page - 1) * per_page)
+        total_pages = (total_users.to_f / per_page).ceil
+    
+        [paginated_users, total_pages]
+      end   
 
       # indexとshowで使用
       def fetch_users_with_counts
