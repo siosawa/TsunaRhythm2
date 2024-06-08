@@ -5,6 +5,7 @@ module Api
     class UsersController < ApplicationController
       include ActionController::Cookies
       include SessionsHelper
+      include UsersHelper
 
       before_action :logged_in_user, only: %i[index update destroy following followers update_password]
       before_action :correct_user, only: %i[update destroy update_password]
@@ -36,10 +37,8 @@ module Api
         Rails.logger.info 'ユーザー作成処理を開始します。'
         @user = User.new(user_params)
         if @user.save
-          Rails.logger.info "ユーザー(ID: #{@user.id})が正常に保存されました。"
           render json: { message: 'ユーザーが正常に作成されました', user: @user }, status: :created
         else
-          Rails.logger.warn 'ユーザーの保存に失敗しました。'
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
@@ -48,10 +47,8 @@ module Api
         Rails.logger.info 'users_controllerのupdateアクションを実行しようとしています'
         @user = User.find(params[:id])
         if @user.update(user_params)
-          Rails.logger.info 'ユーザー情報の更新に成功しました。'
           render json: { message: 'ユーザー情報の更新に成功しました', user: @user }, status: :ok
         else
-          Rails.logger.info 'ユーザー情報の更新に失敗しました。'
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
@@ -61,7 +58,6 @@ module Api
         user = User.find_by(id: params[:id])
 
         if user.nil?
-          Rails.logger.info 'ユーザーが見つかりませんでした。'
           render json: { message: 'ユーザーが見つかりませんでした' }, status: :not_found
           return
         end
@@ -70,7 +66,6 @@ module Api
           Rails.logger.info 'ユーザーを削除しました。'
           render json: { message: 'ユーザーを削除しました' }, status: :ok
         else
-          Rails.logger.info 'ユーザーの削除に失敗しました。'
           render json: { message: 'ユーザーの削除に失敗しました' }, status: :unprocessable_entity
         end
       end
@@ -98,20 +93,9 @@ module Api
 
       def current_user_info
         if logged_in?
-          render json: {
-            id: current_user.id,
-            name: current_user.name,
-            email: current_user.email,
-            following: current_user.following.count,
-            followers: current_user.followers.count,
-            # posts: current_user.posts,
-            posts_count: current_user.posts.count,
-            work: current_user.work,
-            profile_text: current_user.profile_text,
-            avatar: current_user.avatar
-          }
+          render json: user_info_json(current_user)
         else
-          render json: { error: 'ログインしていません' }, status: :unauthorized
+          render_unauthorized
         end
       end
 
@@ -127,70 +111,6 @@ module Api
 
       private
 
-      def paginate_index(users, per_page, page)
-        total_users = users.length
-        paginated_users = users.limit(per_page).offset((page - 1) * per_page)
-        total_pages = (total_users.to_f / per_page).ceil
-
-        [paginated_users, total_pages]
-      end
-
-      # indexとshowで使用
-      def fetch_users_with_counts
-        User
-          .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text, users.avatar,
-                   (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
-                   (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
-          .left_joins(:posts)
-          .group('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar')
-      end
-
-      # pageが渡されない時は全てのデータを取得するようにしてある。
-      def paginate_relationships(relationship_type, relationship_model, foreign_key)
-        per_page = 10
-        page = params[:page]&.to_i
-
-        user = User.find(params[:id])
-        relationships = fetch_relationships(user, relationship_type, relationship_model, foreign_key)
-
-        total_users = relationships.size
-        (total_users.to_f / per_page).ceil # total_pagesに計算結果を代入
-
-        paginated_users, total_pages, page = cal_paginate_relationships(relationships, page, per_page)
-
-        render json: {
-          users: paginated_users,
-          total_pages:, # 変数名を正しく挿入
-          current_page: page
-        }
-      end
-
-      # paginate_relationshipsで使用
-      def fetch_relationships(user, relationship_type, relationship_model, foreign_key)
-        user.send(relationship_type).includes(relationship_model).map do |related_user|
-          relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
-          related_user.attributes.merge(relationship_id: relationship.id,
-                                        followers_count: related_user.followers.count,
-                                        following_count: related_user.following.count,
-                                        posts_count: related_user.posts.count)
-        end
-      end
-
-      # ページ数を計算しつつ、ページが指定されていない場合はrelationships全体を返す。
-      def cal_paginate_relationships(relationships, page, per_page)
-        if page
-          paginated_users = relationships.slice((page - 1) * per_page, per_page)
-          total_pages = (relationships.size.to_f / per_page).ceil
-        else
-          paginated_users = relationships
-          total_pages = 1
-          page = 1
-        end
-
-        [paginated_users, total_pages, page]
-      end
-
-      # createとupdateで使用
       def user_params
         params.require(:user).permit(:name, :email, :password, :password_confirmation, :work, :profile_text, :avatar)
       end
