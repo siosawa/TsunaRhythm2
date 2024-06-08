@@ -29,7 +29,8 @@ module UsersHelper
 
   def fetch_users_with_counts
     User
-      .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text, users.avatar,
+      .select('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar,
+                 COUNT(posts.id) AS posts_count,
                  (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
                  (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
       .left_joins(:posts)
