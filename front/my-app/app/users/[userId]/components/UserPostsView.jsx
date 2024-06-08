@@ -29,7 +29,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
         { title, content },
         {
           withCredentials: true,
-        }
+        },
       );
       setPosts(
         posts.map((post) =>
@@ -39,8 +39,8 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
                 title: response.data.title,
                 content: response.data.content,
               }
-            : post
-        )
+            : post,
+        ),
       );
       setEditingPost(null);
       setIsModalOpen(false);
@@ -56,7 +56,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
           `http://localhost:3000/api/v1/posts/user/${user.id}?page=${currentPage}`,
           {
             credentials: "include",
-          }
+          },
         );
         const userPosts = await response.json();
         setPosts(userPosts.posts || []);
@@ -76,7 +76,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
-          { locale: ja }
+          { locale: ja },
         );
         return (
           <div key={post.id} className="border-b border-gray-200 py-4">

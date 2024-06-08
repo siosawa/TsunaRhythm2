@@ -25,7 +25,7 @@ export default function UserPage() {
           `http://localhost:3000/api/v1/users/${userId}`,
           {
             credentials: "include",
-          }
+          },
         );
         const userData = await response.json();
         setUser(userData);

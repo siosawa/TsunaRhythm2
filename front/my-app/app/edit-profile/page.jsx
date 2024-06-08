@@ -39,7 +39,7 @@ const ProfileReadPage = () => {
           method: "PATCH",
           body: formData,
           credentials: "include",
-        }
+        },
       );
 
       if (response.ok) {
@@ -91,7 +91,7 @@ const ProfileReadPage = () => {
         `http://localhost:3000/api/v1/users/${user.id}`,
         {
           withCredentials: true,
-        }
+        },
       );
       console.log("退会処理が実行されました:", response.data);
 

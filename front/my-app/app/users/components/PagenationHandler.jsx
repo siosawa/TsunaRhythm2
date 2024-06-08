@@ -10,7 +10,7 @@ const fetchUsersAndFollowing = (
   setTotalPages,
   setFollowings,
   setFollowStates,
-  setError
+  setError,
 ) => {
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,7 +19,7 @@ const fetchUsersAndFollowing = (
           `http://localhost:3000/api/v1/users?page=${currentPage}`,
           {
             withCredentials: true,
-          }
+          },
         );
 
         if (res.data && Array.isArray(res.data.users)) {
@@ -46,7 +46,7 @@ const fetchUsersAndFollowing = (
             `http://localhost:3000/api/v1/users/${userId}/following`,
             {
               withCredentials: true,
-            }
+            },
           );
           const data = response.data;
 

@@ -18,7 +18,7 @@ const PostDetail = () => {
           `http://localhost:3000/api/v1/posts/${id}`,
           {
             withCredentials: true,
-          }
+          },
         );
         setPost(postRes.data);
         const userId = postRes.data.user_id;
@@ -28,7 +28,7 @@ const PostDetail = () => {
           `http://localhost:3000/api/v1/users/${userId}`,
           {
             withCredentials: true,
-          }
+          },
         );
         setUser(userRes.data);
       } catch (error) {

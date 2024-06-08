@@ -89,7 +89,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
         },
         {
           withCredentials: true, // クッキーを含める設定
-        }
+        },
       );
 
       if (response.status === 201) {
