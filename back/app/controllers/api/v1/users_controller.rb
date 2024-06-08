@@ -12,17 +12,17 @@ module Api
       def index
         per_page = 10
         page = params[:page]&.to_i || 1
-    
+
         users = fetch_users_with_counts
         paginated_users, total_pages = paginate_index(users, per_page, page)
-    
+
         render json: {
           users: paginated_users.as_json(only: %i[id name created_at work profile_text avatar],
                                          methods: %i[posts_count followers_count following_count]),
-          total_pages: total_pages,
+          total_pages:,
           current_page: page
         }
-      end      
+      end
 
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
@@ -126,14 +126,14 @@ module Api
       end
 
       private
-          
+
       def paginate_index(users, per_page, page)
         total_users = users.length
         paginated_users = users.limit(per_page).offset((page - 1) * per_page)
         total_pages = (total_users.to_f / per_page).ceil
-    
+
         [paginated_users, total_pages]
-      end   
+      end
 
       # indexとshowで使用
       def fetch_users_with_counts
@@ -143,18 +143,18 @@ module Api
                    (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
           .left_joins(:posts)
           .group('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar')
-      end  
+      end
 
       def paginate_relationships(relationship_type, relationship_model, foreign_key)
         per_page = 10
         page = params[:page]&.to_i
-      
+
         user = User.find(params[:id])
         relationships = fetch_relationships(user, relationship_type, relationship_model, foreign_key)
-      
+
         total_users = relationships.size
         total_pages = (total_users.to_f / per_page).ceil
-      
+
         if page
           paginated_users = relationships.slice((page - 1) * per_page, per_page)
         else
@@ -162,13 +162,13 @@ module Api
           total_pages = 1
           page = 1
         end
-      
+
         render json: {
           users: paginated_users,
-          total_pages: total_pages,
+          total_pages:,
           current_page: page
         }
-      end      
+      end
 
       # paginate_relationshipsで使用
       def fetch_relationships(user, relationship_type, relationship_model, foreign_key)
@@ -179,7 +179,7 @@ module Api
                                         following_count: related_user.following.count,
                                         posts_count: related_user.posts.count)
         end
-      end      
+      end
 
       # createとupdateで使用
       def user_params
