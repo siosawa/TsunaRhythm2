@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mysql:8.0
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
+        ports:
+          - 4306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+
+    steps:
+      - name: コードをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Rubyをセットアップ
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+
+      - name: 依存関係をインストール
+        run: |
+          cd back
+          gem install bundler
+          bundle install
+
+      - name: データベースをセットアップ
+        run: |
+          cd back
+          cp config/database.yml config/database.yml.bak
+          sed -i 's/host: db/host: 127.0.0.1/' config/database.yml
+          RAILS_ENV=test bundle exec rails db:create
+          RAILS_ENV=test bundle exec rails db:migrate
+
+      - name: テストを実行
+        run: |
+          cd back
+          RAILS_ENV=test bundle exec rspec
+
+      - name: オリジナルのdatabase.ymlを復元
+        run: |
+          cd back
+          mv config/database.yml.bak config/database.yml
