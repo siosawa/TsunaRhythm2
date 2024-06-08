@@ -1,4 +1,5 @@
-# spec/rails_helper.rb
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'faker'
 ENV['RAILS_ENV'] ||= 'test'

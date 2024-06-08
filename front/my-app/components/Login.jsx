@@ -12,10 +12,11 @@ const Login = () => {
   const passwordInputRef = useRef(null);
   const [isGuestLogin, setIsGuestLogin] = useState(false);
 
+  // emailフォームでエンターキーを押した時にpasswordフォームにカーソルが移動
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault(); // Enterキーのデフォルト動作を防ぐ
-      passwordInputRef.current.focus(); // パスワードフィールドにフォーカスを移動
+      passwordInputRef.current.focus();
     }
   };
 
@@ -39,15 +40,13 @@ const Login = () => {
       const responseData = await response.json();
       if (!response.ok) {
         setError(responseData.error || "ログインに失敗しました");
+        setEmail("");
+        setPassword("");
         return;
       }
 
       setSuccess("ログインに成功しました");
-      setError("");
-      // ログイン成功後の処理はここに追加（例：リダイレクト）
       window.location.href = `/rooms`;
-      // setEmail("");
-      // setPassword("");
     } catch (error) {
       setError("ログインに失敗しました");
     }
@@ -56,15 +55,15 @@ const Login = () => {
   const handleGuestLogin = () => {
     setEmail("guest@example.com");
     setPassword("foobar");
-    setIsGuestLogin(true); // フラグを設定
+    setIsGuestLogin(true);
   };
 
   useLayoutEffect(() => {
     if (isGuestLogin) {
       handleSubmit(new Event("submit", { bubbles: true, cancelable: true }));
-      setIsGuestLogin(false); // フラグをリセット
+      setIsGuestLogin(false);
     }
-  }, [email, password, isGuestLogin]); // isGuestLoginを依存配列に追加
+  }, [email, password, isGuestLogin]);
 
   return (
     <div className="fixed top-20 md:right-10 2xl:right-72 my-10 mx-auto md:mx-0 md:w-auto w-full">
@@ -81,7 +80,7 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={handleKeyDown}
-            autoComplete="email" // autocomplete属性を追加
+            autoComplete="email"
           />
           <Input
             type="password"
@@ -89,7 +88,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             ref={passwordInputRef}
-            autoComplete="current-password" // autocomplete属性を追加
+            autoComplete="current-password"
           />
           <Button
             type="submit"

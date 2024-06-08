@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
-// フォロー・フォロー解除コンポーネント
 const FollowUnfollowButton = ({
   userId,
   isFollowing,

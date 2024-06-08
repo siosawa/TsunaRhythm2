@@ -24,7 +24,6 @@ const Setting = () => {
       });
 
       if (res.ok) {
-        // ログアウト成功
         setMessage("ログアウトに成功しました。");
         setTimeout(() => {
           window.location.href = "/";
@@ -51,7 +50,6 @@ const Setting = () => {
     window.location.href = "/edit-profile";
   };
 
-  // CurrentUserのデータを受け取り、idを抽出して設定
   const handleSetCurrentUser = (userData) => {
     setUserId(userData.id);
   };

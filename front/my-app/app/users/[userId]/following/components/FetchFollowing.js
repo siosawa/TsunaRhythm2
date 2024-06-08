@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'next/navigation';
 
-// ユーザー情報取得コンポーネント
 const FetchFollowing = ({
   currentPage,
   currentUserId,
@@ -42,7 +41,7 @@ const FetchFollowing = ({
       if (currentUserId) {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/v1/users/60/following`,
+            `http://localhost:3000/api/v1/users/${currentUserId}/following`,
             {
               withCredentials: true,
             }
@@ -72,7 +71,7 @@ const FetchFollowing = ({
     }
   }, [currentPage, currentUserId, userId]);
 
-  return null; // このコンポーネントは何もレンダリングしないため、nullを返します。
+  return null; 
 };
 
 export default FetchFollowing;

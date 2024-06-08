@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'next/navigation';
 
-// ユーザー情報取得コンポーネント
 const FetchFollowers = ({
   currentPage,
   currentUserId,

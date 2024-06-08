@@ -31,7 +31,6 @@ const SignUp = () => {
     }
 
     try {
-      // アカウント作成APIの呼び出し
       const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
@@ -54,13 +53,6 @@ const SignUp = () => {
         );
         return;
       }
-
-      // アカウント作成成功
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setError("");
 
       try {
         // 自動ログインのためのAPI呼び出し
@@ -86,13 +78,8 @@ const SignUp = () => {
           setError(loginResponseData.error || "ログインに失敗しました");
           return;
         }
-
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-
-        // ログイン成功後の処理（例：リダイレクト）
-        window.location.href = "/diarys"; //一時的に/diarysを使用
+        // アカウント作成・ログイン成功時に/roomへ遷移
+        window.location.href = "/rooms";
       } catch (error) {
         setError("ログインに失敗しました");
       }
