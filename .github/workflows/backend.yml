@@ -18,7 +18,7 @@ jobs:
           --health-timeout 5s
           --health-retries 3
         ports:
-          - 3307:3306
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: password
 
@@ -40,6 +40,14 @@ jobs:
       - name: Yarnをインストール
         working-directory: back
         run: yarn install --check-files
+
+      - name: MySQLの起動を待機
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          until mysqladmin ping -h db --silent; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
 
       - name: データベースの作成とマイグレーション
         working-directory: back
