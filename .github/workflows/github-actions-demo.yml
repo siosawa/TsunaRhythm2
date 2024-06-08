@@ -1,0 +1,64 @@
+name: RSpecテスト
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mysql:8.0
+        options: >-
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 4306:3306
+        volumes:
+          - db_data:/var/lib/mysql
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Rubyをセットアップ
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3.0" # 使用するRubyのバージョンを指定
+
+      - name: 依存関係をインストール
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: データベース設定を確認
+        run: |
+          if [ ! -f config/database.yml.ci ]; then
+            echo "config/database.yml.ci が見つかりません"
+            exit 1
+          fi
+          cp config/database.yml.ci config/database.yml
+
+      - name: データベースが起動するのを待機
+        run: |
+          until mysqladmin ping -h db --silent; do
+            echo 'waiting for mysql...'
+            sleep 3
+          done
+
+      - name: データベースをセットアップ
+        env:
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+
+      - name: RSpecテストを実行
+        env:
+          RAILS_ENV: test
+        run: bundle exec rspec
