@@ -11,17 +11,10 @@ module Api
 
       def index
         per_page = 10
-        # pageパラメータが存在しない場合はnilとする
         page = params[:page]&.to_i
-
-        users = User
-                .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text, users.avatar,
-                           (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
-                           (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
-                .left_joins(:posts)
-                .group('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar')
-
-        # pageがnilの場合、全てのユーザーを取得
+      
+        users = fetch_users_with_counts
+      
         if page
           users = users.limit(per_page).offset((page - 1) * per_page)
           total_users = User.count
@@ -30,23 +23,18 @@ module Api
           total_pages = 1
           page = 1
         end
-
+      
         render json: {
           users: users.as_json(only: %i[id name created_at work profile_text avatar],
                                methods: %i[posts_count followers_count following_count]),
-          total_pages:,
+          total_pages: total_pages,
           current_page: page
         }
-      end
+      end          
 
       def show
         Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
-        @user = User
-                .select('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar,
-                           (SELECT COUNT(1) FROM posts WHERE posts.user_id = users.id) AS posts_count,
-                           (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
-                           (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
-                .find(params[:id])
+        @user = fetch_users_with_counts.find(params[:id])
         render json: @user.as_json(
           except: %i[email password_digest]
         )
@@ -146,6 +134,16 @@ module Api
       end
 
       private
+
+      # indexとshowで使用
+      def fetch_users_with_counts
+        User
+          .select('users.id, users.name, users.created_at, COUNT(posts.id) AS posts_count, users.work, users.profile_text, users.avatar,
+                   (SELECT COUNT(1) FROM relationships WHERE relationships.followed_id = users.id) AS followers_count,
+                   (SELECT COUNT(1) FROM relationships WHERE relationships.follower_id = users.id) AS following_count')
+          .left_joins(:posts)
+          .group('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar')
+      end  
 
       def paginate_relationships(relationship_type, relationship_model, foreign_key)
         per_page = 10
