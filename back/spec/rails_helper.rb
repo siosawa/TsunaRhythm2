@@ -1,4 +1,3 @@
-# spec/rails_helper.rb
 require 'spec_helper'
 require 'faker'
 ENV['RAILS_ENV'] ||= 'test'

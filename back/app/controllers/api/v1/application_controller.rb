@@ -6,7 +6,6 @@ module Api
 
       private
 
-      # ログイン済みユーザーかどうか確認
       def logged_in_user
         Rails.logger.info 'logged_in_user メソッドが呼び出されました'
 
