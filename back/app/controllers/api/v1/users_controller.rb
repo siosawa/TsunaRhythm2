@@ -26,7 +26,6 @@ module Api
       end
 
       def show
-        Rails.logger.info 'users_controllerのshowアクションを実行しようとしています'
         @user = fetch_users_with_counts.find(params[:id])
         render json: @user.as_json(
           except: %i[email password_digest]
@@ -34,7 +33,6 @@ module Api
       end
 
       def create
-        Rails.logger.info 'ユーザー作成処理を開始します。'
         @user = User.new(user_params)
         if @user.save
           render json: { message: 'ユーザーが正常に作成されました', user: @user }, status: :created
@@ -44,7 +42,6 @@ module Api
       end
 
       def update
-        Rails.logger.info 'users_controllerのupdateアクションを実行しようとしています'
         @user = User.find(params[:id])
         if @user.update(user_params)
           render json: { message: 'ユーザー情報の更新に成功しました', user: @user }, status: :ok
@@ -54,16 +51,12 @@ module Api
       end
 
       def destroy
-        Rails.logger.info 'users_controllerのdestroyアクションを実行しようとしています'
         user = User.find_by(id: params[:id])
-
         if user.nil?
           render json: { message: 'ユーザーが見つかりませんでした' }, status: :not_found
           return
         end
-
         if user.destroy
-          Rails.logger.info 'ユーザーを削除しました。'
           render json: { message: 'ユーザーを削除しました' }, status: :ok
         else
           render json: { message: 'ユーザーの削除に失敗しました' }, status: :unprocessable_entity
