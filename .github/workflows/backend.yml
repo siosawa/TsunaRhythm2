@@ -25,7 +25,7 @@ jobs:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Rubyをセットアップ
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
@@ -37,17 +37,21 @@ jobs:
           bundle install
 
       - name: データベースをセットアップ
+        env:
+          RAILS_ENV: test
         run: |
           cd back
           cp config/database.yml config/database.yml.bak
           sed -i 's/host: db/host: 127.0.0.1/' config/database.yml
-          RAILS_ENV=test bundle exec rails db:create
-          RAILS_ENV=test bundle exec rails db:migrate
+          bundle exec rails db:create
+          bundle exec rails db:migrate
 
       - name: テストを実行
+        env:
+          RAILS_ENV: test
         run: |
           cd back
-          RAILS_ENV=test bundle exec rspec
+          bundle exec rspec
 
       - name: オリジナルのdatabase.ymlを復元
         run: |
