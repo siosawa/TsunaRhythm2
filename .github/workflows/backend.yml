@@ -14,18 +14,19 @@ jobs:
         image: mysql:8.0
         options: >-
           --health-cmd "mysqladmin ping --silent"
-          --character-set-server=utf8mb4
-          --collation-server=utf8mb4_unicode_ci
         ports:
           - 4306:3306
         env:
           MYSQL_ROOT_PASSWORD: password
+        command: >
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
 
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Set up Ruby
+      - name: Rubyをセットアップ
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
