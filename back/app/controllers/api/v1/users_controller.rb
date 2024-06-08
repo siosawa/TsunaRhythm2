@@ -14,7 +14,7 @@ module Api
         page = params[:page]&.to_i || 1
     
         users = fetch_users_with_counts
-        paginated_users, total_pages = index_paginate(users, per_page, page)
+        paginated_users, total_pages = paginate_index(users, per_page, page)
     
         render json: {
           users: paginated_users.as_json(only: %i[id name created_at work profile_text avatar],
@@ -127,7 +127,7 @@ module Api
 
       private
           
-      def index_paginate(users, per_page, page)
+      def paginate_index(users, per_page, page)
         total_users = users.length
         paginated_users = users.limit(per_page).offset((page - 1) * per_page)
         total_pages = (total_users.to_f / per_page).ceil
@@ -170,6 +170,7 @@ module Api
         }
       end      
 
+      # paginate_relationshipsで使用
       def fetch_relationships(user, relationship_type, relationship_model, foreign_key)
         user.send(relationship_type).includes(relationship_model).map do |related_user|
           relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
@@ -180,6 +181,7 @@ module Api
         end
       end      
 
+      # createとupdateで使用
       def user_params
         params.require(:user).permit(:name, :email, :password, :password_confirmation, :work, :profile_text, :avatar)
       end
