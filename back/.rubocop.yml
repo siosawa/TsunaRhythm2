@@ -59,3 +59,9 @@ RSpec/MultipleExpectations:
 RSpec/InstanceVariable:
   Exclude:
     - "spec/requests/relationships_spec.rb"
+
+# 行数が長くなってもそのほうがわかりやすいと思われるので許可
+Metrics/MethodLength:
+  Max: 12
+  Exclude:
+    - "app/helpers/users_helper.rb"
