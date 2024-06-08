@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -20,6 +21,16 @@ const PostDetail = () => {
           }
         );
         setPost(postRes.data);
+        const userId = postRes.data.user_id;
+
+        // Fetch user data
+        const userRes = await axios.get(
+          `http://localhost:3000/api/v1/users/${userId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setUser(userRes.data);
       } catch (error) {
         console.error("データの取得に失敗しました:", error);
         setError(error);
@@ -33,7 +44,7 @@ const PostDetail = () => {
     return <div>データの取得に失敗しました: {error.message}</div>;
   }
 
-  if (!post) {
+  if (!post || !user) {
     return <div>Loading...</div>;
   }
 
@@ -46,9 +57,7 @@ const PostDetail = () => {
       <div className="flex items-center mb-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
         <div>
-          <p className="text-lg font-semibold">
-            {post.user ? post.user.name : "Unknown User"}
-          </p>
+          <p className="text-lg font-semibold">{user.name}</p>
           <p className="text-sm text-gray-500">{formattedDate}</p>
         </div>
       </div>
