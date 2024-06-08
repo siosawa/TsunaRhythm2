@@ -13,8 +13,6 @@ jobs:
       db:
         image: mysql:8.0
         options: >
-          --character-set-server=utf8mb4
-          --collation-server=utf8mb4_unicode_ci
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
@@ -81,6 +79,14 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
+
+      - name: Cache Gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
 
       - name: Bundlerとgemをインストール
         working-directory: back
