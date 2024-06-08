@@ -145,6 +145,7 @@ module Api
           .group('users.id, users.name, users.created_at, users.work, users.profile_text, users.avatar')
       end
 
+      # pageが渡されない時は全てのデータを取得するようにしてある。
       def paginate_relationships(relationship_type, relationship_model, foreign_key)
         per_page = 10
         page = params[:page]&.to_i
@@ -153,19 +154,13 @@ module Api
         relationships = fetch_relationships(user, relationship_type, relationship_model, foreign_key)
 
         total_users = relationships.size
-        total_pages = (total_users.to_f / per_page).ceil
+        (total_users.to_f / per_page).ceil # total_pagesに計算結果を代入
 
-        if page
-          paginated_users = relationships.slice((page - 1) * per_page, per_page)
-        else
-          paginated_users = relationships
-          total_pages = 1
-          page = 1
-        end
+        paginated_users, total_pages, page = cal_paginate_relationships(relationships, page, per_page)
 
         render json: {
           users: paginated_users,
-          total_pages:,
+          total_pages:, # 変数名を正しく挿入
           current_page: page
         }
       end
@@ -179,6 +174,20 @@ module Api
                                         following_count: related_user.following.count,
                                         posts_count: related_user.posts.count)
         end
+      end
+
+      # ページ数を計算しつつ、ページが指定されていない場合はrelationships全体を返す。
+      def cal_paginate_relationships(relationships, page, per_page)
+        if page
+          paginated_users = relationships.slice((page - 1) * per_page, per_page)
+          total_pages = (relationships.size.to_f / per_page).ceil
+        else
+          paginated_users = relationships
+          total_pages = 1
+          page = 1
+        end
+
+        [paginated_users, total_pages, page]
       end
 
       # createとupdateで使用
