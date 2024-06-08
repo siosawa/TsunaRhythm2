@@ -18,7 +18,7 @@ jobs:
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=10
         ports:
           - 3306:3306
         env:
@@ -32,6 +32,22 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
+
+      - name: Cache Gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: back/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Bundlerとgemをインストール
         working-directory: back
@@ -52,8 +68,6 @@ jobs:
 
       - name: RSpecを実行
         working-directory: back
-        env:
-          RAILS_ENV: test
         run: bundle exec rspec
 
   RuboCop:
