@@ -18,7 +18,7 @@ jobs:
           --health-timeout 5s
           --health-retries 3
         ports:
-          - 4306:3306
+          - 3307:3306
         env:
           MYSQL_ROOT_PASSWORD: password
 
@@ -47,7 +47,7 @@ jobs:
           RAILS_ENV: test
         run: |
           cp config/database.yml config/database.yml.bak
-          sed -i 's/host: db/host: 127.0.0.1/' config/database.yml
+          sed -i 's/host: 127.0.0.1/host: db/' config/database.yml
           bundle exec rails db:create
           bundle exec rails db:migrate
 
