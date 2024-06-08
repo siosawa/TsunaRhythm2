@@ -9,7 +9,7 @@ const FetchCurrentUser = ({ setCurrentUser }) => {
           "http://localhost:3000/api/v1/current_user",
           {
             withCredentials: true,
-          }
+          },
         );
 
         setCurrentUser(response.data);

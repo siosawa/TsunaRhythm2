@@ -9,7 +9,7 @@ const FetchPosts = ({ currentPage, setPosts, setTotalPages, reload }) => {
           `http://localhost:3000/api/v1/posts?page=${currentPage}`,
           {
             withCredentials: true,
-          }
+          },
         );
 
         setPosts(response.data.posts);

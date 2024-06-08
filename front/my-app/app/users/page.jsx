@@ -25,7 +25,7 @@ const UsersList = () => {
     setTotalPages,
     setFollowings,
     setFollowStates,
-    setError
+    setError,
   );
 
   if (error) {

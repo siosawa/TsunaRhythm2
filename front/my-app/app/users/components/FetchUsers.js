@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import axios from "axios"; 
+import axios from "axios";
 
 const FetchUsers = (
   currentPage,
@@ -8,7 +8,7 @@ const FetchUsers = (
   setTotalPages,
   setFollowings,
   setFollowStates,
-  setError
+  setError,
 ) => {
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,7 +17,7 @@ const FetchUsers = (
           `http://localhost:3000/api/v1/users?page=${currentPage}`,
           {
             withCredentials: true,
-          }
+          },
         );
 
         if (res.data && Array.isArray(res.data.users)) {
@@ -40,7 +40,7 @@ const FetchUsers = (
             `http://localhost:3000/api/v1/users/${currentUserId}/following`,
             {
               withCredentials: true,
-            }
+            },
           );
           const data = response.data;
 
@@ -66,5 +66,4 @@ const FetchUsers = (
   }, [currentPage, currentUserId]);
 };
 
-export default FetchUsers; 
-
+export default FetchUsers;

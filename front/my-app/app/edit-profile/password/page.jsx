@@ -57,7 +57,7 @@ const EditPassword = () => {
             new_password: formData.new_password,
           }),
           credentials: "include",
-        }
+        },
       );
 
       if (response.ok) {

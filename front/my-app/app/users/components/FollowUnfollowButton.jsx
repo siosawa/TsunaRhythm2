@@ -29,7 +29,7 @@ const FollowUnfollowButton = ({
         `http://localhost:3000/api/v1/relationships/${relationshipId}`,
         {
           withCredentials: true,
-        }
+        },
       );
       if (response.status === 200) {
         updateFollowState(false);
@@ -48,7 +48,7 @@ const FollowUnfollowButton = ({
         { followed_id: userId },
         {
           withCredentials: true,
-        }
+        },
       );
       if (response.status === 201) {
         const data = response.data;

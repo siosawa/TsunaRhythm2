@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
 
 const FetchFollowers = ({
   currentPage,
@@ -9,7 +9,7 @@ const FetchFollowers = ({
   setTotalPages,
   setFollowings,
   setFollowStates,
-  setError
+  setError,
 }) => {
   const { userId } = useParams();
 
@@ -20,7 +20,7 @@ const FetchFollowers = ({
           `http://localhost:3000/api/v1/users/${userId}/followers?page=${currentPage}`,
           {
             withCredentials: true,
-          }
+          },
         );
 
         if (res.data && Array.isArray(res.data.users)) {
@@ -43,7 +43,7 @@ const FetchFollowers = ({
             `http://localhost:3000/api/v1/users/${currentUserId}/following`,
             {
               withCredentials: true,
-            }
+            },
           );
           const data = response.data;
 
@@ -70,8 +70,7 @@ const FetchFollowers = ({
     }
   }, [currentPage, currentUserId, userId]);
 
-  return null; 
+  return null;
 };
 
 export default FetchFollowers;
-

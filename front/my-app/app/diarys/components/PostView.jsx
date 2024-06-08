@@ -32,7 +32,7 @@ const PostView = ({ reload }) => {
         { title, content },
         {
           withCredentials: true,
-        }
+        },
       );
       setPosts(
         posts.map((post) =>
@@ -42,8 +42,8 @@ const PostView = ({ reload }) => {
                 title: response.data.title,
                 content: response.data.content,
               }
-            : post
-        )
+            : post,
+        ),
       );
       setEditingPost(null);
       setIsModalOpen(false);
@@ -59,7 +59,7 @@ const PostView = ({ reload }) => {
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
-          { locale: ja }
+          { locale: ja },
         );
         return (
           <div key={post.id} className="border-b border-gray-200 py-4">

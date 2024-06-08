@@ -40,7 +40,9 @@ const UsersPagination = ({ currentPage, totalPages, onPageChange }) => {
           key={index}
           onClick={() => onPageChange(page)}
           className={`mx-1 px-3 py-1 border rounded ${
-            page === currentPage ? "bg-blue-500 text-white" : "bg-white text-blue-500"
+            page === currentPage
+              ? "bg-blue-500 text-white"
+              : "bg-white text-blue-500"
           }`}
         >
           {page}
