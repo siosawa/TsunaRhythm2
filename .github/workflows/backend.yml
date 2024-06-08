@@ -13,6 +13,7 @@ jobs:
       db:
         image: mysql:8.0
         options: >-
+          --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
           --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
           --health-timeout 5s
@@ -41,34 +42,18 @@ jobs:
         working-directory: back
         run: yarn install --check-files
 
-      - name: MySQLの起動を待機
-        run: |
-          echo "Waiting for MySQL to be ready..."
-          until mysqladmin ping -h db --silent; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
-
-      - name: データベースの作成とマイグレーション
+      - name: データベース設定ファイルをコピー
         working-directory: back
-        env:
-          RAILS_ENV: test
         run: |
-          cp config/database.yml config/database.yml.bak
-          sed -i 's/host: 127.0.0.1/host: db/' config/database.yml
-          bundle exec rails db:create
-          bundle exec rails db:migrate
+          cp config/database.yml.ci config/database.yml
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
 
       - name: RSpecを実行
         working-directory: back
         env:
           RAILS_ENV: test
         run: bundle exec rspec
-
-      - name: オリジナルのdatabase.ymlを復元
-        run: |
-          cd back
-          mv config/database.yml.bak config/database.yml
 
   RuboCop:
     runs-on: ubuntu-latest
