@@ -1,56 +1,64 @@
-# name: Code Review
+name: RSpecテスト
 
-# permissions:
-#   contents: read
-#   pull-requests: write
+on:
+  push:
+    branches:
+      - feature/*
 
-# on:
-#   pull_request:
-#     types: [opened]
-#   pull_request_review_comment:
-#     types: [created]
-#   issue_comment:
-#     types: [created]
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-# concurrency:
-#   group:
-#     ${{ github.repository }}-${{ github.event.number || github.head_ref ||
-#     github.sha }}-${{ github.workflow }}-${{ github.event_name ==
-#     'pull_request_review_comment' && 'pr_comment' || 'pr' }}
-#   cancel-in-progress: ${{ github.event_name != 'pull_request_review_comment' }}
+    services:
+      db:
+        image: mysql:8.0
+        options: >-
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 4306:3306
+        volumes:
+          - db_data:/var/lib/mysql
 
-# jobs:
-#   review:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: coderabbitai/ai-pr-reviewer@latest
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-#         with:
-#           debug: false
-#           review_simple_changes: true
-#           review_comment_lgtm: false
-#           openai_light_model: gpt-3.5-turbo
-#           openai_heavy_model: gpt-4-turbo-preview
-#           openai_timeout_ms: 90000
-#           language: ja-JP
-#           system_message: |
-#             あなたは @coderabbitai（別名 github-actions[bot]）で、OpenAIによって訓練された言語モデルです。
-#             些細なコードスタイルの問題や、コメント・ドキュメントの欠落についてはコメントしないでください。
-#           summarize: |
-#             次の内容でmarkdownフォーマットを使用して、最終的な回答を提供してください。
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
 
-#               ### 概要: 特定のファイルではなく、全体の変更に関する高レベルの要約を80語以内で。
-#               ### 詳細: ファイルとその要約のテーブル。スペースを節約するために、同様の変更を持つファイルを1行にまとめることが可能
+      - name: Rubyをセットアップ
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3.0" # 使用するRubyのバージョンを指定
 
-#           summarize_release_notes: |
-#             このプルリクエストのために、markdownフォーマットで簡潔なリリースノートを作成してください。
-#             変更は以下のような分類で箇条書きにすること:
-#               "New Feature", "Bug fix", "Documentation", "Refactor", "Style",
-#               "Test", "Chore", "Revert"
-#             例えば:
-#             ```
-#             - New Feature: モーダルコンポーネントを追加
-#             ```
-#             回答は50-100語以内にしてください。
+      - name: 依存関係をインストール
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: データベース設定を確認
+        run: |
+          if [ ! -f config/database.yml.ci ]; then
+            echo "config/database.yml.ci が見つかりません"
+            exit 1
+          fi
+          cp config/database.yml.ci config/database.yml
+
+      - name: データベースが起動するのを待機
+        run: |
+          until mysqladmin ping -h db --silent; do
+            echo 'waiting for mysql...'
+            sleep 3
+          done
+
+      - name: データベースをセットアップ
+        env:
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+
+      - name: RSpecテストを実行
+        env:
+          RAILS_ENV: test
+        run: bundle exec rspec
