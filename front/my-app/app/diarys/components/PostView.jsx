@@ -53,7 +53,7 @@ const PostView = ({ reload }) => {
   };
 
   return (
-    <div className="max-w-2xl p-4 bg-white rounded-3xl shadow-custom-dark mx-4 md:mx-auto">
+    <div className="max-w-2xl p-4 bg-white rounded-3xl shadow-custom-dark mx-4 md:mx-auto mb-20">
       {" "}
       {posts.map((post) => {
         const formattedDate = format(
