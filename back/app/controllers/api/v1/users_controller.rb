@@ -150,19 +150,13 @@ module Api
       def paginate_relationships(relationship_type, relationship_model, foreign_key)
         per_page = 10
         page = params[:page]&.to_i
-
+      
         user = User.find(params[:id])
-        relationships = user.send(relationship_type).includes(relationship_model).map do |related_user|
-          relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
-          related_user.attributes.merge(relationship_id: relationship.id,
-                                        followers_count: related_user.followers.count,
-                                        following_count: related_user.following.count,
-                                        posts_count: related_user.posts.count)
-        end
-
+        relationships = fetch_relationships(user, relationship_type, relationship_model, foreign_key)
+      
         total_users = relationships.size
         total_pages = (total_users.to_f / per_page).ceil
-
+      
         if page
           paginated_users = relationships.slice((page - 1) * per_page, per_page)
         else
@@ -170,13 +164,23 @@ module Api
           total_pages = 1
           page = 1
         end
-
+      
         render json: {
           users: paginated_users,
-          total_pages:,
+          total_pages: total_pages,
           current_page: page
         }
-      end
+      end      
+
+      def fetch_relationships(user, relationship_type, relationship_model, foreign_key)
+        user.send(relationship_type).includes(relationship_model).map do |related_user|
+          relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
+          related_user.attributes.merge(relationship_id: relationship.id,
+                                        followers_count: related_user.followers.count,
+                                        following_count: related_user.following.count,
+                                        posts_count: related_user.posts.count)
+        end
+      end      
 
       def user_params
         params.require(:user).permit(:name, :email, :password, :password_confirmation, :work, :profile_text, :avatar)
