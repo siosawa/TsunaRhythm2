@@ -105,9 +105,9 @@ jobs:
         with:
           node-version: 20
 
-      - name: Yarn install
-        working-directory: front/ my-app
-        run: yarn install
+      - name: Yarnをインストール
+        working-directory: front/my-app
+        run: yarn install --check-files
 
       - name: Run ESLint
         working-directory: front/my-app
