@@ -1,9 +1,17 @@
 import { Calendar } from "@/components/ui/calendar";
+import { EditTable } from "./components/EditTable";
 const Dashboard = () => {
   return (
     <>
-      <div>dashboard?</div>
-      <Calendar className="pl-9 mx-80 my-10 bg-white rounded-3xl shadow-custom-dark" />
+      <div className="flex flex-col items-start space-y-4 mt-12">
+        <div>dashboard?</div>
+        <div className="my-10 mx-7 bg-white rounded-3xl shadow-custom-dark">
+          <Calendar />
+        </div>
+        <div className="lg:w-1/3">
+          <EditTable />
+        </div>
+      </div>
     </>
   );
 };
