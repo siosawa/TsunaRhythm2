@@ -21,6 +21,7 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: "%"
         volumes:
           - db_data:/var/lib/mysql
 
@@ -55,12 +56,14 @@ jobs:
         working-directory: back
         run: |
           cp config/database.yml.ci config/database.yml
-          bundle exec rails db:create RAILS_ENV=test
-          bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rake db:create
+          bundle exec rake db:migrate
 
       - name: RSpecを実行
         working-directory: back
         run: bundle exec rspec
+        env:
+          RAILS_ENV: test
 
   RuboCop:
     runs-on: ubuntu-latest
