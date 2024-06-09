@@ -40,7 +40,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_30_211327) do
     t.string "work"
     t.text "profile_text"
     t.string "avatar"
-    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "posts", "users"
