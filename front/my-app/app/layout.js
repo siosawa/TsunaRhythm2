@@ -11,10 +11,11 @@ import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const inter = Inter({ subsets: ["latin"] });
 const navList = [
-  { label: "ホーム", href: "/home" },
+  { label: "ルーム", href: "/room" },
   { label: "ルーム一覧・作成", href: "/rooms" },
   { label: "みんなの日記", href: "/diarys" },
   { label: "ユーザー", href: "/users" },
+  { label: "ダッシュボード", href: "/dashboard" },
 ];
 
 export default function RootLayout({ children }) {
