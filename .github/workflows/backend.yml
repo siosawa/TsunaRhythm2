@@ -106,9 +106,9 @@ jobs:
           node-version: 20
 
       - name: Yarn install
-        working-directory: front/app
+        working-directory: front/ my-app
         run: yarn install
 
       - name: Run ESLint
-        working-directory: front/app
+        working-directory: front/my-app
         run: yarn run lint
