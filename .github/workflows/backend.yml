@@ -56,8 +56,8 @@ jobs:
         working-directory: back
         run: |
           cp config/database.yml.ci config/database.yml
-          bundle exec rake db:create
-          bundle exec rake db:migrate
+          bundle exec rake db:create --trace
+          bundle exec rake db:migrate --trace
 
       - name: RSpecを実行
         working-directory: back
