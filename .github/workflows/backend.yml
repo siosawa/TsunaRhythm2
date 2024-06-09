@@ -2,7 +2,8 @@ name: Run RSpec and RuboCop
 
 on:
   push:
-  pull_request:
+    branches:
+      - feature
 
 jobs:
   RSpec:
@@ -13,31 +14,26 @@ jobs:
       db:
         image: mysql:8.0
         options: >-
-          --character-set-server=utf8mb4
-          --collation-server=utf8mb4_unicode_ci
-          --default-authentication-plugin=mysql_native_password
           --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 3
+          --health-retries 10
         ports:
-          - 4306:3306
-
-    container:
-      image: ruby:3.3.0
-      options: --network=service:db --tty
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: "%"
+        volumes:
+          - db_data:/var/lib/mysql
 
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Cache Gems
-        uses: actions/cache@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
+          ruby-version: 3.3.0
 
       - name: Cache node modules
         uses: actions/cache@v2
@@ -59,32 +55,32 @@ jobs:
 
       - name: データベース設定ファイルをコピー
         working-directory: back
+        run: cp config/database.yml.ci config/database.yml
+
+      - name: データベースを作成およびマイグレーション
+        working-directory: back
         run: |
-          cp config/database.yml.ci config/database.yml
-          bundle exec rails db:create RAILS_ENV=test
-          bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rake db:create RAILS_ENV=test --trace
+          bundle exec rake db:migrate RAILS_ENV=test --trace
 
       - name: RSpecを実行
         working-directory: back
         run: bundle exec rspec
+        env:
+          RAILS_ENV: test
 
   RuboCop:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    container:
-      image: ruby:3.3.0
 
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Cache Gems
-        uses: actions/cache@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
+          ruby-version: 3.3.0
 
       - name: Bundlerとgemをインストール
         working-directory: back
