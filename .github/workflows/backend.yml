@@ -91,3 +91,24 @@ jobs:
       - name: RuboCopを実行
         working-directory: back
         run: bundle exec rubocop
+
+  ESLint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Yarn install
+        working-directory: front/app
+        run: yarn install
+
+      - name: Run ESLint
+        working-directory: front/app
+        run: yarn run lint
