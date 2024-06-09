@@ -52,7 +52,7 @@ export function EditTable() {
       },
       {
         Header: "ワークの種類",
-        accessor: "work",
+        accessor: "workType",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
