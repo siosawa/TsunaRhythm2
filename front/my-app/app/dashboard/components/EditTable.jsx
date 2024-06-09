@@ -26,7 +26,7 @@ export function EditTable() {
       },
       {
         Header: "企業名",
-        accessor: "companyName",
+        accessor: "company",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
@@ -39,7 +39,7 @@ export function EditTable() {
       },
       {
         Header: "案件名",
-        accessor: "projectName",
+        accessor: "profect",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
@@ -52,7 +52,7 @@ export function EditTable() {
       },
       {
         Header: "ワークの種類",
-        accessor: "workType",
+        accessor: "work",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
