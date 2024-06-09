@@ -54,10 +54,13 @@ jobs:
 
       - name: データベース設定ファイルをコピー
         working-directory: back
+        run: cp config/database.yml.ci config/database.yml
+
+      - name: データベースを作成およびマイグレーション
+        working-directory: back
         run: |
-          cp config/database.yml.ci config/database.yml
-          bundle exec rake db:create --trace
-          bundle exec rake db:migrate --trace
+          bundle exec rake db:create RAILS_ENV=test --trace
+          bundle exec rake db:migrate RAILS_ENV=test --trace
 
       - name: RSpecを実行
         working-directory: back
@@ -68,6 +71,7 @@ jobs:
   RuboCop:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
