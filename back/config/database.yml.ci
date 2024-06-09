@@ -7,3 +7,4 @@ test:
   host: 127.0.0.1
   database: app_test
   reconnect: false
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
