@@ -24,20 +24,14 @@ jobs:
         volumes:
           - db_data:/var/lib/mysql
 
-    container:
-      image: ruby:3.3.0
-
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Cache Gems
-        uses: actions/cache@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
+          ruby-version: 3.3.0
 
       - name: Cache node modules
         uses: actions/cache@v2
@@ -71,20 +65,14 @@ jobs:
   RuboCop:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    container:
-      image: ruby:3.3.0
-
     steps:
       - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Cache Gems
-        uses: actions/cache@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
+          ruby-version: 3.3.0
 
       - name: Bundlerとgemをインストール
         working-directory: back
