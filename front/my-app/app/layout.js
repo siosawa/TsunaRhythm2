@@ -116,14 +116,6 @@ export default function RootLayout({ children }) {
                 asChild
                 onClick={handleMenuClick}
               >
-                <Link href={`/users/${currentUser.id}`}>自分の日記</Link>
-              </Button>
-              <Button
-                variant="ghost"
-                className="hover:bg-sky-400 hover:text-white"
-                asChild
-                onClick={handleMenuClick}
-              >
                 <Link href={`/diarys`}>みんなの日記</Link>
               </Button>
               <Button
