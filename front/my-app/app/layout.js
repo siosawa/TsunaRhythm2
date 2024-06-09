@@ -10,18 +10,18 @@ import { TbMenu } from "react-icons/tb"; // ハンバーガーメニューアイ
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const inter = Inter({ subsets: ["latin"] });
-const navList = [
-  { label: "ルーム", href: "/room" },
-  { label: "ルーム一覧・作成", href: "/rooms" },
-  { label: "みんなの日記", href: "/diarys" },
-  { label: "ユーザー", href: "/users" },
-  { label: "ダッシュボード", href: "/dashboard" },
-];
 
 export default function RootLayout({ children }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState("");
+
+  const navList = [
+    { label: "ルーム", href: "/room" },
+    { label: "ルーム一覧", href: "/rooms" },
+    { label: "ダッシュボード", href: "/dashboard" },
+    { label: "自分の日記", href: `/users/${currentUser?.id}` },
+  ];
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
                     <TbMenu size={24} />
                   </Button>
                 </div>
-                <ul className="hidden md:flex gap-4">
+                <ul className="hidden md:flex">
                   {navList.map((item) => (
                     <li key={item.label}>
                       <Button
@@ -116,7 +116,15 @@ export default function RootLayout({ children }) {
                 asChild
                 onClick={handleMenuClick}
               >
-                <Link href={`/users/${currentUser.id}`}>マイページ</Link>
+                <Link href={`/diarys`}>みんなの日記</Link>
+              </Button>
+              <Button
+                variant="ghost"
+                className="hover:bg-sky-400 hover:text-white"
+                asChild
+                onClick={handleMenuClick}
+              >
+                <Link href={`/users`}>ユーザー一覧</Link>
               </Button>
               <Button
                 variant="ghost"

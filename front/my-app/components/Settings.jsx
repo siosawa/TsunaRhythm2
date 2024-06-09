@@ -34,18 +34,6 @@ const Setting = () => {
     }
   };
 
-  const handleUserProfile = () => {
-    if (userId) {
-      window.location.href = `/users/${userId}`;
-    } else {
-      setError("ユーザーIDが取得できませんでした。");
-    }
-  };
-
-  const handleEditProfile = () => {
-    window.location.href = "/edit-profile";
-  };
-
   const handleSetCurrentUser = (userData) => {
     setUserId(userData.id);
   };
@@ -60,12 +48,21 @@ const Setting = () => {
             <NavigationMenuTrigger>設定</NavigationMenuTrigger>
             <NavigationMenuContent>
               <Button
+                variant="primary"
+                asChild
+                className="w-full hover:bg-sky-400 hover:text-white"
+              >
+                <NavigationMenuLink href="/diarys">
+                  みんなの日記
+                </NavigationMenuLink>
+              </Button>
+              <Button
                 variant="ghost"
                 asChild
                 className="w-full hover:bg-sky-400 hover:text-white"
               >
-                <NavigationMenuLink onClick={handleUserProfile}>
-                  マイページ
+                <NavigationMenuLink href="/users">
+                  ユーザー一覧
                 </NavigationMenuLink>
               </Button>
               <Button
@@ -73,7 +70,7 @@ const Setting = () => {
                 asChild
                 className="hover:bg-sky-400 hover:text-white"
               >
-                <NavigationMenuLink onClick={handleEditProfile}>
+                <NavigationMenuLink href="/edit-profile">
                   プロフィール編集
                 </NavigationMenuLink>
               </Button>
