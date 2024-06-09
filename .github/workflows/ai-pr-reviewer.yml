@@ -1,3 +1,5 @@
+# 下記のコメントアウトを外せばコードは正常に動くが、API使用料を鑑みてコメントアウト
+
 # name: Code Review
 
 # permissions:
