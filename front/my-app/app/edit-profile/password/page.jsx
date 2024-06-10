@@ -32,7 +32,7 @@ const EditPassword = () => {
     setNewPassword("");
     setConfirmPassword("");
 
-    if (user && user.id === 60) {
+    if (user && user.id === 2) {
       setMessage("ゲストアカウントはパスワードを変更できません");
       setMessageType("error");
       return;
@@ -57,7 +57,7 @@ const EditPassword = () => {
             new_password: formData.new_password,
           }),
           credentials: "include",
-        },
+        }
       );
 
       if (response.ok) {
