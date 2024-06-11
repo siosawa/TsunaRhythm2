@@ -12,19 +12,6 @@ export function EditTable() {
   const columns = React.useMemo(
     () => [
       {
-        Header: "日付",
-        accessor: "date",
-        Cell: ({ value, row: { index }, column: { id } }) => (
-          <input
-            type="date"
-            value={value}
-            onChange={(e) => handleInputChange(e, index, id)}
-            className="w-full p-2 border rounded text-xs"
-            disabled={!isEditing}
-          />
-        ),
-      },
-      {
         Header: "企業名",
         accessor: "company",
         Cell: ({ value, row: { index }, column: { id } }) => (
@@ -79,19 +66,6 @@ export function EditTable() {
       {
         Header: "-本数-",
         accessor: "quantity",
-        Cell: ({ value, row: { index }, column: { id } }) => (
-          <input
-            type="number"
-            value={value}
-            onChange={(e) => handleInputChange(e, index, id, "number")}
-            className="w-full p-2 border rounded text-xs"
-            disabled={!isEditing}
-          />
-        ),
-      },
-      {
-        Header: "-分数-",
-        accessor: "minutes",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="number"
