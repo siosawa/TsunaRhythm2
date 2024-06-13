@@ -4,6 +4,7 @@ import { ProjectSelection } from "@/app/room/components/ProjectSelection";
 import { useState } from "react";
 import { SetTimer } from "@/app/room/components/SetTimer";
 import { ViewTimerRecord } from "@/app/room/components/ViewTimerRecord";
+import GroupChat from "../components/GroupChat";
 
 const projects = [
   '"Tech Today" Webメディアの記事執筆',
@@ -41,6 +42,7 @@ export default function Timer() {
           projects={projects}
         />
       </div>
+      <GroupChat className="absolute z-30" />
     </>
   );
 }
