@@ -37,49 +37,57 @@ export function ViewTimerRecord({ timerRecords, setTimerRecords, projects }) {
     setIsEditing(true); // 編集モードを開始
   };
 
+  const formatDate = (date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${month}/${day} ${hours}:${minutes.toString().padStart(2, "0")}`;
+  };
+
   return (
-    <div className="mt-4 w-11/12">
-      <div className="bg-gray-200 rounded-3xl p-4 h-96 max-h-96 overflow-y-auto w-5/12 text-left relative">
+    <div className="mt-4 w-44">
+      <div className="bg-gray-200 rounded-3xl p-3 h-96 overflow-y-auto relative">
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
             <tr>
-              <th className="w-1/4">日付</th>
-              <th className="w-1/6">分</th>
-              <th className="w-1/3">案件名</th>
+              <th className="w-1/4 p-1 whitespace-nowrap">日付</th>
+              <th className="w-1/6 p-1 whitespace-nowrap">分</th>
+              <th className="w-1/5 p-1 whitespace-nowrap">案件名</th>
             </tr>
           </thead>
           <tbody>
             {timerRecords.length === 0 ? (
               <tr>
-                <td colSpan="3" className="text-center py-4">
+                <td colSpan="3" className="text-center py-4 whitespace-nowrap">
                   記録がありません
                 </td>
               </tr>
             ) : (
               timerRecords.map((record, index) => (
                 <tr key={index}>
-                  <td className="w-1/4">
+                  <td className="w-1/4 p-0 whitespace-nowrap">
                     <input
-                      type="datetime-local"
-                      value={record.date.toISOString().slice(0, 16)}
+                      type="text"
+                      value={formatDate(record.date)}
                       readOnly
-                      className="border p-1 w-full"
+                      className="border p-0 w-full text-xs whitespace-nowrap"
                     />
                   </td>
-                  <td className="w-1/6">
+                  <td className="w-1/6 p-0 whitespace-nowrap">
                     <input
                       type="number"
                       value={record.minutes}
                       min="0"
                       readOnly
-                      className="border p-1 w-full"
+                      className="border p-0 w-full text-xs whitespace-nowrap"
                     />
                   </td>
-                  <td className="w-1/3">
+                  <td className="w-1/5 p-0 whitespace-nowrap">
                     <select
                       value={record.project}
                       disabled
-                      className="border p-1 w-full"
+                      className="border p-0 w-full text-xs whitespace-nowrap"
                     >
                       {projects.map((project, i) => (
                         <option key={i} value={project}>
@@ -95,7 +103,7 @@ export function ViewTimerRecord({ timerRecords, setTimerRecords, projects }) {
         </table>
         <button
           onClick={handleEditClick}
-          className="absolute bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-3xl"
+          className="absolute bottom-4 right-4 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-3xl whitespace-nowrap"
         >
           編集
         </button>
