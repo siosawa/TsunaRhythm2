@@ -6,6 +6,7 @@ import { TbTriangleInvertedFilled } from "react-icons/tb";
 export function ViewTimerRecord({ timerRecords, setTimerRecords, projects }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editRecords, setEditRecords] = useState([]);
+  const [isHidden, setIsHidden] = useState(false);
 
   const handleEdit = (index, field, value) => {
     const updatedRecords = [...editRecords];
@@ -24,18 +25,18 @@ export function ViewTimerRecord({ timerRecords, setTimerRecords, projects }) {
   };
 
   const handleSave = () => {
-    setTimerRecords(editRecords); // 変更内容を保存
-    setIsEditing(false); // 編集モードを終了
+    setTimerRecords(editRecords);
+    setIsEditing(false);
   };
 
   const handleClose = () => {
-    setEditRecords(timerRecords); // 変更をキャンセルし、元のデータを復元
-    setIsEditing(false); // 編集モードを終了
+    setEditRecords(timerRecords);
+    setIsEditing(false);
   };
 
   const handleEditClick = () => {
-    setEditRecords([...timerRecords]); // 現在のデータを編集用にコピー
-    setIsEditing(true); // 編集モードを開始
+    setEditRecords([...timerRecords]);
+    setIsEditing(true);
   };
 
   const formatDate = (date) => {
@@ -46,93 +47,107 @@ export function ViewTimerRecord({ timerRecords, setTimerRecords, projects }) {
     return `${month}/${day} ${hours}:${minutes.toString().padStart(2, "0")}`;
   };
 
-  return (
-    <div className="mt-4 w-44">
-      <div className="bg-gray-200 rounded-3xl p-3 h-96 overflow-y-auto relative">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead>
-            <tr>
-              <th colSpan="3" className="text-right">
-                <TbTriangleInvertedFilled className="inline-block" />
-              </th>
-            </tr>
-            <tr>
-              <th className="w-1/4 text-xs text-left whitespace-nowrap">
-                日付
-              </th>
-              <th className="w-1/6 text-xs text-left whitespace-nowrap">分</th>
-              <th className="w-1/5 text-xs text-left whitespace-nowrap">
-                案件名
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {timerRecords.length === 0 ? (
-              <tr>
-                <td
-                  colSpan="3"
-                  className="text-center py-4 text-xs whitespace-nowrap"
-                >
-                  記録がありません
-                </td>
-              </tr>
-            ) : (
-              timerRecords.map((record, index) => (
-                <tr key={index}>
-                  <td className="w-1/4 p-0 text-left whitespace-nowrap">
-                    <input
-                      type="text"
-                      value={formatDate(record.date)}
-                      readOnly
-                      className="border p-0 w-full text-xs"
-                    />
-                  </td>
-                  <td className="w-1/6 p-0 text-left whitespace-nowrap">
-                    <input
-                      type="number"
-                      value={record.minutes}
-                      min="0"
-                      readOnly
-                      className="border p-0 w-full text-xs"
-                    />
-                  </td>
-                  <td className="w-1/5 p-0 whitespace-nowrap">
-                    <select
-                      value={record.project}
-                      disabled
-                      className="border p-0 w-full text-xs"
-                    >
-                      {projects.map((project, i) => (
-                        <option key={i} value={project}>
-                          {project}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        <button
-          onClick={handleEditClick}
-          className="absolute bottom-4 right-4 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-3xl text-xs whitespace-nowrap"
-        >
-          編集
-        </button>
-      </div>
+  const handleToggle = () => {
+    setIsHidden(!isHidden);
+  };
 
-      {isEditing && (
-        <EditTimer
-          editRecords={editRecords}
-          handleDateChange={handleDateChange}
-          handleTimeChange={handleTimeChange}
-          handleEdit={handleEdit}
-          handleSave={handleSave}
-          handleClose={handleClose}
-          projects={projects}
-        />
-      )}
-    </div>
+  return (
+    <>
+      <div className="w-44">
+        <div className="bg-gray-200 rounded-3xl p-3 max-h-96 overflow-y-auto relative">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th colSpan="3" className="text-right px-2">
+                  <div className="flex items-center justify-end">
+                    <p className="flex-grow text-center font-light">作業記録</p>
+                    <TbTriangleInvertedFilled
+                      className="inline-block cursor-pointer ml-2"
+                      onClick={handleToggle}
+                    />
+                  </div>
+                </th>
+              </tr>
+              {!isHidden && timerRecords.length > 0 && (
+                <tr>
+                  <th className="w-1/4 text-xs text-left whitespace-nowrap">
+                    日付
+                  </th>
+                  <th className="w-1/6 text-xs text-left whitespace-nowrap">
+                    分
+                  </th>
+                  <th className="w-1/5 text-xs text-left whitespace-nowrap">
+                    案件名
+                  </th>
+                </tr>
+              )}
+            </thead>
+            {!isHidden && timerRecords.length > 0 && (
+              <tbody>
+                {timerRecords.map((record, index) => (
+                  <tr key={index}>
+                    <td className="w-1/3 p-0 text-left whitespace-nowrap">
+                      <input
+                        type="text"
+                        value={formatDate(record.date)}
+                        readOnly
+                        className="border p-0 w-full text-xs"
+                      />
+                    </td>
+                    <td className="w-1/5 p-0 text-left whitespace-nowrap">
+                      <input
+                        type="number"
+                        value={record.minutes}
+                        min="0"
+                        readOnly
+                        className="border p-0 w-full text-xs"
+                      />
+                    </td>
+                    <td className="w-1/6 p-0 whitespace-nowrap">
+                      <select
+                        value={record.project}
+                        disabled
+                        className="border p-0 w-full text-xs"
+                      >
+                        {projects.map((project, i) => (
+                          <option key={i} value={project}>
+                            {project}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
+          </table>
+          {!isHidden && timerRecords.length === 0 && (
+            <div className="text-center text-xs py-2">作業記録がありません</div>
+          )}
+        </div>
+
+        {!isHidden && timerRecords.length > 0 && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleEditClick}
+              className="bg-white shadow-custom-dark rounded-md mt-2 mr-3 px-2 py-1 text-xs whitespace-nowrap hover:bg-gray-200"
+            >
+              編集
+            </button>
+          </div>
+        )}
+        {isEditing && (
+          <EditTimer
+            editRecords={editRecords}
+            handleDateChange={handleDateChange}
+            handleTimeChange={handleTimeChange}
+            handleEdit={handleEdit}
+            handleSave={handleSave}
+            handleClose={handleClose}
+            projects={projects}
+          />
+        )}
+      </div>
+    </>
   );
 }
