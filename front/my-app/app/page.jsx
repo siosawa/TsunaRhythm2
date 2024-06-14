@@ -1,10 +1,10 @@
 import Login from "@/components/Login";
-import RootClamCafe from "@/components/room/RootClamCafe";
+import RootCalmCafe from "@/components/room/RootCalmCafe";
 
 export default function Home() {
   return (
     <div>
-      <RootClamCafe />
+      <RootCalmCafe />
       <div className="absolute z-30">
         <Login />
       </div>

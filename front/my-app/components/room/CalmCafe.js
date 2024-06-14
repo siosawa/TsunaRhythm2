@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-const ClamCafe = () => {
+const CalmCafe = () => {
   return (
     <div className="flex items-center justify-center fixed inset-0 z-10">
       <div className="">
@@ -17,4 +17,4 @@ const ClamCafe = () => {
   );
 };
 
-export default ClamCafe;
+export default CalmCafe;

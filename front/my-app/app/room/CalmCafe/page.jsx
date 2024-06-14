@@ -1,5 +1,5 @@
 "use client";
-import ClamCafe from "@/components/room/ClamCafe";
+import CalmCafe from "@/components/room/CalmCafe";
 import { ProjectSelection } from "@/app/room/components/ProjectSelection";
 import { useState } from "react";
 import { SetTimer } from "@/app/room/components/SetTimer";
@@ -26,7 +26,7 @@ export default function Timer() {
 
   return (
     <>
-      <ClamCafe />
+      <CalmCafe />
       <div className="absolute z-30 mx-10 mt-20 flex flex-col items-start space-y-4">
         <SetTimer
           selectedProject={selectedProject}

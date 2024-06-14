@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-const RootClamCafe = () => {
+const RootCalmCafe = () => {
   return (
     <div className="flex items-center justify-center fixed inset-0 z-10">
       <div className="hidden md:block">
@@ -17,4 +17,4 @@ const RootClamCafe = () => {
   );
 };
 
-export default RootClamCafe;
+export default RootCalmCafe;
