@@ -56,7 +56,7 @@ const GroupChat = () => {
   };
 
   return (
-    <div className="p-1 rounded-3xl bg-white shadow-custom-dark absolute z-30 w-68 right-12 mt-40">
+    <div className="p-1 rounded-3xl bg-white shadow-custom-dark absolute z-30 w-68 right-12 mt-52">
       <div className="flex justify-between items-center">
         <h2 className="text-xl text-center flex-grow">ルームチャット</h2>
         <button onClick={toggleChat} className="text-gray-500 mr-2">
