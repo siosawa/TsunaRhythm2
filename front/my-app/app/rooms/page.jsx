@@ -1,16 +1,55 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import RoomsData from "./components/RoomsData";
 import { RiTeamFill } from "react-icons/ri";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 const Index = () => {
+  const [rooms, setRooms] = useState([]);
+  const [roomMembers, setRoomMembers] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const roomsResponse = await axios.get("http://localhost:3001/rooms");
+        setRooms(roomsResponse.data);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+
+    const fetchRoomMembers = async () => {
+      try {
+        const roomMembersResponse = await axios.get(
+          "http://localhost:3001/roomMembers"
+        );
+        setRoomMembers(roomMembersResponse.data);
+      } catch (error) {
+        console.error("Error fetching room members:", error);
+      }
+    };
+
+    fetchRooms();
+    fetchRoomMembers();
+  }, []);
+
+  const getCurrentMembersCount = (roomId) => {
+    const now = new Date();
+    return roomMembers.filter(
+      (member) =>
+        member.room_id === roomId &&
+        member.leaved_at === null &&
+        new Date(member.entered_at) <= now
+    ).length;
+  };
+
   const handleRoomClick = (room) => {
-    setSelectedRoom(room);
+    if (getCurrentMembersCount(room.id) < room.maxMembers) {
+      setSelectedRoom(room);
+    }
   };
 
   const handleClosePopup = () => {
@@ -24,30 +63,39 @@ const Index = () => {
       </h1>
       <div className="bg-gray-200 shadow-custom-dark p-4 sm:p-6 md:p-8 w-full mx-auto md:max-w-6xl mb-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 container">
-          {RoomsData.map((room) => (
-            <div
-              key={room.id}
-              className="flex flex-col items-center p-4 border rounded-3xl bg-white cursor-pointer h-52"
-              onClick={() => handleRoomClick(room)}
-            >
-              <div className="relative w-full h-26 flex-grow mb-2">
-                <Image
-                  src={room.image}
-                  alt={room.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="flex flex-col items-center text-center mt-auto">
-                <h2 className="text-lg sm:text-xl mb-1">{room.name}</h2>
-                <div className="flex items-center text-gray-500">
-                  <RiTeamFill className="mr-1" />
-                  {room.members}/{room.maxMembers}
+          {rooms.map((room) => {
+            const isFull = getCurrentMembersCount(room.id) >= room.maxMembers;
+            return (
+              <div
+                key={room.id}
+                className={`flex flex-col items-center p-4 border rounded-3xl bg-white cursor-pointer h-52 ${isFull ? "opacity-70 cursor-not-allowed" : ""}`}
+                onClick={() => handleRoomClick(room)}
+                style={{ pointerEvents: isFull ? "none" : "auto" }}
+              >
+                <div className="relative w-full h-26 flex-grow mb-2">
+                  <Image
+                    src={room.image}
+                    alt={room.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-lg"
+                  />
+                </div>
+                <div className="flex flex-col items-center text-center mt-auto">
+                  <h2 className="text-lg sm:text-xl mb-1">{room.name}</h2>
+                  <div className="flex items-center text-gray-500">
+                    <RiTeamFill className="mr-1" />
+                    {getCurrentMembersCount(room.id)}/{room.maxMembers}
+                  </div>
+                  {isFull && (
+                    <div className="text-red-500 mt-2">
+                      このルームは満室です
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

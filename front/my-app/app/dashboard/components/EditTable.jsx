@@ -1,13 +1,65 @@
-// テーブル編集
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTable } from "react-table";
-import initialData from "./initialData";
+import axios from "axios";
 
 export function EditTable() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get("http://localhost:3001/projects");
+        setData(result.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleInputChange = (e, rowIndex, columnId, type) => {
+    const value = e.target.value;
+    const updatedData = data.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...row,
+          [columnId]: value,
+        };
+      }
+      return row;
+    });
+
+    // バリデーション
+    let newErrors = { ...errors };
+    if (type === "number" && isNaN(value)) {
+      newErrors[rowIndex] = {
+        ...newErrors[rowIndex],
+        [columnId]: "数字を入力してください",
+      };
+    } else {
+      delete newErrors[rowIndex]?.[columnId];
+    }
+
+    setData(updatedData);
+    setErrors(newErrors);
+  };
+
+  const handleCheckboxChange = (e, rowIndex) => {
+    const value = e.target.checked;
+    const updatedData = data.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...row,
+          isCompleted: value,
+        };
+      }
+      return row;
+    });
+    setData(updatedData);
+  };
 
   const columns = React.useMemo(
     () => [
@@ -76,39 +128,37 @@ export function EditTable() {
           />
         ),
       },
+      {
+        Header: "完了状態",
+        accessor: "isCompleted",
+        Cell: ({ value, row: { index }, column: { id } }) => (
+          <div className="flex items-center justify-center">
+            {isEditing ? (
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={(e) => handleCheckboxChange(e, index)}
+              />
+            ) : (
+              <span
+                className={`ml-2 p-1 rounded ${
+                  value
+                    ? "bg-green-200 text-green-800"
+                    : "bg-red-200 text-red-800"
+                }`}
+              >
+                {value ? "完" : "未"}
+              </span>
+            )}
+          </div>
+        ),
+      },
     ],
     [isEditing]
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });
-
-  const handleInputChange = (e, rowIndex, columnId, type) => {
-    const value = e.target.value;
-    const updatedData = data.map((row, index) => {
-      if (index === rowIndex) {
-        return {
-          ...row,
-          [columnId]: value,
-        };
-      }
-      return row;
-    });
-
-    // バリデーション
-    let newErrors = { ...errors };
-    if (type === "number" && isNaN(value)) {
-      newErrors[rowIndex] = {
-        ...newErrors[rowIndex],
-        [columnId]: "数字を入力してください",
-      };
-    } else {
-      delete newErrors[rowIndex]?.[columnId];
-    }
-
-    setData(updatedData);
-    setErrors(newErrors);
-  };
 
   return (
     <div>

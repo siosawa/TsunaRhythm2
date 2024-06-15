@@ -1,56 +1,89 @@
-// 今月の平均時給と給与総額(Average Hourly Wage and Total Salary for the Month)
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 const MonthHWAT = () => {
   const [averageHourlyWage, setAverageHourlyWage] = useState(0);
+  const [totalSalary, setTotalSalary] = useState(0);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/records")
-      .then((recordsResponse) => {
+    const fetchData = async () => {
+      try {
+        const recordsResponse = await axios.get(
+          "http://localhost:3001/records"
+        );
         const records = recordsResponse.data || [];
         console.log("Records:", records);
 
-        axios
-          .get("http://localhost:3001/projects")
-          .then((projectsResponse) => {
-            const projects = projectsResponse.data || [];
-            console.log("Projects:", projects);
+        const projectsResponse = await axios.get(
+          "http://localhost:3001/projects"
+        );
+        const projects = projectsResponse.data || [];
+        console.log("Projects:", projects);
 
-            // recordsテーブルから必要なデータを抽出し、計算
-            let totalUnitPriceTimesQuantity = 0;
-            let totalMinutes = 0;
+        // 現在の月を取得
+        const currentMonth = new Date().getMonth();
 
-            records.forEach((record) => {
-              const project = projects.find((p) => p.id === record.project_id);
-              if (project) {
-                totalUnitPriceTimesQuantity +=
-                  project.unitPrice * project.quantity;
-                totalMinutes += record.minutes;
-              }
-            });
+        // 初期設定を忘れずに
+        let totalSalary = 0;
+        let totalMinutes = 0;
 
-            const averageHourlyWage =
-              totalUnitPriceTimesQuantity / (totalMinutes / 60);
+        // おそらくmap関数でも可能。projectごとにループ処理を行う。
+        projects.forEach((project) => {
+          // すでに完了しているプロジェクトだけを抽出
+          if (project.isCompleted) {
+            // そのプロジェクトに関連するrecordsテーブルのレコードを取得。テーブル名わかりづらいかも？
+            const projectRecords = records.filter(
+              (record) => record.project_id === project.id
+            );
 
-            setAverageHourlyWage(Math.floor(averageHourlyWage)); // 端数を切り捨て
-          })
-          .catch((error) => {
-            console.error("Error fetching projects data:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching records data:", error);
-      });
+            // プロジェクトの総作業時間を計算
+            const totalProjectMinutes = projectRecords.reduce(
+              (acc, record) => acc + record.minutes,
+              0
+            );
+
+            // プロジェクトの平均時給を計算
+            const projectAverageHourlyWage =
+              (project.unitPrice * project.quantity) /
+              (totalProjectMinutes / 60);
+
+            // 現在の月のレコードのみをフィルタリング
+            const currentMonthRecords = projectRecords.filter(
+              (record) => new Date(record.date).getMonth() === currentMonth
+            );
+
+            // 現在の月のプロジェクトの総作業時間を計算
+            const currentMonthProjectMinutes = currentMonthRecords.reduce(
+              (acc, record) => acc + record.minutes,
+              0
+            );
+
+            // プロジェクトの平均時給に現在の月の総作業時間を掛けて給与総額を算出
+            totalSalary +=
+              projectAverageHourlyWage * (currentMonthProjectMinutes / 60);
+            totalMinutes += currentMonthProjectMinutes; // 現在の月の総作業時間を累計
+          }
+        });
+
+        // 今月の平均時給を計算
+        const averageHourlyWage = (totalSalary / totalMinutes) * 60;
+
+        // 結果をステートに設定
+        setAverageHourlyWage(Math.floor(averageHourlyWage)); // 端数を切り捨て
+        setTotalSalary(Math.floor(totalSalary)); // 総給与を設定
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
-    <div>
-      <h1 className="bg-white rounded-3xl shadow-custom-dark">
-        今月の平均時給: {averageHourlyWage}円
-      </h1>
+    <div className="p-5 w-[5cm] h-[7cm] bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center m-2.5 text-center">
+      <p className="font-bold">今月の平均時給は{averageHourlyWage}円です！</p>
+      <p className="font-bold">今月の給与総額は{totalSalary}円です！</p>
     </div>
   );
 };
