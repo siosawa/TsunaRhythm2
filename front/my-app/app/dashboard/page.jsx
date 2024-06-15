@@ -3,6 +3,8 @@ import { EditTable } from "./components/EditTable";
 import MonthHWAT from "./components/MonthHWAT";
 import RandomWord from "./components/RandomWord";
 import GraphWorkingMinutes from "./components/GrapWorkingMinutes";
+import GraphHourlyRate from "./components/GraphHourlyRate";
+import GraphDailyEarnings from "./components/GraphDailyEarnings";
 
 const Dashboard = () => {
   return (
@@ -19,6 +21,8 @@ const Dashboard = () => {
       <MonthHWAT />
       <RandomWord />
       <GraphWorkingMinutes />
+      <GraphHourlyRate />
+      <GraphDailyEarnings />
     </>
   );
 };
