@@ -1,4 +1,3 @@
-// 保存された時にパッチリクエストを送りたいがまだ未実装
 "use client";
 import React, { useState, useEffect } from "react";
 import { useTable } from "react-table";
@@ -46,6 +45,20 @@ export function EditTable() {
 
     setData(updatedData);
     setErrors(newErrors);
+  };
+
+  const handleCheckboxChange = (e, rowIndex) => {
+    const value = e.target.checked;
+    const updatedData = data.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...row,
+          isCompleted: value,
+        };
+      }
+      return row;
+    });
+    setData(updatedData);
   };
 
   const columns = React.useMemo(
@@ -113,6 +126,31 @@ export function EditTable() {
             className="w-full p-2 border rounded text-xs"
             disabled={!isEditing}
           />
+        ),
+      },
+      {
+        Header: "完了状態",
+        accessor: "isCompleted",
+        Cell: ({ value, row: { index }, column: { id } }) => (
+          <div className="flex items-center justify-center">
+            {isEditing ? (
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={(e) => handleCheckboxChange(e, index)}
+              />
+            ) : (
+              <span
+                className={`ml-2 p-1 rounded ${
+                  value
+                    ? "bg-green-200 text-green-800"
+                    : "bg-red-200 text-red-800"
+                }`}
+              >
+                {value ? "完" : "未"}
+              </span>
+            )}
+          </div>
         ),
       },
     ],
