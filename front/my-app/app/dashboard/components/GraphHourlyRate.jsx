@@ -25,6 +25,7 @@ ChartJS.register(
 );
 
 const GraphHourlyRate = () => {
+  const currentMonth = new Date().getMonth(); // 現在の月を取得
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -39,7 +40,7 @@ const GraphHourlyRate = () => {
     ],
   });
 
-  const [monthIndex, setMonthIndex] = useState(2); // 初期値を3月（2）に設定
+  const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
 
   const fetchData = (month) => {
     Promise.all([
@@ -91,6 +92,10 @@ const GraphHourlyRate = () => {
   useEffect(() => {
     fetchData(monthIndex);
   }, [monthIndex]);
+
+  useEffect(() => {
+    fetchData(currentMonth); // 初回ロード時に現在の月のデータを取得
+  }, []);
 
   const handlePreviousMonth = () => {
     setMonthIndex((prevMonthIndex) =>

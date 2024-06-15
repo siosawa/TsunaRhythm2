@@ -23,6 +23,7 @@ ChartJS.register(
 );
 
 const GraphWorkingMinutes = () => {
+  const currentMonth = new Date().getMonth(); // 現在の月を取得
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -37,52 +38,54 @@ const GraphWorkingMinutes = () => {
     ],
   });
 
-  const [monthIndex, setMonthIndex] = useState(2); // 初期値を3月（2）に設定
+  const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
 
-  const fetchData = (month) => {
-    axios
-      .get("http://localhost:3001/records")
-      .then((response) => {
-        const records = response.data || [];
-        const minutesPerDay = {};
-        const selectedMonthRecords = records.filter(
-          (record) => new Date(record.date).getMonth() === month
-        );
+  const fetchData = async (month) => {
+    try {
+      const response = await axios.get("http://localhost:3001/records");
+      const records = response.data || [];
+      const minutesPerDay = {};
+      const selectedMonthRecords = records.filter(
+        (record) => new Date(record.date).getMonth() === month
+      );
 
-        selectedMonthRecords.forEach((record) => {
-          const date = new Date(record.date).toLocaleDateString();
-          if (!minutesPerDay[date]) {
-            minutesPerDay[date] = 0;
-          }
-          minutesPerDay[date] += record.minutes;
-        });
-
-        const totalMinutes = selectedMonthRecords.reduce(
-          (sum, record) => sum + record.minutes,
-          0
-        );
-        const totalHours = (totalMinutes / 60).toFixed(1); // 小数点第一位まで表示
-
-        const year = new Date().getFullYear();
-
-        setChartData({
-          labels: Object.keys(minutesPerDay),
-          datasets: [
-            {
-              label: `${year}年${month + 1}月の作業時間(分) 計: ${totalHours}時間`,
-              data: Object.values(minutesPerDay),
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-              borderDash: [5, 5], // 破線の設定
-            },
-          ],
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching records data:", error);
+      selectedMonthRecords.forEach((record) => {
+        const date = new Date(record.date).toLocaleDateString();
+        if (!minutesPerDay[date]) {
+          minutesPerDay[date] = 0;
+        }
+        minutesPerDay[date] += record.minutes;
       });
+
+      const totalMinutes = selectedMonthRecords.reduce(
+        (sum, record) => sum + record.minutes,
+        0
+      );
+      const totalHours = (totalMinutes / 60).toFixed(1); // 小数点第一位まで表示
+
+      const year = new Date().getFullYear();
+
+      setChartData({
+        labels: Object.keys(minutesPerDay),
+        datasets: [
+          {
+            label: `${year}年${month + 1}月の作業時間(分) 計: ${totalHours}時間`,
+            data: Object.values(minutesPerDay),
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+            borderDash: [5, 5], // 破線の設定
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error fetching records data:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchData(currentMonth); // 初回ロード時に現在の月のデータを取得
+  }, []);
 
   useEffect(() => {
     fetchData(monthIndex);
