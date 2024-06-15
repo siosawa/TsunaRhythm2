@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      width: {
+        '68': '17rem', // グループチャットで使用
+      },
       screens: {
         '3xl': '2200px',
         '2md': '1000px',

@@ -12,6 +12,7 @@ const FetchCurrentUser = ({ setCurrentUser }) => {
           },
         );
 
+        console.log("取得したデータ:", response.data); // ここでデータをコンソールに出力
         setCurrentUser(response.data);
       } catch (error) {
         console.error("データの取得に失敗しました:", error);

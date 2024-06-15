@@ -39,7 +39,7 @@ const ProfileReadPage = () => {
           method: "PATCH",
           body: formData,
           credentials: "include",
-        },
+        }
       );
 
       if (response.ok) {
@@ -81,7 +81,7 @@ const ProfileReadPage = () => {
   const closeDialog = () => setIsDialogOpen(false);
 
   const handleDeleteAccount = async () => {
-    if (user?.id === 60) {
+    if (user?.id == 2) {
       setError("ゲストアカウントは退会できません。");
       return;
     }
@@ -91,7 +91,7 @@ const ProfileReadPage = () => {
         `http://localhost:3000/api/v1/users/${user.id}`,
         {
           withCredentials: true,
-        },
+        }
       );
       console.log("退会処理が実行されました:", response.data);
 

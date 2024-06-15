@@ -47,42 +47,37 @@ const Setting = () => {
           <NavigationMenuItem>
             <NavigationMenuTrigger>設定</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <Button
-                variant="primary"
-                asChild
-                className="w-full hover:bg-sky-400 hover:text-white"
-              >
-                <NavigationMenuLink href="/diarys">
+              <div className="space-y-2">
+                {/* onClickで発火させるのではなくhrefを使いたいがうまくいかないためwindo.locationを使用。多分もっと綺麗に描く方法があると思う */}
+                <Button
+                  variant="primary"
+                  className="w-full hover:bg-sky-400 hover:text-white"
+                  onClick={() => (window.location.href = "/diarys")}
+                >
                   みんなの日記
-                </NavigationMenuLink>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className="w-full hover:bg-sky-400 hover:text-white"
-              >
-                <NavigationMenuLink href="/users">
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full hover:bg-sky-400 hover:text-white"
+                  onClick={() => (window.location.href = "/users")}
+                >
                   ユーザー一覧
-                </NavigationMenuLink>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className="hover:bg-sky-400 hover:text-white"
-              >
-                <NavigationMenuLink href="/edit-profile">
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full hover:bg-sky-400 hover:text-white"
+                  onClick={() => (window.location.href = "/edit-profile")}
+                >
                   プロフィール編集
-                </NavigationMenuLink>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className="w-full hover:bg-sky-400 hover:text-white"
-              >
-                <NavigationMenuLink onClick={handleLogout}>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full hover:bg-sky-400 hover:text-white"
+                  onClick={handleLogout}
+                >
                   ログアウト
-                </NavigationMenuLink>
-              </Button>
+                </Button>
+              </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>

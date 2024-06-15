@@ -1,5 +1,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { EditTable } from "./components/EditTable";
+import MonthHWAT from "./components/MonthHWAT";
+import RandomWord from "./components/RandomWord";
 const Dashboard = () => {
   return (
     <>
@@ -12,6 +14,8 @@ const Dashboard = () => {
           <EditTable />
         </div>
       </div>
+      <MonthHWAT />
+      <RandomWord />
     </>
   );
 };

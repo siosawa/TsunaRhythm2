@@ -12,19 +12,6 @@ export function EditTable() {
   const columns = React.useMemo(
     () => [
       {
-        Header: "日付",
-        accessor: "date",
-        Cell: ({ value, row: { index }, column: { id } }) => (
-          <input
-            type="date"
-            value={value}
-            onChange={(e) => handleInputChange(e, index, id)}
-            className="w-full p-2 border rounded text-xs"
-            disabled={!isEditing}
-          />
-        ),
-      },
-      {
         Header: "企業名",
         accessor: "company",
         Cell: ({ value, row: { index }, column: { id } }) => (
@@ -39,7 +26,7 @@ export function EditTable() {
       },
       {
         Header: "案件名",
-        accessor: "profect",
+        accessor: "project",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
@@ -111,9 +98,12 @@ export function EditTable() {
     // バリデーション
     let newErrors = { ...errors };
     if (type === "number" && isNaN(value)) {
-      newErrors[columnId] = "数字を入力してください";
+      newErrors[rowIndex] = {
+        ...newErrors[rowIndex],
+        [columnId]: "数字を入力してください",
+      };
     } else {
-      delete newErrors[columnId];
+      delete newErrors[rowIndex]?.[columnId];
     }
 
     setData(updatedData);
@@ -134,11 +124,15 @@ export function EditTable() {
             <div className="overflow-auto">
               <table {...getTableProps()} className="table-auto w-full">
                 <thead>
-                  {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
+                  {headerGroups.map((headerGroup, headerGroupIndex) => (
+                    <tr
+                      {...headerGroup.getHeaderGroupProps()}
+                      key={headerGroupIndex}
+                    >
+                      {headerGroup.headers.map((column, columnIndex) => (
                         <th
                           {...column.getHeaderProps()}
+                          key={columnIndex}
                           className="p-2 border whitespace-nowrap"
                         >
                           {column.render("Header")}
@@ -151,13 +145,17 @@ export function EditTable() {
                   {rows.map((row, rowIndex) => {
                     prepareRow(row);
                     return (
-                      <tr {...row.getRowProps()}>
+                      <tr {...row.getRowProps()} key={rowIndex}>
                         {row.cells.map((cell) => (
-                          <td {...cell.getCellProps()} className="p-2 border">
+                          <td
+                            {...cell.getCellProps()}
+                            key={cell.column.id}
+                            className="p-2 border"
+                          >
                             {cell.render("Cell")}
-                            {errors[cell.column.id] && (
+                            {errors[rowIndex]?.[cell.column.id] && (
                               <div className="text-red-500 text-xs">
-                                {errors[cell.column.id]}
+                                {errors[rowIndex][cell.column.id]}
                               </div>
                             )}
                           </td>
@@ -175,11 +173,15 @@ export function EditTable() {
         <div className="overflow-auto h-64">
           <table {...getTableProps()} className="table-auto w-full">
             <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
+              {headerGroups.map((headerGroup, headerGroupIndex) => (
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  key={headerGroupIndex}
+                >
+                  {headerGroup.headers.map((column, columnIndex) => (
                     <th
                       {...column.getHeaderProps()}
+                      key={columnIndex}
                       className="p-1 border whitespace-nowrap"
                     >
                       {column.render("Header")}
@@ -192,9 +194,13 @@ export function EditTable() {
               {rows.map((row, rowIndex) => {
                 prepareRow(row);
                 return (
-                  <tr {...row.getRowProps()}>
+                  <tr {...row.getRowProps()} key={rowIndex}>
                     {row.cells.map((cell) => (
-                      <td {...cell.getCellProps()} className="p-1 border">
+                      <td
+                        {...cell.getCellProps()}
+                        key={cell.column.id}
+                        className="p-1 border"
+                      >
                         {cell.render("Cell")}
                       </td>
                     ))}

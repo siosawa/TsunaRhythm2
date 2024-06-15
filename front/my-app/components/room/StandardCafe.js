@@ -1,15 +1,15 @@
 import React from "react";
 import Image from "next/image";
 
-const ClamCafe = () => {
+const StandardCafe = () => {
   return (
     <div className="flex items-center justify-center fixed inset-0 z-10">
-      <div className="hidden md:block">
+      <div className="">
         <Image
-          src="/CalmCafe.PNG"
-          alt="Calm Cafe"
-          width={800}
-          height={600}
+          src="/StandardCafe.PNG"
+          alt="Standard Cafe"
+          width={750}
+          height={500}
           layout="intrinsic"
         />
       </div>
@@ -17,4 +17,4 @@ const ClamCafe = () => {
   );
 };
 
-export default ClamCafe;
+export default StandardCafe;
