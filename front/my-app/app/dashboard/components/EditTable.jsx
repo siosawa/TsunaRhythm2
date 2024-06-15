@@ -1,13 +1,52 @@
-// テーブル編集
+// 保存された時にパッチリクエストを送りたいがまだ未実装
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTable } from "react-table";
-import initialData from "./initialData";
+import axios from "axios";
 
 export function EditTable() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get("http://localhost:3001/projects");
+        setData(result.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleInputChange = (e, rowIndex, columnId, type) => {
+    const value = e.target.value;
+    const updatedData = data.map((row, index) => {
+      if (index === rowIndex) {
+        return {
+          ...row,
+          [columnId]: value,
+        };
+      }
+      return row;
+    });
+
+    // バリデーション
+    let newErrors = { ...errors };
+    if (type === "number" && isNaN(value)) {
+      newErrors[rowIndex] = {
+        ...newErrors[rowIndex],
+        [columnId]: "数字を入力してください",
+      };
+    } else {
+      delete newErrors[rowIndex]?.[columnId];
+    }
+
+    setData(updatedData);
+    setErrors(newErrors);
+  };
 
   const columns = React.useMemo(
     () => [
@@ -82,33 +121,6 @@ export function EditTable() {
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });
-
-  const handleInputChange = (e, rowIndex, columnId, type) => {
-    const value = e.target.value;
-    const updatedData = data.map((row, index) => {
-      if (index === rowIndex) {
-        return {
-          ...row,
-          [columnId]: value,
-        };
-      }
-      return row;
-    });
-
-    // バリデーション
-    let newErrors = { ...errors };
-    if (type === "number" && isNaN(value)) {
-      newErrors[rowIndex] = {
-        ...newErrors[rowIndex],
-        [columnId]: "数字を入力してください",
-      };
-    } else {
-      delete newErrors[rowIndex]?.[columnId];
-    }
-
-    setData(updatedData);
-    setErrors(newErrors);
-  };
 
   return (
     <div>
