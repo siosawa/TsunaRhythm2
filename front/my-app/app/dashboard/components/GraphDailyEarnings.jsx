@@ -5,20 +5,18 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  LineElement,
-  PointElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  LineElement,
-  PointElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -35,57 +33,80 @@ const GraphDailyEarnings = () => {
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
-        tension: 0.4, // ラインのテンションを設定して波線にする
       },
     ],
   });
-
   const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
+  const [error, setError] = useState(null);
 
-  const fetchData = (month) => {
-    Promise.all([
-      axios.get("http://localhost:3001/projects"),
-      axios.get("http://localhost:3001/records"),
-    ])
-      .then(([projectsResponse, recordsResponse]) => {
-        const projects = projectsResponse.data || [];
-        const records = recordsResponse.data || [];
-        const earningsPerDay = {};
-        const selectedMonthRecords = records.filter(
-          (record) => new Date(record.date).getMonth() === month
+  const fetchData = async (month) => {
+    try {
+      const [projectsResponse, recordsResponse] = await Promise.all([
+        axios.get("http://localhost:3001/projects"),
+        axios.get("http://localhost:3001/records"),
+      ]);
+      const projects = projectsResponse.data || [];
+      const records = recordsResponse.data || [];
+
+      // 完了済みのprojectを取得
+      const completedProjects = projects.filter(
+        (project) => project.isCompleted
+      );
+
+      const earningsPerDay = {};
+      const year = new Date().getFullYear();
+
+      // 今月のrecordsデータを取得
+      const selectedMonthRecords = records.filter(
+        (record) => new Date(record.date).getMonth() === month
+      );
+
+      completedProjects.forEach((project) => {
+        // project_idが一致するrecordsデータを取得して
+        const projectRecords = records.filter(
+          (record) => record.project_id === project.id
         );
+        // トータル作業分数も取得
+        const totalWorkMinutes = projectRecords.reduce(
+          (total, record) => total + record.minutes,
+          0
+        );
+        // 案件別自給平均を算出
+        const averageHourlyWage =
+          (project.unitPrice * project.quantity) / (totalWorkMinutes / 60);
 
         selectedMonthRecords.forEach((record) => {
-          const project = projects.find((p) => p.id === record.project_id);
-          if (project) {
+          if (record.project_id === project.id) {
             const date = new Date(record.date).toLocaleDateString();
             if (!earningsPerDay[date]) {
               earningsPerDay[date] = 0;
             }
-            const dailyEarnings = project.unitPrice * project.quantity;
+
+            // recordsの作業分数と時給を分給に直したものをかけて稼いだ金額を出力
+            const dailyEarnings = record.minutes * (averageHourlyWage / 60);
+
+            // 日付ごとに稼いだ金額を加算していくことで日毎の稼いだ金額合計を出力
             earningsPerDay[date] += dailyEarnings;
           }
         });
-
-        const year = new Date().getFullYear();
-
-        setChartData({
-          labels: Object.keys(earningsPerDay),
-          datasets: [
-            {
-              label: `${year}年${month + 1}月の日毎の稼いだ金額合計`,
-              data: Object.values(earningsPerDay),
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-              tension: 0.4, // ラインのテンションを設定して波線にする
-            },
-          ],
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
       });
+
+      setChartData({
+        labels: Object.keys(earningsPerDay),
+        datasets: [
+          {
+            label: `${year}年${month + 1}月の日毎の稼いだ金額合計`,
+            data: Object.values(earningsPerDay),
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      });
+    } catch (error) {
+      setError("データの取得に失敗しました。");
+      console.error("Error fetching data:", error);
+    }
   };
 
   useEffect(() => {
@@ -109,8 +130,9 @@ const GraphDailyEarnings = () => {
   };
 
   return (
-    <div className="w-96 h-58 p-4 mx-7 bg-white rounded-3xl custom_shadow_dark relative">
-      <Line
+    <div className="w-96 h-58 p-4 mx-7 bg-white rounded-3xl shadow-md relative">
+      {error && <p className="text-red-500">{error}</p>}
+      <Bar
         data={chartData}
         options={{
           scales: {
@@ -125,11 +147,6 @@ const GraphDailyEarnings = () => {
                   weight: "bold", // 太文字に設定
                 },
               },
-            },
-          },
-          elements: {
-            line: {
-              tension: 0.4, // ラインのテンションを設定して波線にする
             },
           },
         }}
