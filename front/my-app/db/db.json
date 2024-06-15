@@ -521,5 +521,121 @@
         {"id": 18, "message": "他人と比べず、自分のペースを大事にしよう。"},
         {"id": 19, "message": "心配事があれば、誰かに話してみよう。"},
         {"id": 20, "message": "リフレッシュして、新しい気持ちで頑張ろう。"}
-    ]
+    ],
+     "roomMembers": [
+          {
+            "id": 1,
+            "user_id": 101,
+            "room_id": 1,
+            "entered_at": "2024-06-15T08:30:00Z",
+            "leaved_at": null
+          },
+          {
+            "id": 2,
+            "user_id": 102,
+            "room_id": 1,
+            "entered_at": "2024-06-15T08:45:00Z",
+            "leaved_at": null
+          },
+          {
+            "id": 3,
+            "user_id": 103,
+            "room_id": 1,
+            "entered_at": "2024-06-15T09:00:00Z",
+            "leaved_at": "2024-06-15T09:30:00Z"
+          },
+          {
+            "id": 4,
+            "user_id": 104,
+            "room_id": 1,
+            "entered_at": "2024-06-15T09:15:00Z",
+            "leaved_at": null
+          },
+          {
+            "id": 5,
+            "user_id": 105,
+            "room_id": 1,
+            "entered_at": "2024-06-15T09:45:00Z",
+            "leaved_at": null
+          },
+          {
+            "id": 6,
+            "user_id": 106,
+            "room_id": 1,
+            "entered_at": "2024-06-15T09:45:00Z",
+            "leaved_at": null
+          }
+    ],
+    "rooms": [
+          {
+            "id": 1,
+            "name": "普通のカフェ",
+            "maxMembers": 5,
+            "image": "/StandardCafe.PNG",
+            "path": "/room/StandardCafe"
+          },
+          {
+            "id": 2,
+            "name": "シックなカフェ",
+            "maxMembers": 5,
+            "image": "/CalmCafe.PNG",
+            "path": "/room/CalmCafe"
+          },
+          {
+            "id": 3,
+            "name": "宇宙空間",
+            "maxMembers": 5,
+            "image": "/Universe.PNG",
+            "path": "/room/Universe"
+          },
+          {
+            "id": 4,
+            "name": "額縁ビーチ",
+            "maxMembers": 1,
+            "image": "/Beach.jpg",
+            "path": "/room/Beach"
+          },
+          {
+            "id": 5,
+            "name": "さわたの部屋",
+            "maxMembers": 5,
+            "image": "/SawataRoom.PNG",
+            "path": "/room/SawataRoom"
+          },
+          {
+            "id": 6,
+            "name": "もくもく作業部屋1",
+            "maxMembers": 5,
+            "image": "/MokumokuRoom1.PNG",
+            "path": "/room/MokumokuRoom1"
+          },
+          {
+            "id": 7,
+            "name": "もくもく作業部屋2",
+            "maxMembers": 6,
+            "image": "/MokumokuRoom2.PNG",
+            "path": "/room/MokumokuRoom2"
+          },
+          {
+            "id": 8,
+            "name": "もくもく作業部屋3",
+            "maxMembers": 7,
+            "image": "/MokumokuRoom3.PNG",
+            "path": "/room/MokumokuRoom3"
+          },
+          {
+            "id": 9,
+            "name": "もくもく作業部屋4",
+            "maxMembers": 10,
+            "image": "/MokumokuRoom4.PNG",
+            "path": "/room/MokumokuRoom4"
+          },
+          {
+            "id": 10,
+            "name": "さわたの部屋2",
+            "maxMembers": 4,
+            "image": "/SawataRoom2.PNG",
+            "path": "/room/SawataRoom2"
+          }
+    ]      
 }
