@@ -4,62 +4,60 @@ import { useEffect, useState } from "react";
 
 const ProjectHourlyWageRanking = () => {
   const [ranking, setRanking] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/records")
-      .then((recordsResponse) => {
+    const fetchRankingData = async () => {
+      try {
+        const [recordsResponse, projectsResponse] = await Promise.all([
+          axios.get("http://localhost:3001/records"),
+          axios.get("http://localhost:3001/projects"),
+        ]);
+
         const records = recordsResponse.data || [];
-        console.log("Records:", records);
+        const projects = projectsResponse.data || [];
 
-        axios
-          .get("http://localhost:3001/projects")
-          .then((projectsResponse) => {
-            const projects = projectsResponse.data || [];
-            console.log("Projects:", projects);
+        // projectごとの時給平均を計算
+        const projectHourlyWages = {};
 
-            // projectごとの時給平均を計算
-            const projectHourlyWages = {};
+        records.forEach((record) => {
+          const project = projects.find((p) => p.id === record.project_id);
+          if (project) {
+            if (!projectHourlyWages[project.id]) {
+              projectHourlyWages[project.id] = {
+                totalUnitPriceTimesQuantity: 0,
+                totalMinutes: 0,
+                projectName: project.project,
+              };
+            }
+            projectHourlyWages[project.id].totalUnitPriceTimesQuantity +=
+              project.unitPrice * project.quantity;
+            projectHourlyWages[project.id].totalMinutes += record.minutes;
+          }
+        });
 
-            records.forEach((record) => {
-              const project = projects.find((p) => p.id === record.project_id);
-              if (project) {
-                if (!projectHourlyWages[project.id]) {
-                  projectHourlyWages[project.id] = {
-                    totalUnitPriceTimesQuantity: 0,
-                    totalMinutes: 0,
-                    projectName: project.project,
-                  };
-                }
-                projectHourlyWages[project.id].totalUnitPriceTimesQuantity +=
-                  project.unitPrice * project.quantity;
-                projectHourlyWages[project.id].totalMinutes += record.minutes;
-              }
-            });
+        const ranking = Object.values(projectHourlyWages)
+          .map((project) => ({
+            name: project.projectName,
+            averageHourlyWage:
+              project.totalUnitPriceTimesQuantity / (project.totalMinutes / 60),
+          }))
+          .sort((a, b) => b.averageHourlyWage - a.averageHourlyWage); // 高い順にソート
 
-            const ranking = Object.values(projectHourlyWages)
-              .map((project) => ({
-                name: project.projectName,
-                averageHourlyWage:
-                  project.totalUnitPriceTimesQuantity /
-                  (project.totalMinutes / 60),
-              }))
-              .sort((a, b) => b.averageHourlyWage - a.averageHourlyWage); // 高い順にソート
+        setRanking(ranking);
+      } catch (error) {
+        setError("データの取得に失敗しました。");
+        console.error("Error fetching data:", error);
+      }
+    };
 
-            setRanking(ranking);
-          })
-          .catch((error) => {
-            console.error("Error fetching projects data:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching records data:", error);
-      });
+    fetchRankingData();
   }, []);
 
   return (
-    <div className="p-5 w-[5cm] bg-white shadow-custom-dark rounded-3xl flex flex-col items-center m-2.5 text-center max-h-[5cm] overflow-auto">
+    <div className="p-5 max-w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center m-2.5 mx-7 text-center h-52 overflow-auto">
       <p className="font-bold">プロジェクト別時給平均ランキング</p>
+      {error && <p className="text-red-500">{error}</p>}
       <ul className="w-full">
         {ranking.map((project, index) => (
           <li key={index} className="w-full flex justify-between my-1">
