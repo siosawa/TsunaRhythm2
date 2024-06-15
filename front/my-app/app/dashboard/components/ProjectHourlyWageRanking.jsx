@@ -22,7 +22,7 @@ const ProjectHourlyWageRanking = () => {
 
         records.forEach((record) => {
           const project = projects.find((p) => p.id === record.project_id);
-          if (project) {
+          if (project && project.isCompleted) {
             if (!projectHourlyWages[project.id]) {
               projectHourlyWages[project.id] = {
                 totalUnitPriceTimesQuantity: 0,

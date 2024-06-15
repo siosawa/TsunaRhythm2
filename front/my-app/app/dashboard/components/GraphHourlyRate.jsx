@@ -61,33 +61,36 @@ const GraphHourlyRate = () => {
       const year = new Date().getFullYear();
 
       projects.forEach((project) => {
-        const projectRecords = selectedMonthRecords.filter(
-          (record) => record.project_id === project.id
-        );
-        const totalWorkMinutes = projectRecords.reduce(
-          (total, record) => total + record.minutes,
-          0
-        );
+        if (project.isCompleted) {
+          // 完了しているプロジェクトのみ考慮
+          const projectRecords = selectedMonthRecords.filter(
+            (record) => record.project_id === project.id
+          );
+          const totalWorkMinutes = projectRecords.reduce(
+            (total, record) => total + record.minutes,
+            0
+          );
 
-        const averageHourlyWage =
-          (project.unitPrice * project.quantity) / (totalWorkMinutes / 60);
+          const averageHourlyWage =
+            (project.unitPrice * project.quantity) / (totalWorkMinutes / 60);
 
-        projectRecords.forEach((record) => {
-          const date = new Date(record.date).toLocaleDateString();
-          if (!earningsPerDay[date]) {
-            earningsPerDay[date] = 0;
-            workMinutesPerDay[date] = 0;
-          }
+          projectRecords.forEach((record) => {
+            const date = new Date(record.date).toLocaleDateString();
+            if (!earningsPerDay[date]) {
+              earningsPerDay[date] = 0;
+              workMinutesPerDay[date] = 0;
+            }
 
-          // recordsの作業分数と時給を分給に直したものをかけて稼いだ金額を出力
-          const dailyEarnings = record.minutes * (averageHourlyWage / 60);
+            // recordsの作業分数と時給を分給に直したものをかけて稼いだ金額を出力
+            const dailyEarnings = record.minutes * (averageHourlyWage / 60);
 
-          // 日毎に稼いだ金額を加算していくことで日毎の稼いだ金額合計を出力
-          earningsPerDay[date] += dailyEarnings;
+            // 日毎に稼いだ金額を加算していくことで日毎の稼いだ金額合計を出力
+            earningsPerDay[date] += dailyEarnings;
 
-          // 日毎の作業時間を加算していくことで日毎の作業時間合計を出力
-          workMinutesPerDay[date] += record.minutes;
-        });
+            // 日毎の作業時間を加算していくことで日毎の作業時間合計を出力
+            workMinutesPerDay[date] += record.minutes;
+          });
+        }
       });
 
       Object.keys(earningsPerDay).forEach((date) => {

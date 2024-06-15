@@ -22,7 +22,7 @@ const WorkTypeHourlyWageRanking = () => {
 
         records.forEach((record) => {
           const project = projects.find((p) => p.id === record.project_id);
-          if (project) {
+          if (project && project.isCompleted) {
             if (!workTypeHourlyWages[project.workType]) {
               workTypeHourlyWages[project.workType] = {
                 totalUnitPriceTimesQuantity: 0,
@@ -56,7 +56,7 @@ const WorkTypeHourlyWageRanking = () => {
   }, []);
 
   return (
-    <div className="p-5 max-w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center m-2.5 mx-7 text-center h-52 max-h-52 overflow-auto">
+    <div className="p-5 max-w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center m-2.5 mx-7 text-center h-52 overflow-auto">
       <p className="font-bold">作業タイプ別時給平均ランキング</p>
       {error && <p className="text-red-500">{error}</p>}
       <ul className="w-full">
