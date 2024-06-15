@@ -1,10 +1,10 @@
-// 今月の平均時給と給与総額(Average Hourly Wage and Total Salary for the Month)
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 const MonthHWAT = () => {
   const [averageHourlyWage, setAverageHourlyWage] = useState(0);
+  const [totalSalary, setTotalSalary] = useState(0);
 
   useEffect(() => {
     axios
@@ -34,8 +34,10 @@ const MonthHWAT = () => {
 
             const averageHourlyWage =
               totalUnitPriceTimesQuantity / (totalMinutes / 60);
+            const totalSalary = totalUnitPriceTimesQuantity;
 
             setAverageHourlyWage(Math.floor(averageHourlyWage)); // 端数を切り捨て
+            setTotalSalary(totalSalary); // 総給与を設定
           })
           .catch((error) => {
             console.error("Error fetching projects data:", error);
@@ -47,8 +49,9 @@ const MonthHWAT = () => {
   }, []);
 
   return (
-    <div className="p-5 w-[5cm] h-[5cm] bg-white shadow-custom-dark rounded-3xl flex items-center justify-center m-2.5 text-center">
+    <div className="p-5 w-[5cm] h-[7cm] bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center m-2.5 text-center">
       <p className="font-bold">今月の平均時給は{averageHourlyWage}円です！</p>
+      <p className="font-bold">今月の給与総額は{totalSalary}円です！</p>
     </div>
   );
 };
