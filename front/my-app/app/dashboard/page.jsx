@@ -2,7 +2,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { EditTable } from "./components/EditTable";
 import MonthHWAT from "./components/MonthHWAT";
 import RandomWord from "./components/RandomWord";
-import GraphWorkingMinutes from "./components/GrapWorkingMinutes";
+import GraphWorkingMinutes from "./components/GraphWorkingMinutes";
 import GraphHourlyRate from "./components/GraphHourlyRate";
 import GraphDailyEarnings from "./components/GraphDailyEarnings";
 import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
