@@ -47,10 +47,8 @@ const MonthHWAT = () => {
   }, []);
 
   return (
-    <div>
-      <h1 className="bg-white rounded-3xl shadow-custom-dark">
-        今月の平均時給: {averageHourlyWage}円
-      </h1>
+    <div className="p-5 w-[5cm] h-[5cm] bg-white shadow-custom-dark rounded-3xl flex items-center justify-center m-2.5 text-center">
+      <p className="font-bold">今月の平均時給は{averageHourlyWage}円です！</p>
     </div>
   );
 };
