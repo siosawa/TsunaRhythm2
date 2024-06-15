@@ -5,6 +5,8 @@ import RandomWord from "./components/RandomWord";
 import GraphWorkingMinutes from "./components/GrapWorkingMinutes";
 import GraphHourlyRate from "./components/GraphHourlyRate";
 import GraphDailyEarnings from "./components/GraphDailyEarnings";
+import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
+import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
 
 const Dashboard = () => {
   return (
@@ -23,6 +25,8 @@ const Dashboard = () => {
       <GraphWorkingMinutes />
       <GraphHourlyRate />
       <GraphDailyEarnings />
+      <ProjectHourlyWageRanking />
+      <WorkTypeHourlyWageRanking />
     </>
   );
 };
