@@ -124,11 +124,15 @@ export function EditTable() {
             <div className="overflow-auto">
               <table {...getTableProps()} className="table-auto w-full">
                 <thead>
-                  {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
+                  {headerGroups.map((headerGroup, headerGroupIndex) => (
+                    <tr
+                      {...headerGroup.getHeaderGroupProps()}
+                      key={headerGroupIndex}
+                    >
+                      {headerGroup.headers.map((column, columnIndex) => (
                         <th
                           {...column.getHeaderProps()}
+                          key={columnIndex}
                           className="p-2 border whitespace-nowrap"
                         >
                           {column.render("Header")}
@@ -169,11 +173,15 @@ export function EditTable() {
         <div className="overflow-auto h-64">
           <table {...getTableProps()} className="table-auto w-full">
             <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
+              {headerGroups.map((headerGroup, headerGroupIndex) => (
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  key={headerGroupIndex}
+                >
+                  {headerGroup.headers.map((column, columnIndex) => (
                     <th
                       {...column.getHeaderProps()}
+                      key={columnIndex}
                       className="p-1 border whitespace-nowrap"
                     >
                       {column.render("Header")}
