@@ -6,8 +6,8 @@
             "company": "企業A",
             "name": "案件1",
             "workType": "開発",
-            "unitPrice": 5000,
-            "quantity": 10,
+            "unitPrice": 5000000,
+            "quantity": 100,
             "isCompleted": false
           },
           {

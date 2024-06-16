@@ -55,7 +55,7 @@ const ProjectHourlyWageRanking = () => {
   }, []);
 
   return (
-    <div className="p-5 max-w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center m-2.5 mx-7 text-center h-52 overflow-auto">
+    <div className="p-5 w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center h-52 overflow-auto">
       <p className="font-bold">プロジェクト別時給平均ランキング</p>
       {error && <p className="text-red-500">{error}</p>}
       <ul className="w-full">

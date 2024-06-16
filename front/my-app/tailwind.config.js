@@ -23,6 +23,7 @@ module.exports = {
       screens: {
         '3xl': '2200px',
         '2md': '1000px',
+        'tablet': '413px',
       },
       boxShadow: {
         "custom-dark": "0 4px 6px rgba(0, 0, 0, 0.3)", // カスタムシャドウの追加

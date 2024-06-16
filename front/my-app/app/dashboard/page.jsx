@@ -11,36 +11,21 @@ import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
 const Dashboard = () => {
   return (
     <>
-      <div className="flex flex-col items-start space-y-4 mt-12">
-        <div>dashboard?</div>
-        <div className="my-10 mx-7 bg-white rounded-3xl shadow-custom-dark">
-          <Calendar />
+      <div className="flex flex-col items-center mt-16 mx-7 space-y-2 ">
+        <Calendar />
+        <div className="flex space-x-2">
+          <MonthHWAT />
+          <RandomWord />
         </div>
-        <div className="lg:w-1/3">
-          <EditTable />
-        </div>
+        <GraphWorkingMinutes />
+        <GraphHourlyRate />
+        <GraphDailyEarnings />
+        <ProjectHourlyWageRanking />
+        <WorkTypeHourlyWageRanking />
+        <EditTable />
       </div>
-      <MonthHWAT />
-      <RandomWord />
-      <GraphWorkingMinutes />
-      <GraphHourlyRate />
-      <GraphDailyEarnings />
-      <ProjectHourlyWageRanking />
-      <WorkTypeHourlyWageRanking />
     </>
   );
 };
 
 export default Dashboard;
-
-{
-  /* <Logo />
-<MonthHWAT />
-<RandomWord />
-<CaseHW />
-<WorkHW />
-<GraphHWA />
-<GraphHWT />
-<Calendar />
-<EditTable />  */
-}

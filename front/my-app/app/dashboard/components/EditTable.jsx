@@ -103,27 +103,27 @@ export function EditTable() {
         ),
       },
       {
-        Header: "-単価-",
+        Header: "単価",
         accessor: "unitPrice",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="number"
             value={value}
             onChange={(e) => handleInputChange(e, index, id, "number")}
-            className="w-full p-2 border rounded text-xs"
+            className="max-w-24 p-2 border rounded text-xs"
             disabled={!isEditing}
           />
         ),
       },
       {
-        Header: "-本数-",
+        Header: "本数",
         accessor: "quantity",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="number"
             value={value}
             onChange={(e) => handleInputChange(e, index, id, "number")}
-            className="w-full p-2 border rounded text-xs"
+            className="w-full min-w-14 p-2 border rounded text-xs"
             disabled={!isEditing}
           />
         ),
@@ -141,7 +141,7 @@ export function EditTable() {
               />
             ) : (
               <span
-                className={`ml-2 p-1 rounded ${
+                className={`w-full text-center p-1 rounded ${
                   value
                     ? "bg-green-200 text-green-800"
                     : "bg-red-200 text-red-800"
@@ -164,7 +164,7 @@ export function EditTable() {
     <div>
       {isEditing && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="p-8 bg-white rounded-3xl shadow-xl w-3/4 h-3/4 overflow-auto">
+          <div className="p-8 bg-white rounded-3xl shadow-custom-dark h-3/4 overflow-auto mx-7">
             <button
               onClick={() => setIsEditing(false)}
               className="mb-4 p-2 bg-emerald-500 text-white rounded-2xl"
@@ -219,9 +219,9 @@ export function EditTable() {
           </div>
         </div>
       )}
-      <div className="p-2 bg-white rounded-3xl shadow-custom-dark mx-7">
-        <div className="overflow-auto h-64">
-          <table {...getTableProps()} className="table-auto w-full">
+      <div className="p-2 bg-white rounded-3xl shadow-custom-dark overflow-x-auto">
+        <div className="overflow-x-auto h-64">
+          <table {...getTableProps()} className="table-auto">
             <thead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (
                 <tr
@@ -232,7 +232,7 @@ export function EditTable() {
                     <th
                       {...column.getHeaderProps()}
                       key={columnIndex}
-                      className="p-1 border whitespace-nowrap"
+                      className="p-1 border whitespace-nowrap w-[94px]"
                     >
                       {column.render("Header")}
                     </th>
@@ -249,7 +249,7 @@ export function EditTable() {
                       <td
                         {...cell.getCellProps()}
                         key={cell.column.id}
-                        className="p-1 border"
+                        className="p-1 border w-[94px]"
                       >
                         {cell.render("Cell")}
                       </td>
@@ -260,7 +260,7 @@ export function EditTable() {
             </tbody>
           </table>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-2">
           <button
             onClick={() => setIsEditing(true)}
             className="pt-1 hover:underline"
