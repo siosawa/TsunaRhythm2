@@ -19,9 +19,9 @@ export function SetTimer({ selectedProject, addTimerRecord }) {
   };
 
   const formatElapsedTime = (elapsedTime) => {
-    const totalSeconds = Math.floor(elapsedTime / 1000);
+    const totalSeconds = elapsedTime / 1000;
     const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
+    const seconds = (totalSeconds % 60).toFixed(2);
     return `${minutes}分${seconds}秒`;
   };
 
@@ -36,7 +36,7 @@ export function SetTimer({ selectedProject, addTimerRecord }) {
     if (isRunning && startTime) {
       intervalRef.current = setInterval(() => {
         setElapsedTime(Date.now() - startTime.getTime());
-      }, 1000);
+      }, 100);
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -90,7 +90,7 @@ export function SetTimer({ selectedProject, addTimerRecord }) {
   };
 
   return (
-    <div>
+    <div className="flex items-end">
       <button onClick={handleButtonClick} className="border-none bg-none">
         {isRunning ? (
           <BiSolidAlarmOff className="text-6xl" />
@@ -98,13 +98,17 @@ export function SetTimer({ selectedProject, addTimerRecord }) {
           <BsAlarmFill className="text-6xl" />
         )}
       </button>
-      <div>
-        {elapsedTime !== null
-          ? formatElapsedTime(elapsedTime)
-          : "タイマーは停止しています"}
-      </div>
-      <div>
-        <p>スタート時刻: {startTimestamp || "未開始"}</p>
+      <div className="ml-4">
+        <div className="text-3xl">
+          {elapsedTime !== null ? (
+            formatElapsedTime(elapsedTime)
+          ) : (
+            <span className="text-base">タイマーは停止しています</span>
+          )}
+        </div>
+        <div className="text-base">
+          <p>スタート時刻: {startTimestamp || "未開始"}</p>
+        </div>
       </div>
     </div>
   );
