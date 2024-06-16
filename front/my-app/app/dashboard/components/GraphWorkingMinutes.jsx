@@ -104,7 +104,7 @@ const GraphWorkingMinutes = () => {
   };
 
   return (
-    <div className="w-96 h-58 p-4 mx-7 bg-white rounded-3xl custom_shadow_dark relative">
+    <div className="w-96 h-58 p-4 bg-white rounded-3xl custom_shadow_dark relative">
       <Bar
         data={chartData}
         options={{

@@ -1,75 +1,75 @@
 {
     "projects": [
-        {
+          {
             "id": 1,
             "user_id": 2,
             "company": "企業A",
-            "project": "案件1",
+            "name": "案件1",
             "workType": "開発",
-            "unitPrice": 5000,
-            "quantity": 10,
+            "unitPrice": 5000000,
+            "quantity": 100,
             "isCompleted": false
-        },
-        {
+          },
+          {
             "id": 2,
             "user_id": 2,
             "company": "企業B",
-            "project": "案件2",
+            "name": "案件2",
             "workType": "デザイン",
             "unitPrice": 3000,
             "quantity": 5,
             "isCompleted": true
-        },
-        {
+          },
+          {
             "id": 3,
             "user_id": 2,
             "company": "企業C",
-            "project": "案件3",
+            "name": "案件3",
             "workType": "マーケティング",
             "unitPrice": 7000,
             "quantity": 7,
             "isCompleted": false
-        },
-        {
+          },
+          {
             "id": 4,
             "user_id": 2,
             "company": "企業A",
-            "project": "案件4",
+            "name": "案件4",
             "workType": "コンサルティング",
             "unitPrice": 8000,
             "quantity": 3,
             "isCompleted": true
-        },
-        {
+          },
+          {
             "id": 5,
             "user_id": 2,
             "company": "企業B",
-            "project": "案件5",
+            "name": "案件5",
             "workType": "開発",
             "unitPrice": 6000,
             "quantity": 8,
             "isCompleted": false
-        },
-        {
+          },
+          {
             "id": 6,
             "user_id": 2,
             "company": "企業C",
-            "project": "案件6",
+            "name": "案件6",
             "workType": "デザイン",
             "unitPrice": 4000,
             "quantity": 6,
             "isCompleted": true
-        },
-        {
+          },
+          {
             "id": 7,
             "user_id": 2,
             "company": "企業A",
-            "project": "案件7",
+            "name": "案件7",
             "workType": "マーケティング",
             "unitPrice": 9000,
             "quantity": 4,
             "isCompleted": false
-        }
+          }
     ],
     "records": [
             {
