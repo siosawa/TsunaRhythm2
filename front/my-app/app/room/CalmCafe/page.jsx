@@ -41,6 +41,8 @@ export default function Timer() {
           projects={projects.map((project) => project.name)} // プロジェクト名（name）を渡す
           setSelectedProject={setSelectedProject}
         />
+      </div>
+      <div className="absolute z-30 mx-10 mt-52">
         <ViewTimerRecord
           timerRecords={timerRecords}
           setTimerRecords={setTimerRecords}
