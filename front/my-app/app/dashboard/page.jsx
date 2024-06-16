@@ -7,22 +7,34 @@ import GraphHourlyRate from "./components/GraphHourlyRate";
 import GraphDailyEarnings from "./components/GraphDailyEarnings";
 import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
 import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
+import TsunaRhythm from "@/components/TsunaRhythm";
 
 const Dashboard = () => {
   return (
     <>
-      <div className="flex flex-col items-center mt-16 mx-7 space-y-2 ">
-        <Calendar />
-        <div className="flex space-x-2">
-          <MonthHWAT />
-          <RandomWord />
+      <div class="mx-7 grid 845s:grid-cols-2 1320s:grid-cols-3 1600s:grid-cols-4 gap-5 place-items-center mt-12">
+        <div className=" space-y-2">
+          <GraphWorkingMinutes />
+          <div className="flex items-center space-x-2 ">
+            <MonthHWAT />
+            <RandomWord />
+          </div>
         </div>
-        <GraphWorkingMinutes />
-        <GraphHourlyRate />
-        <GraphDailyEarnings />
-        <ProjectHourlyWageRanking />
-        <WorkTypeHourlyWageRanking />
-        <EditTable />
+        <div className="space-y-2">
+          <GraphHourlyRate />
+          <GraphDailyEarnings />
+        </div>
+        <div className="space-y-2">
+          <ProjectHourlyWageRanking />
+          <WorkTypeHourlyWageRanking />
+        </div>
+        <Calendar />
+        <div className="col-span-2">
+          <EditTable />
+        </div>
+        <div class="hidden 2xl:block col-span-2 bg-orange-200 rounded-3xl shadow-custom-dark ">
+          <TsunaRhythm />
+        </div>
       </div>
     </>
   );

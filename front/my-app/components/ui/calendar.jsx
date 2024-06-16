@@ -12,7 +12,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
       showOutsideDays={showOutsideDays}
       className={cn(
         "p-3",
-        (className = "bg-white rounded-3xl shadow-custom-dark")
+        (className = "bg-white rounded-3xl shadow-custom-dark h-96")
       )}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",

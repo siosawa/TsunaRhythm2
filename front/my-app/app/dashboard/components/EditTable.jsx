@@ -219,8 +219,8 @@ export function EditTable() {
           </div>
         </div>
       )}
-      <div className="p-2 bg-white rounded-3xl shadow-custom-dark overflow-x-auto">
-        <div className="overflow-x-auto h-64">
+      <div className="p-2 bg-white rounded-3xl shadow-custom-dark overflow-x-auto mx-7 my-2">
+        <div className="overflow-x-auto h-60">
           <table {...getTableProps()} className="table-auto">
             <thead>
               {headerGroups.map((headerGroup, headerGroupIndex) => (

@@ -22,7 +22,7 @@ const RandomWord = () => {
   }, []);
 
   return (
-    <div className="p-5 w-[5cm] h-[5cm] bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
+    <div className="p-5 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
       <p className="font-bold">{word}</p>
     </div>
   );

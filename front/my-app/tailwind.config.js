@@ -20,10 +20,16 @@ module.exports = {
       width: {
         '68': '17rem', // グループチャットで使用
       },
+      height: {
+        '39': '9.75rem', // ダッシュボードのEditTableで使用
+      },
       screens: {
+        'ss': '300px',
+        '845s': '845px',
+        '1320s': '1320px',
+        '1600s': '1600px',
         '3xl': '2200px',
         '2md': '1000px',
-        'tablet': '413px',
       },
       boxShadow: {
         "custom-dark": "0 4px 6px rgba(0, 0, 0, 0.3)", // カスタムシャドウの追加
