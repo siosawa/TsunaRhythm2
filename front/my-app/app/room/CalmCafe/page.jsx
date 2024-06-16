@@ -38,13 +38,13 @@ export default function Timer() {
           addTimerRecord={addTimerRecord}
         />
         <ProjectSelection
-          projects={projects.map((project) => project.project)} // プロジェクト名のみを渡す
+          projects={projects.map((project) => project.name)} // プロジェクト名（name）を渡す
           setSelectedProject={setSelectedProject}
         />
         <ViewTimerRecord
           timerRecords={timerRecords}
           setTimerRecords={setTimerRecords}
-          projects={projects.map((project) => project.project)} // プロジェクト名のみを渡す
+          projects={projects.map((project) => project.name)} // プロジェクト名（name）を渡す
         />
       </div>
       <GroupChat className="absolute z-30" />

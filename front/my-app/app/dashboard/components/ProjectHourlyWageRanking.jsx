@@ -27,7 +27,7 @@ const ProjectHourlyWageRanking = () => {
               projectHourlyWages[project.id] = {
                 totalUnitPriceTimesQuantity: 0,
                 totalMinutes: 0,
-                projectName: project.project,
+                projectName: project.name,
               };
             }
             projectHourlyWages[project.id].totalUnitPriceTimesQuantity +=

@@ -78,7 +78,7 @@ export function EditTable() {
       },
       {
         Header: "案件名",
-        accessor: "project",
+        accessor: "name",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
