@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { SetTimer } from "@/app/room/components/SetTimer";
 import { ViewTimerRecord } from "@/app/room/components/ViewTimerRecord";
 import GroupChat from "@/app/room/components/GroupChat";
+import RoomExitButton from "@/app/room/components/RoomExit";
 
 export default function Timer() {
   const [selectedProject, setSelectedProject] = useState("");
@@ -50,6 +51,7 @@ export default function Timer() {
         />
       </div>
       <GroupChat className="absolute z-30" />
+      <RoomExitButton />
     </>
   );
 }
