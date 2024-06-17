@@ -525,43 +525,43 @@
      "roomMembers": [
           {
             "id": 1,
-            "user_id": 2,
+            "user_id": 1,
             "room_id": 1,
             "entered_at": "2024-06-15T08:30:00Z",
             "leaved_at": null
           },
           {
             "id": 2,
-            "user_id": 102,
+            "user_id": 2,
             "room_id": 1,
             "entered_at": "2024-06-15T08:45:00Z",
             "leaved_at": null
           },
           {
             "id": 3,
-            "user_id": 103,
-            "room_id": 1,
+            "user_id": 3,
+            "room_id": 2,
             "entered_at": "2024-06-15T09:00:00Z",
             "leaved_at": "2024-06-15T09:30:00Z"
           },
           {
             "id": 4,
-            "user_id": 104,
-            "room_id": 1,
+            "user_id": 4,
+            "room_id": 2,
             "entered_at": "2024-06-15T09:15:00Z",
             "leaved_at": null
           },
           {
             "id": 5,
-            "user_id": 105,
-            "room_id": 1,
+            "user_id": 5,
+            "room_id": 2,
             "entered_at": "2024-06-15T09:45:00Z",
             "leaved_at": null
           },
           {
             "id": 6,
-            "user_id": 106,
-            "room_id": 1,
+            "user_id": 6,
+            "room_id": 2,
             "entered_at": "2024-06-15T09:45:00Z",
             "leaved_at": null
           }
