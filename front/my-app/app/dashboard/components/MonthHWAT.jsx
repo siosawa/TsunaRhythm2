@@ -1,13 +1,12 @@
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import FetchCurrentUser from "@/components/FetchCurrentUser"; // FetchCurrentUserをインポート
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const MonthHWAT = () => {
   const [averageHourlyWage, setAverageHourlyWage] = useState(0);
   const [totalSalary, setTotalSalary] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null); // currentUserの状態を追加
-
+  const [currentUser, setCurrentUser] = useState(null);
   const fetchData = async (userId) => {
     try {
       const recordsResponse = await axios.get(
@@ -17,7 +16,10 @@ const MonthHWAT = () => {
       console.log("Records:", records);
 
       const projectsResponse = await axios.get(
-        `http://localhost:3001/projects?user_id=${userId}`
+        `http://localhost:3000/api/v1/projects`,
+        {
+          withCredentials: true, //クッキーを含める設定
+        }
       );
       const projects = projectsResponse.data || [];
       console.log("Projects:", projects);
@@ -32,7 +34,7 @@ const MonthHWAT = () => {
       // おそらくmap関数でも可能。projectごとにループ処理を行う。
       projects.forEach((project) => {
         // すでに完了しているプロジェクトだけを抽出
-        if (project.isCompleted) {
+        if (project.is_completed) {
           // そのプロジェクトに関連するrecordsテーブルのレコードを取得。テーブル名わかりづらいかも？
           const projectRecords = records.filter(
             (record) => record.project_id === project.id
@@ -46,7 +48,8 @@ const MonthHWAT = () => {
 
           // プロジェクトの平均時給を計算
           const projectAverageHourlyWage =
-            (project.unitPrice * project.quantity) / (totalProjectMinutes / 60);
+            (project.unit_price * project.quantity) /
+            (totalProjectMinutes / 60);
 
           // 現在の月のレコードのみをフィルタリング
           const currentMonthRecords = projectRecords.filter(

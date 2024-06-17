@@ -15,11 +15,11 @@ export default function Timer() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchProjects = async (userId) => {
+    const fetchProjects = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3001/projects?user_id=${userId}`
-        );
+        const response = await fetch(`http://localhost:3000/api/v1/projects`, {
+          credentials: "include",
+        });
         const projectsData = await response.json();
         setProjects(projectsData);
       } catch (error) {
@@ -28,7 +28,7 @@ export default function Timer() {
     };
 
     if (currentUser) {
-      fetchProjects(currentUser.id);
+      fetchProjects();
     }
   }, [currentUser]);
 

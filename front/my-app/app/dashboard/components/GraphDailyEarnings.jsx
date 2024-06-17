@@ -44,7 +44,9 @@ const GraphDailyEarnings = () => {
   const fetchData = async (userId, month) => {
     try {
       const [projectsResponse, recordsResponse] = await Promise.all([
-        axios.get(`http://localhost:3001/projects?user_id=${userId}`),
+        axios.get(`http://localhost:3000/api/v1/projects`, {
+          withCredentials: true,
+        }),
         axios.get(`http://localhost:3001/records?user_id=${userId}`),
       ]);
       const projects = projectsResponse.data || [];
@@ -52,7 +54,7 @@ const GraphDailyEarnings = () => {
 
       // 完了済みのprojectを取得
       const completedProjects = projects.filter(
-        (project) => project.isCompleted
+        (project) => project.is_completed
       );
 
       const earningsPerDay = {};
@@ -75,7 +77,7 @@ const GraphDailyEarnings = () => {
         );
         // 案件別自給平均を算出
         const averageHourlyWage =
-          (project.unitPrice * project.quantity) / (totalWorkMinutes / 60);
+          (project.unit_price * project.quantity) / (totalWorkMinutes / 60);
 
         selectedMonthRecords.forEach((record) => {
           if (record.project_id === project.id) {

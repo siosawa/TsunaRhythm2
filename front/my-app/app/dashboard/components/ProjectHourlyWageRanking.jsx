@@ -12,7 +12,9 @@ const ProjectHourlyWageRanking = () => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
         axios.get(`http://localhost:3001/records?user_id=${userId}`),
-        axios.get(`http://localhost:3001/projects?user_id=${userId}`),
+        axios.get(`http://localhost:3000/api/v1/projects`, {
+          withCredentials: true,
+        }),
       ]);
 
       const records = recordsResponse.data || [];
@@ -23,7 +25,7 @@ const ProjectHourlyWageRanking = () => {
 
       records.forEach((record) => {
         const project = projects.find((p) => p.id === record.project_id);
-        if (project && project.isCompleted) {
+        if (project && project.is_completed) {
           if (!projectHourlyWages[project.id]) {
             projectHourlyWages[project.id] = {
               totalUnitPriceTimesQuantity: 0,
@@ -32,7 +34,7 @@ const ProjectHourlyWageRanking = () => {
             };
           }
           projectHourlyWages[project.id].totalUnitPriceTimesQuantity +=
-            project.unitPrice * project.quantity;
+            project.unit_price * project.quantity;
           projectHourlyWages[project.id].totalMinutes += record.minutes;
         }
       });

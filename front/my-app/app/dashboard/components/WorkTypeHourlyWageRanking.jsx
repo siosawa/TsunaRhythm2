@@ -12,36 +12,38 @@ const WorkTypeHourlyWageRanking = () => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
         axios.get(`http://localhost:3001/records?user_id=${userId}`),
-        axios.get(`http://localhost:3001/projects?user_id=${userId}`),
+        axios.get(`http://localhost:3000/api/v1/projects`, {
+          withCredentials: true,
+        }),
       ]);
 
       const records = recordsResponse.data || [];
       const projects = projectsResponse.data || [];
 
-      // workTypeごとの時給平均を計算
+      // work_typeごとの時給平均を計算
       const workTypeHourlyWages = {};
 
       records.forEach((record) => {
         const project = projects.find((p) => p.id === record.project_id);
-        if (project && project.isCompleted) {
-          if (!workTypeHourlyWages[project.workType]) {
-            workTypeHourlyWages[project.workType] = {
+        if (project && project.is_completed) {
+          if (!workTypeHourlyWages[project.work_type]) {
+            workTypeHourlyWages[project.work_type] = {
               totalUnitPriceTimesQuantity: 0,
               totalMinutes: 0,
             };
           }
-          workTypeHourlyWages[project.workType].totalUnitPriceTimesQuantity +=
-            project.unitPrice * project.quantity;
-          workTypeHourlyWages[project.workType].totalMinutes += record.minutes;
+          workTypeHourlyWages[project.work_type].totalUnitPriceTimesQuantity +=
+            project.unit_price * project.quantity;
+          workTypeHourlyWages[project.work_type].totalMinutes += record.minutes;
         }
       });
 
       const ranking = Object.keys(workTypeHourlyWages)
-        .map((workType) => ({
-          name: workType,
+        .map((work_type) => ({
+          name: work_type,
           averageHourlyWage:
-            workTypeHourlyWages[workType].totalUnitPriceTimesQuantity /
-            (workTypeHourlyWages[workType].totalMinutes / 60),
+            workTypeHourlyWages[work_type].totalUnitPriceTimesQuantity /
+            (workTypeHourlyWages[work_type].totalMinutes / 60),
         }))
         .sort((a, b) => b.averageHourlyWage - a.averageHourlyWage); // 高い順にソート
 
@@ -64,11 +66,11 @@ const WorkTypeHourlyWageRanking = () => {
       <p className="font-bold">作業タイプ別時給平均ランキング</p>
       {error && <p className="text-red-500">{error}</p>}
       <ul className="w-full">
-        {ranking.map((workType, index) => (
+        {ranking.map((work_type, index) => (
           <li key={index} className="w-full flex justify-between my-1">
             <span>{index + 1}位</span>
-            <span>{workType.name}</span>
-            <span>{Math.floor(workType.averageHourlyWage)}円</span>
+            <span>{work_type.name}</span>
+            <span>{Math.floor(work_type.averageHourlyWage)}円</span>
           </li>
         ))}
       </ul>

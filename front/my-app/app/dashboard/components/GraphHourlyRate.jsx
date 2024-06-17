@@ -48,7 +48,9 @@ const GraphHourlyRate = () => {
   const fetchData = async (userId, month) => {
     try {
       const [projectsResponse, recordsResponse] = await Promise.all([
-        axios.get(`http://localhost:3001/projects?user_id=${userId}`),
+        axios.get(`http://localhost:3000/api/v1/projects`, {
+          withCredentials: true,
+        }),
         axios.get(`http://localhost:3001/records?user_id=${userId}`),
       ]);
       const projects = projectsResponse.data || [];
@@ -63,7 +65,7 @@ const GraphHourlyRate = () => {
       const year = new Date().getFullYear();
 
       projects.forEach((project) => {
-        if (project.isCompleted) {
+        if (project.is_completed) {
           // 完了しているプロジェクトのみ考慮
           const projectRecords = selectedMonthRecords.filter(
             (record) => record.project_id === project.id
@@ -74,7 +76,7 @@ const GraphHourlyRate = () => {
           );
 
           const averageHourlyWage =
-            (project.unitPrice * project.quantity) / (totalWorkMinutes / 60);
+            (project.unit_price * project.quantity) / (totalWorkMinutes / 60);
 
           projectRecords.forEach((record) => {
             const date = new Date(record.date).toLocaleDateString();

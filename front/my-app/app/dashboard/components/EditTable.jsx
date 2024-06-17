@@ -14,7 +14,10 @@ export function EditTable() {
     const fetchData = async (userId) => {
       try {
         const result = await axios.get(
-          `http://localhost:3001/projects?user_id=${userId}`
+          `http://localhost:3000/api/v1/projects`,
+          {
+            withCredentials: true, // クッキーを含める設定
+          }
         );
         setData(result.data);
       } catch (error) {
@@ -97,7 +100,7 @@ export function EditTable() {
       },
       {
         Header: "ワークの種類",
-        accessor: "workType",
+        accessor: "work_type",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="text"
@@ -110,7 +113,7 @@ export function EditTable() {
       },
       {
         Header: "単価",
-        accessor: "unitPrice",
+        accessor: "unit_price",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <input
             type="number"
@@ -136,7 +139,7 @@ export function EditTable() {
       },
       {
         Header: "完了状態",
-        accessor: "isCompleted",
+        accessor: "is_completed",
         Cell: ({ value, row: { index }, column: { id } }) => (
           <div className="flex items-center justify-center">
             {isEditing ? (
