@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # # # メインのサンプルユーザーを1人作成する
 # User.find_or_create_by(email: 'example@railstutorial.org') do |user|
 #     user.name = 'Example User'

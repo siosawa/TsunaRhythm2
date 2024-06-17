@@ -46,7 +46,7 @@ RSpec.describe User do
 
     it 'ランダムなトークンの長さが0より大きい' do
       token = described_class.new_token
-      expect(token.length).to be > 0
+      expect(token.length).to be.positive?
     end
 
     it '渡された文字列のハッシュ値を返す' do
@@ -56,7 +56,7 @@ RSpec.describe User do
 
     it 'ハッシュ値の長さが0より大きい' do
       digest = described_class.digest('password')
-      expect(digest.length).to be > 0
+      expect(digest.length).to be.positive?
     end
 
     it 'フォローできる' do
