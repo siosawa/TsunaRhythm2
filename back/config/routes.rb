@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       end
       resources :password_resets,     only: %i[create edit update]
       resources :relationships,       only: %i[create destroy]
+      resources :projects, only: %i[index show create update destroy]
     end
   end
   get 'up' => 'rails/health#show', as: :rails_health_check
