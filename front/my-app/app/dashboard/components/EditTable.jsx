@@ -2,23 +2,29 @@
 import React, { useState, useEffect } from "react";
 import { useTable } from "react-table";
 import axios from "axios";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 export function EditTable() {
   const [data, setData] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (userId) => {
       try {
-        const result = await axios.get("http://localhost:3001/projects");
+        const result = await axios.get(
+          `http://localhost:3001/projects?user_id=${userId}`
+        );
         setData(result.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    fetchData();
-  }, []);
+    if (currentUser) {
+      fetchData(currentUser.id);
+    }
+  }, [currentUser]);
 
   const handleInputChange = (e, rowIndex, columnId, type) => {
     const value = e.target.value;
@@ -161,114 +167,117 @@ export function EditTable() {
     useTable({ columns, data });
 
   return (
-    <div>
-      {isEditing && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="p-8 bg-white rounded-3xl shadow-custom-dark h-3/4 overflow-auto mx-7">
-            <button
-              onClick={() => setIsEditing(false)}
-              className="mb-4 p-2 bg-emerald-500 text-white rounded-2xl"
-            >
-              保存
-            </button>
-            <div className="overflow-auto">
-              <table {...getTableProps()} className="table-auto w-full">
-                <thead>
-                  {headerGroups.map((headerGroup, headerGroupIndex) => (
-                    <tr
-                      {...headerGroup.getHeaderGroupProps()}
-                      key={headerGroupIndex}
-                    >
-                      {headerGroup.headers.map((column, columnIndex) => (
-                        <th
-                          {...column.getHeaderProps()}
-                          key={columnIndex}
-                          className="p-2 border whitespace-nowrap"
-                        >
-                          {column.render("Header")}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                  {rows.map((row, rowIndex) => {
-                    prepareRow(row);
-                    return (
-                      <tr {...row.getRowProps()} key={rowIndex}>
-                        {row.cells.map((cell) => (
-                          <td
-                            {...cell.getCellProps()}
-                            key={cell.column.id}
-                            className="p-2 border"
+    <>
+      <FetchCurrentUser setCurrentUser={setCurrentUser} />
+      <div>
+        {isEditing && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="p-8 bg-white rounded-3xl shadow-custom-dark h-3/4 overflow-auto mx-7">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="mb-4 p-2 bg-emerald-500 text-white rounded-2xl"
+              >
+                保存
+              </button>
+              <div className="overflow-auto">
+                <table {...getTableProps()} className="table-auto w-full">
+                  <thead>
+                    {headerGroups.map((headerGroup, headerGroupIndex) => (
+                      <tr
+                        {...headerGroup.getHeaderGroupProps()}
+                        key={headerGroupIndex}
+                      >
+                        {headerGroup.headers.map((column, columnIndex) => (
+                          <th
+                            {...column.getHeaderProps()}
+                            key={columnIndex}
+                            className="p-2 border whitespace-nowrap"
                           >
-                            {cell.render("Cell")}
-                            {errors[rowIndex]?.[cell.column.id] && (
-                              <div className="text-red-500 text-xs">
-                                {errors[rowIndex][cell.column.id]}
-                              </div>
-                            )}
-                          </td>
+                            {column.render("Header")}
+                          </th>
                         ))}
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </thead>
+                  <tbody {...getTableBodyProps()}>
+                    {rows.map((row, rowIndex) => {
+                      prepareRow(row);
+                      return (
+                        <tr {...row.getRowProps()} key={rowIndex}>
+                          {row.cells.map((cell) => (
+                            <td
+                              {...cell.getCellProps()}
+                              key={cell.column.id}
+                              className="p-2 border"
+                            >
+                              {cell.render("Cell")}
+                              {errors[rowIndex]?.[cell.column.id] && (
+                                <div className="text-red-500 text-xs">
+                                  {errors[rowIndex][cell.column.id]}
+                                </div>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      <div className="p-2 bg-white rounded-3xl shadow-custom-dark overflow-x-auto mx-7 my-2">
-        <div className="overflow-x-auto h-60">
-          <table {...getTableProps()} className="table-auto">
-            <thead>
-              {headerGroups.map((headerGroup, headerGroupIndex) => (
-                <tr
-                  {...headerGroup.getHeaderGroupProps()}
-                  key={headerGroupIndex}
-                >
-                  {headerGroup.headers.map((column, columnIndex) => (
-                    <th
-                      {...column.getHeaderProps()}
-                      key={columnIndex}
-                      className="p-1 border whitespace-nowrap w-[94px]"
-                    >
-                      {column.render("Header")}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {rows.map((row, rowIndex) => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()} key={rowIndex}>
-                    {row.cells.map((cell) => (
-                      <td
-                        {...cell.getCellProps()}
-                        key={cell.column.id}
-                        className="p-1 border w-[94px]"
+        )}
+        <div className="p-2 bg-white rounded-3xl shadow-custom-dark overflow-x-auto mx-7 my-2">
+          <div className="overflow-x-auto h-60">
+            <table {...getTableProps()} className="table-auto">
+              <thead>
+                {headerGroups.map((headerGroup, headerGroupIndex) => (
+                  <tr
+                    {...headerGroup.getHeaderGroupProps()}
+                    key={headerGroupIndex}
+                  >
+                    {headerGroup.headers.map((column, columnIndex) => (
+                      <th
+                        {...column.getHeaderProps()}
+                        key={columnIndex}
+                        className="p-1 border whitespace-nowrap w-[94px]"
                       >
-                        {cell.render("Cell")}
-                      </td>
+                        {column.render("Header")}
+                      </th>
                     ))}
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex justify-center mt-2">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="pt-1 hover:underline"
-          >
-            編集
-          </button>
+                ))}
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map((row, rowIndex) => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()} key={rowIndex}>
+                      {row.cells.map((cell) => (
+                        <td
+                          {...cell.getCellProps()}
+                          key={cell.column.id}
+                          className="p-1 border w-[94px]"
+                        >
+                          {cell.render("Cell")}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-center mt-2">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="pt-1 hover:underline"
+            >
+              編集
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

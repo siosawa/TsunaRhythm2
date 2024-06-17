@@ -6,16 +6,20 @@ import { SetTimer } from "@/app/room/components/SetTimer";
 import { ViewTimerRecord } from "@/app/room/components/ViewTimerRecord";
 import GroupChat from "@/app/room/components/GroupChat";
 import RoomExitButton from "@/app/room/components/RoomExit";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 export default function Timer() {
   const [selectedProject, setSelectedProject] = useState("");
   const [timerRecords, setTimerRecords] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjects = async (userId) => {
       try {
-        const response = await fetch("http://localhost:3001/projects");
+        const response = await fetch(
+          `http://localhost:3001/projects?user_id=${userId}`
+        );
         const projectsData = await response.json();
         setProjects(projectsData);
       } catch (error) {
@@ -23,8 +27,10 @@ export default function Timer() {
       }
     };
 
-    fetchProjects();
-  }, []);
+    if (currentUser) {
+      fetchProjects(currentUser.id);
+    }
+  }, [currentUser]);
 
   const addTimerRecord = (record) => {
     setTimerRecords([...timerRecords, record]);
@@ -32,6 +38,7 @@ export default function Timer() {
 
   return (
     <>
+      <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <CalmCafe />
       <div className="absolute z-30 mx-10 mt-20 flex flex-col items-start space-y-4">
         <SetTimer
