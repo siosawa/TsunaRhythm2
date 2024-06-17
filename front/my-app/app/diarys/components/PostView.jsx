@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import ja from "date-fns/locale/ja";
@@ -15,6 +15,7 @@ const PostView = ({ reload }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [editingPost, setEditingPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [avatars, setAvatars] = useState({});
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -32,7 +33,7 @@ const PostView = ({ reload }) => {
         { title, content },
         {
           withCredentials: true,
-        },
+        }
       );
       setPosts(
         posts.map((post) =>
@@ -42,8 +43,8 @@ const PostView = ({ reload }) => {
                 title: response.data.title,
                 content: response.data.content,
               }
-            : post,
-        ),
+            : post
+        )
       );
       setEditingPost(null);
       setIsModalOpen(false);
@@ -52,19 +53,62 @@ const PostView = ({ reload }) => {
     }
   };
 
+  const fetchUserAvatar = async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/users/${userId}`
+      );
+      return response.data.avatar?.url || null;
+    } catch (error) {
+      console.error(`ユーザーID${userId}のアバター取得に失敗しました:`, error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchAvatars = async () => {
+      const newAvatars = {};
+      for (const post of posts) {
+        if (!avatars[post.user_id]) {
+          const avatarUrl = await fetchUserAvatar(post.user_id);
+          newAvatars[post.user_id] = avatarUrl;
+        }
+      }
+      setAvatars((prevAvatars) => ({ ...prevAvatars, ...newAvatars }));
+    };
+
+    if (posts.length > 0) {
+      fetchAvatars();
+    }
+  }, [posts]);
+
   return (
     <div className="max-w-2xl p-4 bg-white rounded-3xl shadow-custom-dark mx-4 md:mx-auto mb-20">
-      {" "}
       {posts.map((post) => {
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
-          { locale: ja },
+          { locale: ja }
         );
         return (
           <div key={post.id} className="border-b border-gray-200 py-4">
             <div className="flex items-center mb-2">
-              <div className="w-10 h-10 bg-gray-200 rounded-full mr-4 flex-shrink-0"></div>
+              {avatars[post.user_id] ? (
+                <img
+                  src={`http://localhost:3000${avatars[post.user_id]}`}
+                  alt={post.user.name}
+                  width={60}
+                  height={60}
+                  className="rounded-full mr-4"
+                />
+              ) : (
+                <div
+                  className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full mr-4"
+                  style={{ width: 60, height: 60, whiteSpace: "nowrap" }}
+                >
+                  NO IMAGE
+                </div>
+              )}
               <div className="flex flex-col flex-1">
                 <div className="flex items-center">
                   <p className="text-lg font-semibold mr-2">{post.user.name}</p>
