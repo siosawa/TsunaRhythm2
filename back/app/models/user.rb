@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  has_many :records, dependent: :destroy
+  has_many :projects, dependent: :destroy
   has_many :posts, dependent: :destroy
 
   has_many :active_relationships, class_name: 'Relationship',
