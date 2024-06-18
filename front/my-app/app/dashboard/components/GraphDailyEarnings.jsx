@@ -47,7 +47,9 @@ const GraphDailyEarnings = () => {
         axios.get(`http://localhost:3000/api/v1/projects`, {
           withCredentials: true,
         }),
-        axios.get(`http://localhost:3001/records?user_id=${userId}`),
+        axios.get(`http://localhost:3000/api/v1/records`, {
+          withCredentials: true,
+        }),
       ]);
       const projects = projectsResponse.data || [];
       const records = recordsResponse.data || [];

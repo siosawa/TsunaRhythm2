@@ -8,10 +8,12 @@ const ProjectHourlyWageRanking = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const fetchRankingData = async (userId) => {
+  const fetchRankingData = async () => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
-        axios.get(`http://localhost:3001/records?user_id=${userId}`),
+        axios.get(`http://localhost:3000/api/v1/records`, {
+          withCredentials: true,
+        }),
         axios.get(`http://localhost:3000/api/v1/projects`, {
           withCredentials: true,
         }),

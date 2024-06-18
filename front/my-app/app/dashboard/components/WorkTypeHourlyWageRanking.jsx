@@ -8,19 +8,17 @@ const WorkTypeHourlyWageRanking = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const fetchRankingData = async (userId) => {
+  const fetchRankingData = async () => {
     try {
-      const [recordsResponse, projectsResponse] = await Promise.all([
-        axios.get(`http://localhost:3001/records?user_id=${userId}`),
-        axios.get(`http://localhost:3000/api/v1/projects`, {
-          withCredentials: true,
-        }),
-      ]);
+      const { data: records } = await axios.get(
+        `http://localhost:3000/api/v1/records`,
+        { withCredentials: true }
+      );
+      const { data: projects } = await axios.get(
+        `http://localhost:3000/api/v1/projects`,
+        { withCredentials: true }
+      );
 
-      const records = recordsResponse.data || [];
-      const projects = projectsResponse.data || [];
-
-      // work_typeごとの時給平均を計算
       const workTypeHourlyWages = {};
 
       records.forEach((record) => {
@@ -45,7 +43,7 @@ const WorkTypeHourlyWageRanking = () => {
             workTypeHourlyWages[work_type].totalUnitPriceTimesQuantity /
             (workTypeHourlyWages[work_type].totalMinutes / 60),
         }))
-        .sort((a, b) => b.averageHourlyWage - a.averageHourlyWage); // 高い順にソート
+        .sort((a, b) => b.averageHourlyWage - a.averageHourlyWage);
 
       setRanking(ranking);
     } catch (error) {
