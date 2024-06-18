@@ -12,7 +12,7 @@ import TsunaRhythm from "@/components/TsunaRhythm";
 const Dashboard = () => {
   return (
     <>
-      <div class="mx-7 grid 845s:grid-cols-2 1320s:grid-cols-3 1600s:grid-cols-4 gap-5 place-items-center mt-12">
+      <div className="mx-7 grid 845s:grid-cols-2 1320s:grid-cols-3 1600s:grid-cols-4 gap-5 place-items-center mt-12">
         <div className=" space-y-2">
           <GraphWorkingMinutes />
           <div className="flex items-center space-x-2 ">
