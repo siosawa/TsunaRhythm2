@@ -10,7 +10,10 @@ const MonthHWAT = () => {
   const fetchData = async (userId) => {
     try {
       const recordsResponse = await axios.get(
-        `http://localhost:3001/records?user_id=${userId}`
+        `http://localhost:3000/api/v1/records`,
+        {
+          withCredentials: true, //クッキーを含める設定
+        }
       );
       const records = recordsResponse.data || [];
       console.log("Records:", records);
