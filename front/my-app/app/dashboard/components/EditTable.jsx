@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useTable } from "react-table";
 import axios from "axios";
@@ -6,12 +7,13 @@ import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 export function EditTable() {
   const [data, setData] = useState([]);
+  const [originalData, setOriginalData] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchData = async (userId) => {
+    const fetchData = async () => {
       try {
         const result = await axios.get(
           `http://localhost:3000/api/v1/projects`,
@@ -20,12 +22,13 @@ export function EditTable() {
           }
         );
         setData(result.data);
+        setOriginalData(result.data); // オリジナルデータを保存
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     if (currentUser) {
-      fetchData(currentUser.id);
+      fetchData();
     }
   }, [currentUser]);
 
@@ -62,12 +65,48 @@ export function EditTable() {
       if (index === rowIndex) {
         return {
           ...row,
-          isCompleted: value,
+          is_completed: value,
         };
       }
       return row;
     });
     setData(updatedData);
+  };
+
+  const handleSave = async () => {
+    try {
+      // 変更があったデータをフィルターする
+      const changedData = data.filter((row, index) => {
+        const originalRow = originalData[index]; // 保存前のオリジナルデータを取得
+        return JSON.stringify(row) !== JSON.stringify(originalRow); // データが変更されているか比較
+      });
+
+      // 各プロジェクトを個別に更新
+      await Promise.all(
+        changedData.map(async (project) => {
+          const projectId = project.id; // プロジェクトのIDを取得
+          await axios.put(
+            `http://localhost:3000/api/v1/projects/${projectId}`,
+            project,
+            {
+              withCredentials: true,
+            }
+          );
+        })
+      );
+
+      // 保存後の処理（成功時のみ）
+      setIsEditing(false);
+      setOriginalData([...data]); // 保存後のデータをオリジナルデータとして更新
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    // 編集モードを終了し、データを元に戻す
+    setData([...originalData]);
+    setIsEditing(false);
   };
 
   const columns = React.useMemo(
@@ -176,12 +215,22 @@ export function EditTable() {
         {isEditing && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="p-8 bg-white rounded-3xl shadow-custom-dark h-3/4 overflow-auto mx-7">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="mb-4 p-2 bg-emerald-500 text-white rounded-2xl"
-              >
-                保存
-              </button>
+              <div className="flex justify-between mb-4">
+                <div>
+                  <button
+                    onClick={handleSave}
+                    className="mr-2 p-2 bg-emerald-500 text-white rounded-2xl"
+                  >
+                    保存
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="p-2 bg-gray-500 text-white rounded-2xl"
+                  >
+                    閉じる
+                  </button>
+                </div>
+              </div>
               <div className="overflow-auto">
                 <table {...getTableProps()} className="table-auto w-full">
                   <thead>
