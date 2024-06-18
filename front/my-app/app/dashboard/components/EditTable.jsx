@@ -11,6 +11,15 @@ export function EditTable() {
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAdding, setIsAdding] = useState(false); // 追加用のポップアップ状態
+  const [newRecord, setNewRecord] = useState({
+    company: "",
+    name: "",
+    work_type: "",
+    unit_price: 0,
+    quantity: 0,
+    is_completed: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +61,12 @@ export function EditTable() {
         [columnId]: "数字を入力してください",
       };
     } else {
-      delete newErrors[rowIndex]?.[columnId];
+      if (newErrors[rowIndex]) {
+        delete newErrors[rowIndex][columnId];
+        if (Object.keys(newErrors[rowIndex]).length === 0) {
+          delete newErrors[rowIndex];
+        }
+      }
     }
 
     setData(updatedData);
@@ -75,10 +89,22 @@ export function EditTable() {
 
   const handleSave = async () => {
     try {
-      // 変更があったデータをフィルターする
+      // 新しいデータをフィルターする
+      const newData = data.filter((row) => !row.id);
+      if (newData.length > 0) {
+        await Promise.all(
+          newData.map(async (project) => {
+            await axios.post(`http://localhost:3000/api/v1/projects`, project, {
+              withCredentials: true,
+            });
+          })
+        );
+      }
+
+      // 変更があった既存のデータをフィルターする
       const changedData = data.filter((row, index) => {
         const originalRow = originalData[index]; // 保存前のオリジナルデータを取得
-        return JSON.stringify(row) !== JSON.stringify(originalRow); // データが変更されているか比較
+        return row.id && JSON.stringify(row) !== JSON.stringify(originalRow); // データが変更されているか比較
       });
 
       // 各プロジェクトを個別に更新
@@ -109,6 +135,28 @@ export function EditTable() {
     setIsEditing(false);
   };
 
+  const handleAdd = () => {
+    setIsAdding(true); // 追加用のポップアップを表示
+  };
+
+  const handleAddChange = (e, columnId) => {
+    const value = e.target.value;
+    setNewRecord({ ...newRecord, [columnId]: value });
+  };
+
+  const handleAddSave = () => {
+    setData([newRecord, ...data]);
+    setIsAdding(false);
+    setNewRecord({
+      company: "",
+      name: "",
+      work_type: "",
+      unit_price: 0,
+      quantity: 0,
+      is_completed: false,
+    });
+  };
+
   const columns = React.useMemo(
     () => [
       {
@@ -121,6 +169,7 @@ export function EditTable() {
             onChange={(e) => handleInputChange(e, index, id)}
             className="w-full p-2 border rounded text-xs"
             disabled={!isEditing}
+            placeholder="企業名"
           />
         ),
       },
@@ -134,6 +183,7 @@ export function EditTable() {
             onChange={(e) => handleInputChange(e, index, id)}
             className="w-full p-2 border rounded text-xs"
             disabled={!isEditing}
+            placeholder="案件名"
           />
         ),
       },
@@ -147,6 +197,7 @@ export function EditTable() {
             onChange={(e) => handleInputChange(e, index, id)}
             className="w-full p-2 border rounded text-xs"
             disabled={!isEditing}
+            placeholder="ワークの種類"
           />
         ),
       },
@@ -160,6 +211,7 @@ export function EditTable() {
             onChange={(e) => handleInputChange(e, index, id, "number")}
             className="max-w-24 p-2 border rounded text-xs"
             disabled={!isEditing}
+            placeholder="単価"
           />
         ),
       },
@@ -173,6 +225,7 @@ export function EditTable() {
             onChange={(e) => handleInputChange(e, index, id, "number")}
             className="w-full min-w-14 p-2 border rounded text-xs"
             disabled={!isEditing}
+            placeholder="本数"
           />
         ),
       },
@@ -219,13 +272,19 @@ export function EditTable() {
                 <div>
                   <button
                     onClick={handleSave}
-                    className="mr-2 p-2 bg-emerald-500 text-white rounded-2xl"
+                    className="mr-2 p-2 bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600"
                   >
                     保存
                   </button>
                   <button
+                    onClick={handleAdd}
+                    className="mr-2 p-2 bg-sky-500 text-white rounded-2xl hover:bg-sky-600"
+                  >
+                    追加
+                  </button>
+                  <button
                     onClick={handleCancel}
-                    className="p-2 bg-gray-500 text-white rounded-2xl"
+                    className="p-2 bg-gray-500 text-white rounded-2xl hover:bg-gray-600"
                   >
                     閉じる
                   </button>
@@ -279,10 +338,98 @@ export function EditTable() {
             </div>
           </div>
         )}
+        {isAdding && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="p-8 bg-white rounded-3xl shadow-custom-dark">
+              <h2 className="text-xl mb-4">新しいレコードを追加</h2>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={newRecord.company}
+                  onChange={(e) => handleAddChange(e, "company")}
+                  className="w-full p-2 mb-2 border rounded text-xs"
+                  placeholder="企業名"
+                />
+                <input
+                  type="text"
+                  value={newRecord.name}
+                  onChange={(e) => handleAddChange(e, "name")}
+                  className="w-full p-2 mb-2 border rounded text-xs"
+                  placeholder="案件名"
+                />
+                <input
+                  type="text"
+                  value={newRecord.work_type}
+                  onChange={(e) => handleAddChange(e, "work_type")}
+                  className="w-full p-2 mb-2 border rounded text-xs"
+                  placeholder="ワークの種類"
+                />
+                <input
+                  type="number"
+                  value={newRecord.unit_price}
+                  onChange={(e) => handleAddChange(e, "unit_price")}
+                  className="w-full p-2 mb-2 border rounded text-xs"
+                  placeholder="単価"
+                />
+                <input
+                  type="number"
+                  value={newRecord.quantity}
+                  onChange={(e) => handleAddChange(e, "quantity")}
+                  className="w-full p-2 mb-2 border rounded text-xs"
+                  placeholder="本数"
+                />
+                <div className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    checked={newRecord.is_completed}
+                    onChange={(e) =>
+                      setNewRecord({
+                        ...newRecord,
+                        is_completed: e.target.checked,
+                      })
+                    }
+                    className="mr-2"
+                  />
+                  <label>完了状態</label>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleAddSave}
+                  className="mr-2 p-2 bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600"
+                >
+                  保存
+                </button>
+                <button
+                  onClick={() => setIsAdding(false)}
+                  className="p-2 bg-gray-500 text-white rounded-2xl hover:bg-gray-600"
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="p-2 bg-white rounded-3xl shadow-custom-dark overflow-x-auto mx-7 my-2">
-          <div className="overflow-x-auto h-60">
-            <table {...getTableProps()} className="table-auto">
-              <thead>
+          <div className="flex justify-between mb-2">
+            <div>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="mr-2 p-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600"
+              >
+                編集
+              </button>
+              <button
+                onClick={handleAdd}
+                className="p-2 bg-sky-500 text-white rounded-2xl hover:bg-sky-600"
+              >
+                追加
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto h-60 relative">
+            <table {...getTableProps()} className="table-auto w-full">
+              <thead className="sticky top-0 bg-white z-10">
                 {headerGroups.map((headerGroup, headerGroupIndex) => (
                   <tr
                     {...headerGroup.getHeaderGroupProps()}
@@ -292,7 +439,7 @@ export function EditTable() {
                       <th
                         {...column.getHeaderProps()}
                         key={columnIndex}
-                        className="p-1 border whitespace-nowrap w-[94px]"
+                        className="p-1 border whitespace-nowrap w-[94px] bg-white"
                       >
                         {column.render("Header")}
                       </th>
@@ -319,14 +466,6 @@ export function EditTable() {
                 })}
               </tbody>
             </table>
-          </div>
-          <div className="flex justify-center mt-2">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="pt-1 hover:underline"
-            >
-              編集
-            </button>
           </div>
         </div>
       </div>
