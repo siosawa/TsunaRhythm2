@@ -1,8 +1,7 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FiTriangle } from "react-icons/fi";
 import axios from "axios"; // 退会処理のためにaxiosを使用
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
@@ -12,6 +11,22 @@ const ProfileReadPage = () => {
   const [error, setError] = useState("");
   const nameInputRef = useRef(null);
   const [avatar, setAvatar] = useState(null);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/current_user",
+        { withCredentials: true }
+      );
+      setUser(response.data);
+    } catch (error) {
+      console.error("ユーザーデータの取得に失敗しました:", error);
+    }
+  };
 
   const handleEditClick = () => {
     setIsEditable(true);
@@ -119,13 +134,13 @@ const ProfileReadPage = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
         </div>
-        <div className="flex justify-center items-center mb-4">
+        <div className="flex justify-center items-center">
           {user && user.avatar && user.avatar.url && (
-            <Image
+            <img
               src={`http://localhost:3000${user.avatar.url}`}
               alt={user.name}
-              width={96}
-              height={96}
+              width={120}
+              height={120}
               className="rounded-full"
             />
           )}
@@ -246,11 +261,6 @@ const ProfileReadPage = () => {
             </div>
           </>
         </form>
-        {user && user.avatar && user.avatar.url && (
-          <div className="text-center mt-4 text-sm text-gray-500">
-            アバターURL: {user.avatar.url}
-          </div>
-        )}
         <div className="flex justify-start mt-4">
           <Button
             variant="ghost"

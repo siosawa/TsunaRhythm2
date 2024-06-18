@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   get 'users/new'
   namespace :api, format: 'json' do
@@ -9,7 +11,7 @@ Rails.application.routes.draw do
         end
       end
       get 'current_user', to: 'users#current_user_info'
-      get 'current_user_posts', to:'users#current_user_posts'
+      get 'current_user_posts', to: 'users#current_user_posts'
       # get 'posts_user', to: 'users#posts_user_info'
       resources :sessions, only: [:create]
       delete '/logout', to: 'sessions#destroy'
@@ -21,6 +23,7 @@ Rails.application.routes.draw do
       end
       resources :password_resets,     only: %i[create edit update]
       resources :relationships,       only: %i[create destroy]
+      resources :projects, only: %i[index show create update destroy]
     end
   end
   get 'up' => 'rails/health#show', as: :rails_health_check

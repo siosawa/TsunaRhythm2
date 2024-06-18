@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 ChartJS.register(
   CategoryScale,
@@ -39,10 +40,14 @@ const GraphWorkingMinutes = () => {
   });
 
   const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
+  const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  const fetchData = async (month) => {
+  const fetchData = async (userId, month) => {
     try {
-      const response = await axios.get("http://localhost:3001/records");
+      const response = await axios.get(
+        `http://localhost:3001/records?user_id=${userId}`
+      );
       const records = response.data || [];
       const minutesPerDay = {};
       const selectedMonthRecords = records.filter(
@@ -79,17 +84,22 @@ const GraphWorkingMinutes = () => {
         ],
       });
     } catch (error) {
+      setError("データの取得に失敗しました。");
       console.error("Error fetching records data:", error);
     }
   };
 
   useEffect(() => {
-    fetchData(currentMonth); // 初回ロード時に現在の月のデータを取得
-  }, []);
+    if (currentUser) {
+      fetchData(currentUser.id, currentMonth); // 初回ロード時に現在の月のデータを取得
+    }
+  }, [currentUser]);
 
   useEffect(() => {
-    fetchData(monthIndex);
-  }, [monthIndex]);
+    if (currentUser) {
+      fetchData(currentUser.id, monthIndex);
+    }
+  }, [currentUser, monthIndex]);
 
   const handlePreviousMonth = () => {
     setMonthIndex((prevMonthIndex) =>
@@ -105,6 +115,8 @@ const GraphWorkingMinutes = () => {
 
   return (
     <div className="w-96 h-58 p-4 bg-white rounded-3xl custom_shadow_dark relative">
+      <FetchCurrentUser setCurrentUser={setCurrentUser} />
+      {error && <p className="text-red-500">{error}</p>}
       <Bar
         data={chartData}
         options={{

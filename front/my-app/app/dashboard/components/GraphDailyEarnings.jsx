@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
+import FetchCurrentUser from "@/components/FetchCurrentUser"; // FetchCurrentUserをインポート
 
 ChartJS.register(
   CategoryScale,
@@ -38,19 +39,22 @@ const GraphDailyEarnings = () => {
   });
   const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null); // currentUserの状態を追加
 
-  const fetchData = async (month) => {
+  const fetchData = async (userId, month) => {
     try {
       const [projectsResponse, recordsResponse] = await Promise.all([
-        axios.get("http://localhost:3001/projects"),
-        axios.get("http://localhost:3001/records"),
+        axios.get(`http://localhost:3000/api/v1/projects`, {
+          withCredentials: true,
+        }),
+        axios.get(`http://localhost:3001/records?user_id=${userId}`),
       ]);
       const projects = projectsResponse.data || [];
       const records = recordsResponse.data || [];
 
       // 完了済みのprojectを取得
       const completedProjects = projects.filter(
-        (project) => project.isCompleted
+        (project) => project.is_completed
       );
 
       const earningsPerDay = {};
@@ -73,7 +77,7 @@ const GraphDailyEarnings = () => {
         );
         // 案件別自給平均を算出
         const averageHourlyWage =
-          (project.unitPrice * project.quantity) / (totalWorkMinutes / 60);
+          (project.unit_price * project.quantity) / (totalWorkMinutes / 60);
 
         selectedMonthRecords.forEach((record) => {
           if (record.project_id === project.id) {
@@ -110,12 +114,16 @@ const GraphDailyEarnings = () => {
   };
 
   useEffect(() => {
-    fetchData(monthIndex);
-  }, [monthIndex]);
+    if (currentUser) {
+      fetchData(currentUser.id, monthIndex);
+    }
+  }, [currentUser, monthIndex]);
 
   useEffect(() => {
-    fetchData(currentMonth); // 初回ロード時に現在の月のデータを取得
-  }, []);
+    if (currentUser) {
+      fetchData(currentUser.id, currentMonth); // 初回ロード時に現在の月のデータを取得
+    }
+  }, [currentUser]);
 
   const handlePreviousMonth = () => {
     setMonthIndex((prevMonthIndex) =>
@@ -131,6 +139,7 @@ const GraphDailyEarnings = () => {
 
   return (
     <div className="w-96 h-58 p-4 bg-white rounded-3xl shadow-md relative">
+      <FetchCurrentUser setCurrentUser={setCurrentUser} />
       {error && <p className="text-red-500">{error}</p>}
       <Bar
         data={chartData}

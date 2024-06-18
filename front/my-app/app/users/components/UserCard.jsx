@@ -19,9 +19,25 @@ const UserCard = ({
   return (
     <div
       key={user.id}
-      className="bg-white shadow-md rounded-3xl p-6 mb-5 mx-3 flex justify-between items-center md:mx-20 lg:mx-52 2xl:mx-96"
+      className="bg-white shadow-md rounded-3xl p-6 mb-5 mx-3 flex items-center md:mx-20 lg:mx-52 2xl:mx-96"
     >
-      <div>
+      {user && user.avatar && user.avatar.url ? (
+        <img
+          src={`http://localhost:3000${user.avatar.url}`}
+          alt={user.name}
+          width={70}
+          height={70}
+          className="rounded-full relative -top-5"
+        />
+      ) : (
+        <div
+          className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full relative -top-5"
+          style={{ width: 70, height: 70, whiteSpace: "nowrap" }}
+        >
+          NO IMAGE
+        </div>
+      )}
+      <div className="ml-4 flex-grow">
         <Link href={`/users/${user.id}`}>
           <Button className="text-lg font-semibold mb-2 hover:underline bg-transparent text-black hover:bg-transparent">
             {user.name}
