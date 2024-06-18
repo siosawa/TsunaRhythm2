@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class RecordsController < ApplicationController
@@ -7,7 +9,7 @@ module Api
       before_action :correct_user, only: %i[show update destroy]
 
       def index
-        @records = current_user.records  # ログインユーザーのレコードのみ取得する
+        @records = current_user.records # ログインユーザーのレコードのみ取得する
         render json: @records
       end
 
@@ -17,7 +19,7 @@ module Api
       end
 
       def create
-        @record = current_user.records.build(record_params)  # ログインユーザーに関連付けてレコードを作成
+        @record = current_user.records.build(record_params) # ログインユーザーに関連付けてレコードを作成
         if @record.save
           render json: @record, status: :created
         else
