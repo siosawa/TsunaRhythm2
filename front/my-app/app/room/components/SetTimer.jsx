@@ -18,7 +18,7 @@ export function SetTimer() {
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [startTimestamp, setStartTimestamp] = useState("");
-  const intervalRef = useRef(undefined);
+  const intervalRef = useRef(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [records, setRecords] = useState([]);
   const [projects, setProjects] = useState({});
@@ -43,7 +43,26 @@ export function SetTimer() {
           return acc;
         }, {});
 
-        setRecords(recordsResponse.data);
+        const fetchedRecords = recordsResponse.data;
+
+        // 取得した最初のレコードのwork_endがnullの場合の処理
+        if (fetchedRecords.length > 0 && fetchedRecords[0].work_end === null) {
+          const firstRecord = fetchedRecords[0];
+          const recordDate = new Date(firstRecord.date);
+          const now = new Date();
+          const diff = now.getTime() - recordDate.getTime();
+          setStartTime(recordDate);
+          setElapsedTime(diff);
+          setIsRunning(true);
+          setStartTimestamp(formatTimestamp(recordDate));
+          setCurrentRecordId(firstRecord.id);
+
+          intervalRef.current = setInterval(() => {
+            setElapsedTime(Date.now() - recordDate.getTime());
+          }, 10);
+        }
+
+        setRecords(fetchedRecords);
         setProjects(projectsMap);
       } catch (error) {
         console.error("データの取得に失敗しました", error);
@@ -56,6 +75,7 @@ export function SetTimer() {
   }, []);
 
   const formatTimestamp = (timestamp) => {
+    if (!timestamp) return "";
     const month = timestamp.getMonth() + 1;
     const day = timestamp.getDate();
     const hours = timestamp.getHours();
@@ -141,27 +161,50 @@ export function SetTimer() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+
     const now = new Date();
     const diff = now.getTime() - startTime.getTime();
-    setElapsedTime(diff);
+
+    if (isNaN(diff) || diff < 0) {
+      console.error("無効な経過時間");
+      return;
+    }
+
     setIsRunning(false);
+
+    // 状態の更新を非同期処理の前に行う
+    setElapsedTime(diff);
+
     const recordTime = formatRecordTime(diff);
 
-    if (currentRecordId) {
-      try {
-        await axios.patch(
-          `http://localhost:3000/api/v1/records/${currentRecordId}`,
-          {
-            minutes: recordTime.minutes,
-            date: now.toISOString(),
-          },
-          {
-            withCredentials: true,
-          }
+    if (!currentRecordId) {
+      console.error("現在のレコードIDが存在しません");
+      return;
+    }
+
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/records/${currentRecordId}`,
+        {
+          minutes: recordTime.minutes,
+          work_end: now.toISOString(), // work_endを現在時刻で更新
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status !== 200) {
+        console.error(
+          "記録の更新に失敗しました: ",
+          response.status,
+          response.statusText
         );
-      } catch (error) {
-        console.error("記録の更新に失敗しました", error);
+      } else {
+        console.log("記録が正常に更新されました");
       }
+    } catch (error) {
+      console.error("記録の更新に失敗しました", error);
     }
   };
 

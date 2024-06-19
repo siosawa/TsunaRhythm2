@@ -45,7 +45,7 @@ module Api
       private
 
       def record_params
-        params.require(:record).permit(:user_id, :project_id, :minutes, :date)
+        params.require(:record).permit(:user_id, :project_id, :minutes, :date, :work_end)
       end
 
       def logged_in_user
