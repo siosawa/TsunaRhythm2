@@ -9,7 +9,7 @@ module Api
       before_action :correct_user, only: %i[show update destroy]
 
       def index
-        @records = current_user.records # ログインユーザーのレコードのみ取得する
+        @records = current_user.records.order(date: :desc) 
         render json: @records
       end
 
