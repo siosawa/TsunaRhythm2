@@ -21,8 +21,8 @@ export function SetTimer({ selectedProject, addTimerRecord }) {
   const formatElapsedTime = (elapsedTime) => {
     const totalSeconds = elapsedTime / 1000;
     const minutes = Math.floor(totalSeconds / 60);
-    const seconds = (totalSeconds % 60).toFixed(2);
-    return `${minutes}分${seconds}秒`;
+    const seconds = (totalSeconds % 60).toFixed(2); //小数点第2位まで表示
+    return `${minutes}:${seconds}`;
   };
 
   const formatRecordTime = (elapsedTime) => {
@@ -36,7 +36,7 @@ export function SetTimer({ selectedProject, addTimerRecord }) {
     if (isRunning && startTime) {
       intervalRef.current = setInterval(() => {
         setElapsedTime(Date.now() - startTime.getTime());
-      }, 100);
+      }, 10); //10ミリ秒から計算
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
