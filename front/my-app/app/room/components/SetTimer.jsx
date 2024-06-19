@@ -11,13 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ViewTimerRecord from "./ViewTimerRecord";
+import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 export function SetTimer() {
   const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [startTimestamp, setStartTimestamp] = useState("");
-  const intervalRef = useRef(null);
+  const intervalRef = useRef(undefined);
   const [currentUser, setCurrentUser] = useState(null);
   const [records, setRecords] = useState([]);
   const [projects, setProjects] = useState({});
@@ -96,13 +97,18 @@ export function SetTimer() {
   }, [isRunning, startTime]);
 
   const startTimer = async () => {
+    if (!selectedProject) {
+      alert("案件名から案件を選択してください");
+      return;
+    }
+
     const now = new Date();
     setStartTime(now);
     setStartTimestamp(formatTimestamp(now));
     setIsRunning(true);
     setElapsedTime(0);
 
-    if (selectedProject) {
+    if (selectedProject && currentUser) {
       try {
         const response = await axios.post(
           "http://localhost:3000/api/v1/records",
@@ -120,10 +126,17 @@ export function SetTimer() {
       } catch (error) {
         console.error("記録の送信に失敗しました", error);
       }
+    } else {
+      console.error("プロジェクトまたはユーザーが選択されていません");
     }
   };
 
   const stopTimer = async () => {
+    if (!startTime) {
+      console.error("タイマーが開始されていません");
+      return;
+    }
+
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -162,6 +175,7 @@ export function SetTimer() {
 
   return (
     <>
+      <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="flex items-end">
         <button onClick={handleButtonClick} className="border-none bg-none">
           {isRunning ? (
@@ -189,11 +203,17 @@ export function SetTimer() {
             <SelectValue placeholder="案件名" />
           </SelectTrigger>
           <SelectContent>
-            {Object.values(projects).map((project) => (
-              <SelectItem key={project.id} value={project.id}>
-                {project.name}
-              </SelectItem>
-            ))}
+            {Object.keys(projects).length > 0 ? (
+              Object.values(projects).map((project) => (
+                <SelectItem key={project.id} value={project.id}>
+                  {project.name}
+                </SelectItem>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-gray-500">
+                案件が設定されていません。ダッシュボードページで案件データを記入してください。
+              </div>
+            )}
           </SelectContent>
         </Select>
         <ViewTimerRecord />
