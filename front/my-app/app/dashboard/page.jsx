@@ -8,6 +8,7 @@ import GraphDailyEarnings from "./components/GraphDailyEarnings";
 import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
 import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
 import TsunaRhythm from "@/components/TsunaRhythm";
+import ViewTable from "./components/ViewTable";
 
 const Dashboard = () => {
   return (
@@ -30,9 +31,10 @@ const Dashboard = () => {
         </div>
         <Calendar />
         <div className="col-span-2">
-          <EditTable />
+          {/* <EditTable /> */}
+          <ViewTable />
         </div>
-        <div class="hidden 2xl:block col-span-2 bg-orange-200 rounded-3xl shadow-custom-dark ">
+        <div className="hidden 2xl:block col-span-2 bg-orange-200 rounded-3xl shadow-custom-dark ">
           <TsunaRhythm />
         </div>
       </div>
