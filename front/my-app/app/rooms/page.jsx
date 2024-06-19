@@ -5,6 +5,7 @@ import { RiTeamFill } from "react-icons/ri";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import roomsData from "@/db/rooms.json"; // rooms.json のパスを正確に指定してください
 
 const Index = () => {
   const [rooms, setRooms] = useState([]);
@@ -12,14 +13,8 @@ const Index = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const roomsResponse = await axios.get("http://localhost:3001/rooms");
-        setRooms(roomsResponse.data);
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
-      }
-    };
+    // roomsData からルームのデータを設定
+    setRooms(roomsData);
 
     const fetchRoomMembers = async () => {
       try {
@@ -32,7 +27,6 @@ const Index = () => {
       }
     };
 
-    fetchRooms();
     fetchRoomMembers();
   }, []);
 

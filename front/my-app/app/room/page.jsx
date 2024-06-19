@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import roomsData from "@/db/rooms.json"; // rooms.json のパスを正確に指定してください
 import axios from "axios";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
@@ -29,9 +30,8 @@ const Room = () => {
         );
 
         if (currentRoomMember) {
-          // ルームのデータを取得
-          const roomsResponse = await axios.get("http://localhost:3001/rooms");
-          const rooms = roomsResponse.data;
+          // roomsData からルームのデータを取得
+          const rooms = roomsData;
           console.log("ルームデータ:", rooms);
 
           // 入室中のルームのpathを見つける
