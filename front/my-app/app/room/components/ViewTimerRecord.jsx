@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EditRecord from "./EditRecord"; // EditRecordコンポーネントをインポート
+import { IoNewspaperOutline, IoNewspaper } from "react-icons/io5";
 
 const ViewTimerRecord = () => {
   const [records, setRecords] = useState([]);
   const [projects, setProjects] = useState({});
   const [loading, setLoading] = useState(true);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // トグル用の状態を追加
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -64,15 +66,14 @@ const ViewTimerRecord = () => {
   };
 
   if (loading) {
-    return <p>読み込み中...</p>;
+    return (
+      <div className="flex justify-center space-x-2 my-5 mx-3">
+        <div className="animate-ping h-1 w-1 bg-blue-600 rounded-full"></div>
+        <div className="animate-ping h-1 w-1 bg-blue-600 rounded-full animation-delay-200"></div>
+        <div className="animate-ping h-1 w-1 bg-blue-600 rounded-full animation-delay-400"></div>
+      </div>
+    );
   }
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(
-      date.getMinutes()
-    ).padStart(2, "0")}`;
-  };
 
   const handleEditClick = () => {
     setIsEditOpen(true); // 編集モーダルを表示する
@@ -88,8 +89,47 @@ const ViewTimerRecord = () => {
     setIsEditOpen(false);
   };
 
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible); // 表示/非表示をトグルする
+  };
+
   return (
     <div>
+      <button onClick={toggleVisibility} className="mt-1 mx-2">
+        {isVisible ? (
+          <IoNewspaper
+            className="rounded-sm"
+            style={{ width: "32px", height: "32px" }}
+          />
+        ) : (
+          <IoNewspaperOutline
+            className="bg-white rounded-sm"
+            style={{ width: "32px", height: "32px" }}
+          />
+        )}
+      </button>
+      {isVisible && (
+        <ModalTimerRecord
+          records={records}
+          projects={projects}
+          handleEditClick={handleEditClick}
+        />
+      )}
+      {isEditOpen && <EditRecord onClose={handleClose} onSave={handleSave} />}
+    </div>
+  );
+};
+
+const ModalTimerRecord = ({ records, projects, handleEditClick }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(
+      date.getMinutes()
+    ).padStart(2, "0")}`;
+  };
+
+  return (
+    <div className="absolute left-1 mt-6">
       <div className="bg-white rounded-3xl shadow-custom-dark h-60 max-w-2xl overflow-y-auto w-44">
         <table className="min-w-full table-auto border-collapse border border-gray-200 text-left text-xs">
           <thead className="bg-gray-100 sticky top-0 z-10 text-center">
@@ -134,7 +174,6 @@ const ViewTimerRecord = () => {
           </tfoot>
         </table>
       </div>
-      {isEditOpen && <EditRecord onClose={handleClose} onSave={handleSave} />}
     </div>
   );
 };

@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      margin: {
+        '-21': '-5.25rem', // ルームのViewTimerRecordで使用
+      },
       width: {
         '68': '17rem', // グループチャットで使用
       },
