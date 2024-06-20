@@ -14,15 +14,18 @@ export default function Timer() {
   useEffect(() => {
     const fetchRoomMembers = async () => {
       try {
-        const response = await fetch("http://localhost:3001/roomMembers");
+        const response = await fetch(
+          "http://localhost:3000/api/v1/room_members",
+          { credentials: "include" }
+        );
         if (!response.ok) throw new Error("Failed to fetch room members");
         const roomMembers = await response.json();
         const filteredUserIds = roomMembers
           .filter((member) => member.room_id === 1 && member.leaved_at === null)
           .map((member) => member.user_id);
 
-        // 現在のユーザーがfilteredUserIdsに含まれていない場合にリダイレクト
-        if (!filteredUserIds.includes(currentUser.id)) {
+        // currentUserがnullの場合はリダイレクトしないようにする
+        if (currentUser && !filteredUserIds.includes(currentUser.id)) {
           window.location.href = "/rooms";
           return;
         }
@@ -47,7 +50,9 @@ export default function Timer() {
       }
     };
 
-    fetchRoomMembers();
+    if (currentUser) {
+      fetchRoomMembers();
+    }
   }, [currentUser]);
 
   return (
