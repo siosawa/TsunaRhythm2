@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import axios from "axios"; // axiosのインポートを追加
 
 export default function RoomExitButton() {
   const [roomMembers, setRoomMembers] = useState([]);
@@ -11,7 +12,7 @@ export default function RoomExitButton() {
           "http://localhost:3000/api/v1/room_members",
           {
             method: "GET",
-            credentials: "include", // withCredentials:trueに相当
+            credentials: "include",
           }
         );
         const data = await response.json();
@@ -29,17 +30,21 @@ export default function RoomExitButton() {
     const now = new Date().toISOString();
 
     try {
-      for (const member of roomMembers) {
-        const updatedMember = { ...member, leaved_at: now };
+      const updatedRoomMembers = roomMembers.map((member) => ({
+        ...member,
+        leaved_at: now,
+      }));
 
-        await fetch(`http://localhost:3000/api/v1/room_members/${member.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedMember),
-        });
+      for (const member of updatedRoomMembers) {
+        await axios.patch(
+          `http://localhost:3000/api/v1/room_members/${member.id}`,
+          { leaved_at: now },
+          { withCredentials: true }
+        );
       }
+
+      // 状態を更新
+      setRoomMembers(updatedRoomMembers);
 
       // /rooms に遷移
       window.location.href = "/rooms";
