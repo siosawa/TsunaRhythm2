@@ -27,7 +27,32 @@ const Index = () => {
           }
         );
         const data = await response.json();
-        setRoomMembers(data);
+
+        // 3時間以上経過したメンバーのleaved_atを更新
+        const now = new Date();
+        const updatedMembers = await Promise.all(
+          data.map(async (member) => {
+            if (
+              member.leaved_at === null &&
+              (now - new Date(member.entered_at)) / (1000 * 60 * 60) >= 3 //3日以上入室しているユーザーがいたら強制退出処置
+            ) {
+              try {
+                await axios.patch(
+                  `http://localhost:3000/api/v1/room_members/${member.id}`,
+                  { leaved_at: now.toISOString() },
+                  { withCredentials: true }
+                );
+                return { ...member, leaved_at: now.toISOString() };
+              } catch (error) {
+                console.error("Error updating leaved_at:", error);
+                return member;
+              }
+            }
+            return member;
+          })
+        );
+
+        setRoomMembers(updatedMembers);
       } catch (error) {
         console.error("Error fetching room members:", error);
       }
