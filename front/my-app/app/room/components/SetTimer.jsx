@@ -51,15 +51,41 @@ export function SetTimer() {
           const recordDate = new Date(firstRecord.date);
           const now = new Date();
           const diff = now.getTime() - recordDate.getTime();
-          setStartTime(recordDate);
-          setElapsedTime(diff);
-          setIsRunning(true);
-          setStartTimestamp(formatTimestamp(recordDate));
-          setCurrentRecordId(firstRecord.id);
 
-          intervalRef.current = setInterval(() => {
-            setElapsedTime(Date.now() - recordDate.getTime());
-          }, 10);
+          if (diff > 16 * 60 * 60 * 1000) {
+            // 16時間以上経過している場合
+            const workEndDate = new Date(
+              recordDate.getTime() + 16 * 60 * 60 * 1000
+            ); // 16時間後
+            try {
+              await axios.patch(
+                `http://localhost:3000/api/v1/records/${firstRecord.id}`,
+                {
+                  work_end: workEndDate.toISOString(),
+                  minutes: 960,
+                },
+                {
+                  withCredentials: true,
+                }
+              );
+              // タイマーを途中からスタートさせない
+              setStartTime(null);
+              setElapsedTime(0);
+              setIsRunning(false);
+            } catch (error) {
+              console.error("記録の更新に失敗しました", error);
+            }
+          } else {
+            setStartTime(recordDate);
+            setElapsedTime(diff);
+            setIsRunning(true);
+            setStartTimestamp(formatTimestamp(recordDate));
+            setCurrentRecordId(firstRecord.id);
+
+            intervalRef.current = setInterval(() => {
+              setElapsedTime(Date.now() - recordDate.getTime());
+            }, 10);
+          }
         }
 
         setRecords(fetchedRecords);
