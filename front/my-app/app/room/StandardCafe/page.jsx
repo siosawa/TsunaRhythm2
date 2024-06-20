@@ -18,13 +18,14 @@ export default function Timer() {
         if (!response.ok) throw new Error("Failed to fetch room members");
         const roomMembers = await response.json();
         const filteredUserIds = roomMembers
-          .filter(
-            (member) =>
-              member.room_id === 1 &&
-              new Date(member.entered_at) < new Date() &&
-              member.leaved_at === null
-          )
+          .filter((member) => member.room_id === 1 && member.leaved_at === null)
           .map((member) => member.user_id);
+
+        // 現在のユーザーがfilteredUserIdsに含まれていない場合にリダイレクト
+        if (!filteredUserIds.includes(currentUser.id)) {
+          window.location.href = "/rooms";
+          return;
+        }
 
         const userPromises = filteredUserIds.map(async (userId) => {
           const userResponse = await fetch(
@@ -47,7 +48,7 @@ export default function Timer() {
     };
 
     fetchRoomMembers();
-  }, []);
+  }, [currentUser]);
 
   return (
     <>
