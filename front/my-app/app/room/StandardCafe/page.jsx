@@ -1,12 +1,11 @@
 "use client";
 import StandardCafe from "@/components/room/StandardCafe";
-import { ProjectSelection } from "@/app/room/components/ProjectSelection";
 import { useState, useEffect } from "react";
 import { SetTimer } from "@/app/room/components/SetTimer";
-import ViewTimerRecord from "@/app/room/components/ViewTimerRecord";
 import GroupChat from "@/app/room/components/GroupChat";
 import RoomExitButton from "@/app/room/components/RoomExit";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import WaitingUserAvatar from "../components/WaitingUserAvatar";
 
 export default function Timer() {
   const [selectedProject, setSelectedProject] = useState(null); // オブジェクトに変更
@@ -82,33 +81,7 @@ export default function Timer() {
       </div>
       <GroupChat className="absolute z-30" />
       <RoomExitButton />
-      <div
-        className="absolute right-48 flex -space-x-4 z-30 p-4"
-        style={{ top: "185mm" }}
-      >
-        {userAvatars.map((user) =>
-          user.avatarUrl ? (
-            <div key={user.id} className="relative">
-              <img
-                src={`http://localhost:3000${user.avatarUrl}`}
-                alt={user.name}
-                width={80}
-                height={80}
-                className="rounded-full"
-              />
-            </div>
-          ) : (
-            <div
-              key={user.id}
-              className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full"
-              style={{ width: 80, height: 80, whiteSpace: "nowrap" }}
-            >
-              NO IMAGE
-              <div className="absolute bottom-2 left-0 right-0 h-1 bg-black"></div>
-            </div>
-          )
-        )}
-      </div>
+      <WaitingUserAvatar userAvatars={userAvatars} />
     </>
   );
 }
