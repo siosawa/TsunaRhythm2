@@ -168,7 +168,7 @@ const EditTable = ({ onClose, onSave }) => {
                     単価
                   </th>
                   <th className="px-2 py-1 border border-gray-200 w-1/12">
-                    報酬
+                    本数
                   </th>
                   <th className="px-2 py-1 border border-gray-200 w-1/12">
                     状態
@@ -212,7 +212,7 @@ const EditTable = ({ onClose, onSave }) => {
                         onChange={(e) =>
                           handleNumberChange(e, item.id, "unit_price")
                         }
-                        className="w-full px-1 py-1"
+                        className="w-20 px-1 py-1"
                         min="0"
                       />
                     </td>
