@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class RoomMembersController < ApplicationController
       def index
         room_members = RoomMember.all
-        puts "Room members: #{room_members.inspect}"
+        Rails.logger.debug { "Room members: #{room_members.inspect}" }
         render json: room_members
       end
-      
 
       def show
         room_member = RoomMember.find(params[:id])
@@ -16,7 +17,7 @@ module Api
       def create
         room_member = RoomMember.new(room_member_params)
         if room_member.save
-          render json: { message: 'Room member created successfully', room_member: room_member }, status: :created
+          render json: { message: 'Room member created successfully', room_member: }, status: :created
         else
           render json: { errors: room_member.errors.full_messages }, status: :unprocessable_entity
         end
@@ -25,7 +26,7 @@ module Api
       def update
         room_member = RoomMember.find(params[:id])
         if room_member.update(leaved_at: params[:leaved_at])
-          render json: { message: 'Room member updated successfully', room_member: room_member }, status: :ok
+          render json: { message: 'Room member updated successfully', room_member: }, status: :ok
         else
           render json: { errors: room_member.errors.full_messages }, status: :unprocessable_entity
         end
