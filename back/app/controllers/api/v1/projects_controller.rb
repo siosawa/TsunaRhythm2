@@ -11,7 +11,7 @@ module Api
 
       # GET /api/v1/projects
       def index
-        @projects = Project.where(user_id: current_user.id)
+        @projects = Project.where(user_id: current_user.id).order(created_at: :desc)
         render json: @projects
       end
 

@@ -1,153 +1,181 @@
 "use client";
-import React, { useState } from "react";
-import { EditTimer } from "./EditTimer";
-import { TbTriangleInvertedFilled } from "react-icons/tb";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import EditRecord from "./EditRecord"; // EditRecordコンポーネントをインポート
+import { IoNewspaperOutline, IoNewspaper } from "react-icons/io5";
 
-export function ViewTimerRecord({ timerRecords, setTimerRecords, projects }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editRecords, setEditRecords] = useState([]);
-  const [isHidden, setIsHidden] = useState(false);
+const ViewTimerRecord = () => {
+  const [records, setRecords] = useState([]);
+  const [projects, setProjects] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // トグル用の状態を追加
 
-  const handleEdit = (index, field, value) => {
-    const updatedRecords = [...editRecords];
-    updatedRecords[index][field] = value;
-    setEditRecords(updatedRecords);
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const [recordsResponse, projectsResponse] = await Promise.all([
+          axios.get("http://localhost:3000/api/v1/records", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:3000/api/v1/projects", {
+            withCredentials: true,
+          }),
+        ]);
+
+        const projectsMap = projectsResponse.data.reduce((acc, project) => {
+          acc[project.id] = project.name;
+          return acc;
+        }, {});
+
+        setRecords(recordsResponse.data);
+        setProjects(projectsMap);
+      } catch (error) {
+        console.error("データの取得に失敗しました", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecords();
+  }, []);
+
+  const fetchRecords = async () => {
+    try {
+      const [recordsResponse, projectsResponse] = await Promise.all([
+        axios.get("http://localhost:3000/api/v1/records", {
+          withCredentials: true,
+        }),
+        axios.get("http://localhost:3000/api/v1/projects", {
+          withCredentials: true,
+        }),
+      ]);
+
+      const projectsMap = projectsResponse.data.reduce((acc, project) => {
+        acc[project.id] = project.name;
+        return acc;
+      }, {});
+
+      setRecords(recordsResponse.data);
+      setProjects(projectsMap);
+    } catch (error) {
+      console.error("データの取得に失敗しました", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDateChange = (index, value) => {
-    const date = new Date(value);
-    handleEdit(index, "date", date);
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center space-x-2 my-5 mx-3">
+        <div className="animate-ping h-1 w-1 bg-blue-600 rounded-full"></div>
+        <div className="animate-ping h-1 w-1 bg-blue-600 rounded-full animation-delay-200"></div>
+        <div className="animate-ping h-1 w-1 bg-blue-600 rounded-full animation-delay-400"></div>
+      </div>
+    );
+  }
 
-  const handleTimeChange = (index, field, value) => {
-    const number = parseInt(value, 10);
-    handleEdit(index, field, number);
-  };
-
-  const handleSave = () => {
-    setTimerRecords(editRecords);
-    setIsEditing(false);
+  const handleEditClick = () => {
+    setIsEditOpen(true); // 編集モーダルを表示する
   };
 
   const handleClose = () => {
-    setEditRecords(timerRecords);
-    setIsEditing(false);
+    setIsEditOpen(false); // 編集モーダルを閉じる
   };
 
-  const handleEditClick = () => {
-    setEditRecords([...timerRecords]);
-    setIsEditing(true);
+  const handleSave = async () => {
+    setLoading(true);
+    await fetchRecords(); // データを再フェッチして最新の状態に更新
+    setIsEditOpen(false);
   };
 
-  const formatDate = (date) => {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${month}/${day} ${hours}:${minutes.toString().padStart(2, "0")}`;
-  };
-
-  const handleToggle = () => {
-    setIsHidden(!isHidden);
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible); // 表示/非表示をトグルする
   };
 
   return (
-    <>
-      <div className="w-44">
-        <div className="bg-gray-200 rounded-3xl p-3 max-h-96 overflow-y-auto relative">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr>
-                <th colSpan="3" className="text-right px-2">
-                  <div className="flex items-center justify-end">
-                    <p className="flex-grow text-center font-light">作業記録</p>
-                    <TbTriangleInvertedFilled
-                      className="inline-block cursor-pointer ml-2"
-                      onClick={handleToggle}
-                    />
-                  </div>
-                </th>
-              </tr>
-              {!isHidden && timerRecords.length > 0 && (
-                <tr>
-                  <th className="w-1/4 text-xs text-left whitespace-nowrap">
-                    日付
-                  </th>
-                  <th className="w-1/6 text-xs text-left whitespace-nowrap">
-                    分
-                  </th>
-                  <th className="w-1/5 text-xs text-left whitespace-nowrap">
-                    案件名
-                  </th>
-                </tr>
-              )}
-            </thead>
-            {!isHidden && timerRecords.length > 0 && (
-              <tbody>
-                {timerRecords.map((record, index) => (
-                  <tr key={index}>
-                    <td className="w-1/3 p-0 text-left whitespace-nowrap">
-                      <input
-                        type="text"
-                        value={formatDate(record.date)}
-                        readOnly
-                        className="border p-0 w-full text-xs"
-                      />
-                    </td>
-                    <td className="w-1/5 p-0 text-left whitespace-nowrap">
-                      <input
-                        type="number"
-                        value={record.minutes}
-                        min="0"
-                        readOnly
-                        className="border p-0 w-full text-xs"
-                      />
-                    </td>
-                    <td className="w-1/6 p-0 whitespace-nowrap">
-                      <select
-                        value={record.project}
-                        disabled
-                        className="border p-0 w-full text-xs"
-                      >
-                        {projects.map((project, i) => (
-                          <option key={i} value={project}>
-                            {project}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            )}
-          </table>
-          {!isHidden && timerRecords.length === 0 && (
-            <div className="text-center text-xs py-2">作業記録がありません</div>
-          )}
-        </div>
-
-        {!isHidden && timerRecords.length > 0 && (
-          <div className="flex justify-end">
-            <button
-              onClick={handleEditClick}
-              className="bg-white shadow-custom-dark rounded-md mt-2 mr-3 px-2 py-1 text-xs whitespace-nowrap hover:bg-gray-200"
-            >
-              編集
-            </button>
-          </div>
-        )}
-        {isEditing && (
-          <EditTimer
-            editRecords={editRecords}
-            handleDateChange={handleDateChange}
-            handleTimeChange={handleTimeChange}
-            handleEdit={handleEdit}
-            handleSave={handleSave}
-            handleClose={handleClose}
-            projects={projects}
+    <div>
+      <button onClick={toggleVisibility} className="mt-1 mx-2">
+        {isVisible ? (
+          <IoNewspaper
+            className="rounded-sm"
+            style={{ width: "32px", height: "32px" }}
+          />
+        ) : (
+          <IoNewspaperOutline
+            className="bg-white rounded-sm"
+            style={{ width: "32px", height: "32px" }}
           />
         )}
-      </div>
-    </>
+      </button>
+      {isVisible && (
+        <ModalTimerRecord
+          records={records}
+          projects={projects}
+          handleEditClick={handleEditClick}
+        />
+      )}
+      {isEditOpen && <EditRecord onClose={handleClose} onSave={handleSave} />}
+    </div>
   );
-}
+};
+
+const ModalTimerRecord = ({ records, projects, handleEditClick }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(
+      date.getMinutes()
+    ).padStart(2, "0")}`;
+  };
+
+  return (
+    <div className="absolute left-1 mt-6">
+      <div className="bg-white rounded-3xl shadow-custom-dark h-60 max-w-2xl overflow-y-auto w-44">
+        <table className="min-w-full table-auto border-collapse border border-gray-200 text-left text-xs">
+          <thead className="bg-gray-100 sticky top-0 z-10 text-center">
+            <tr>
+              <th className="px-1 py-1 border border-gray-200 whitespace-nowrap">
+                日付
+              </th>
+              <th className="px-1 py-1 border border-gray-200 whitespace-nowrap">
+                分数
+              </th>
+              <th className="px-1 py-1 border border-gray-200 whitespace-nowrap">
+                案件名
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {records.map((record) => (
+              <tr key={record.id}>
+                <td className="px-1 py-1 border border-gray-200">
+                  {formatDate(record.date)}
+                </td>
+                <td className="px-1 py-1 border border-gray-200">
+                  {record.minutes}
+                </td>
+                <td className="px-1 py-1 border border-gray-200">
+                  {projects[record.project_id] || "不明"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot className="bg-gray-100 sticky bottom-0 z-10">
+            <tr>
+              <td
+                colSpan="3"
+                className="px-1 py-1 border border-gray-200 text-center"
+              >
+                <button className="hover:underline" onClick={handleEditClick}>
+                  編集
+                </button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default ViewTimerRecord;

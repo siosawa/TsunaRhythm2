@@ -6,29 +6,39 @@ import { v4 as uuidv4 } from "uuid";
 import { CiCirclePlus } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 
-const EditTable = ({ onClose, onSave }) => {
+const EditRecord = ({ onClose, onSave }) => {
   const [data, setData] = useState([]);
   const [originalData, setOriginalData] = useState([]);
+  const [projects, setProjects] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get(
-          `http://localhost:3000/api/v1/projects`,
-          {
-            withCredentials: true, // クッキーを含める設定
-          }
-        );
-        const dataWithId = result.data.map((item) => ({
+        const [recordsResponse, projectsResponse] = await Promise.all([
+          axios.get(`http://localhost:3000/api/v1/records`, {
+            withCredentials: true,
+          }),
+          axios.get(`http://localhost:3000/api/v1/projects`, {
+            withCredentials: true,
+          }),
+        ]);
+
+        const projectsMap = projectsResponse.data.reduce((acc, project) => {
+          acc[project.id] = project.name;
+          return acc;
+        }, {});
+
+        const dataWithId = recordsResponse.data.map((item) => ({
           ...item,
           id: uuidv4(),
           originalId: item.id,
         }));
+
         setData(dataWithId);
-        console.log(dataWithId);
         setOriginalData(dataWithId);
+        setProjects(projectsMap);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("データの取得に失敗しました", error);
       }
     };
 
@@ -57,12 +67,9 @@ const EditTable = ({ onClose, onSave }) => {
   const addEmptyRow = () => {
     const newRow = {
       id: uuidv4(),
-      company: "",
-      name: "",
-      work_type: "",
-      unit_price: 0,
-      quantity: 0,
-      is_completed: false,
+      project_id: "",
+      minutes: 0,
+      date: new Date().toISOString(),
     };
     setData([newRow, ...data]);
   };
@@ -85,7 +92,7 @@ const EditTable = ({ onClose, onSave }) => {
       if (originalItem) {
         try {
           await axios.delete(
-            `http://localhost:3000/api/v1/projects/${originalItem.originalId}`, // 元のIDを使用
+            `http://localhost:3000/api/v1/records/${originalItem.originalId}`,
             {
               withCredentials: true,
             }
@@ -100,7 +107,7 @@ const EditTable = ({ onClose, onSave }) => {
       const newItem = data.find((item) => item.id === id);
       if (newItem) {
         try {
-          await axios.post(`http://localhost:3000/api/v1/projects`, newItem, {
+          await axios.post(`http://localhost:3000/api/v1/records`, newItem, {
             withCredentials: true,
           });
         } catch (error) {
@@ -119,7 +126,7 @@ const EditTable = ({ onClose, onSave }) => {
       ) {
         try {
           await axios.put(
-            `http://localhost:3000/api/v1/projects/${originalItem.originalId}`, // 元のIDを使用
+            `http://localhost:3000/api/v1/records/${originalItem.originalId}`,
             newItem,
             {
               withCredentials: true,
@@ -136,8 +143,8 @@ const EditTable = ({ onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50">
-      <div className="mt-16">
-        <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative mx-7">
+      <div className="mt-16 mx-7">
+        <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative">
           <Button
             onClick={onClose}
             className="absolute top-4 right-4 bg-gray-300 hover:bg-gray-400 text-black"
@@ -159,20 +166,11 @@ const EditTable = ({ onClose, onSave }) => {
             <table className="min-w-full table-auto border-collapse border border-gray-200">
               <thead className="bg-gray-100 whitespace-nowrap">
                 <tr>
-                  <th className="px-2 py-1 border border-gray-200">企業名</th>
-                  <th className="px-2 py-1 border border-gray-200">案件名</th>
                   <th className="px-2 py-1 border border-gray-200">
-                    ワークの種類
+                    プロジェクト
                   </th>
-                  <th className="px-2 py-1 border border-gray-200 w-1/12">
-                    単価
-                  </th>
-                  <th className="px-2 py-1 border border-gray-200 w-1/12">
-                    報酬
-                  </th>
-                  <th className="px-2 py-1 border border-gray-200 w-1/12">
-                    状態
-                  </th>
+                  <th className="px-2 py-1 border border-gray-200">分数</th>
+                  <th className="px-2 py-1 border border-gray-200">日付</th>
                   <th className="px-2 py-1 border border-gray-200 w-1/12">
                     操作
                   </th>
@@ -182,35 +180,25 @@ const EditTable = ({ onClose, onSave }) => {
                 {data.map((item) => (
                   <tr key={item.id} className="text-center">
                     <td className="px-1 py-1 border border-gray-200">
-                      <input
-                        type="text"
-                        value={item.company}
-                        onChange={(e) => handleChange(e, item.id, "company")}
+                      <select
+                        value={item.project_id}
+                        onChange={(e) => handleChange(e, item.id, "project_id")}
                         className="w-full px-1 py-1"
-                      />
-                    </td>
-                    <td className="px-1 py-1 border border-gray-200">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => handleChange(e, item.id, "name")}
-                        className="w-full px-1 py-1"
-                      />
-                    </td>
-                    <td className="px-1 py-1 border border-gray-200">
-                      <input
-                        type="text"
-                        value={item.work_type}
-                        onChange={(e) => handleChange(e, item.id, "work_type")}
-                        className="w-full px-1 py-1"
-                      />
+                      >
+                        <option value="">選択してください</option>
+                        {Object.keys(projects).map((projectId) => (
+                          <option key={projectId} value={projectId}>
+                            {projects[projectId]}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-1 py-1 border border-gray-200">
                       <input
                         type="number"
-                        value={item.unit_price}
+                        value={item.minutes}
                         onChange={(e) =>
-                          handleNumberChange(e, item.id, "unit_price")
+                          handleNumberChange(e, item.id, "minutes")
                         }
                         className="w-full px-1 py-1"
                         min="0"
@@ -218,23 +206,10 @@ const EditTable = ({ onClose, onSave }) => {
                     </td>
                     <td className="px-1 py-1 border border-gray-200">
                       <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          handleNumberChange(e, item.id, "quantity")
-                        }
+                        type="datetime-local"
+                        value={new Date(item.date).toISOString().slice(0, 16)}
+                        onChange={(e) => handleChange(e, item.id, "date")}
                         className="w-full px-1 py-1"
-                        min="0"
-                      />
-                    </td>
-                    <td className="px-1 py-1 border border-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={item.is_completed}
-                        onChange={(e) =>
-                          handleChange(e, item.id, "is_completed")
-                        }
-                        className="px-1 py-1"
                       />
                     </td>
                     <td className="px-1 py-1 border border-gray-200">
@@ -256,4 +231,4 @@ const EditTable = ({ onClose, onSave }) => {
   );
 };
 
-export default EditTable;
+export default EditRecord;

@@ -101,7 +101,7 @@ export default function RootLayout({ children }) {
             )}
           </header>
           <main className="pt-16 pb-28">{children}</main>
-          <footer className="fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-20">
+          <footer className="fixed bottom-0 left-0 right-0 h-16 flex items-center justify-center border-t bg-white bg-opacity-80 backdrop-filter backdrop-blur-sm z-40">
             &copy;sawata
           </footer>
           {/* ポップアップメニュー */}

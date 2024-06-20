@@ -9,7 +9,7 @@ module Api
       before_action :correct_user, only: %i[show update destroy]
 
       def index
-        @records = current_user.records # ログインユーザーのレコードのみ取得する
+        @records = current_user.records.order(date: :desc) 
         render json: @records
       end
 
@@ -45,7 +45,7 @@ module Api
       private
 
       def record_params
-        params.require(:record).permit(:user_id, :project_id, :minutes, :date)
+        params.require(:record).permit(:user_id, :project_id, :minutes, :date, :work_end)
       end
 
       def logged_in_user
