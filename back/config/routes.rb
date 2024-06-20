@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       get 'current_user', to: 'users#current_user_info'
       get 'current_user_posts', to: 'users#current_user_posts'
       # get 'posts_user', to: 'users#posts_user_info'
-      resources :sessions, only: [:create]
+      resources :sessions, only: %i[create]
       delete '/logout', to: 'sessions#destroy'
       # resources :account_activations, only: [:edit]
       resources :posts, only: %i[index show create update destroy] do
@@ -21,10 +21,11 @@ Rails.application.routes.draw do
           get 'user/:user_id', to: 'posts#user_posts'
         end
       end
-      resources :password_resets,     only: %i[create edit update]
-      resources :relationships,       only: %i[create destroy]
+      resources :password_resets, only: %i[create edit update]
+      resources :relationships, only: %i[create destroy]
       resources :projects, only: %i[index show create update destroy]
       resources :records
+      resources :room_members, only: %i[create update index show]
     end
   end
   get 'up' => 'rails/health#show', as: :rails_health_check

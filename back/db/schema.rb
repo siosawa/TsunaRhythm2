@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_19_211713) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_19_233248) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -84,6 +84,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_19_211713) do
     t.index ["follower_id"], name: "index_relationships_on_follower_id"
   end
 
+  create_table "room_members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "room_id", null: false
+    t.datetime "entered_at", null: false
+    t.datetime "leaved_at"
+    t.index ["user_id"], name: "index_room_members_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "email", null: false
@@ -102,4 +110,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_19_211713) do
   add_foreign_key "projects", "users"
   add_foreign_key "records", "projects"
   add_foreign_key "records", "users"
+  add_foreign_key "room_members", "users"
 end
