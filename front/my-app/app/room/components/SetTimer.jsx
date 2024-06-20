@@ -25,6 +25,7 @@ export function SetTimer() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentRecordId, setCurrentRecordId] = useState(null);
+  const [dataUpdated, setDataUpdated] = useState(false);
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -52,8 +53,8 @@ export function SetTimer() {
           const now = new Date();
           const diff = now.getTime() - recordDate.getTime();
 
+          // 16時間以上経過している場合
           if (diff > 16 * 60 * 60 * 1000) {
-            // 16時間以上経過している場合
             const workEndDate = new Date(
               recordDate.getTime() + 16 * 60 * 60 * 1000
             ); // 16時間後
@@ -72,6 +73,7 @@ export function SetTimer() {
               setStartTime(null);
               setElapsedTime(0);
               setIsRunning(false);
+              setDataUpdated(true); // 追加: データ更新をトリガー
             } catch (error) {
               console.error("記録の更新に失敗しました", error);
             }
@@ -228,6 +230,7 @@ export function SetTimer() {
         );
       } else {
         console.log("記録が正常に更新されました");
+        setDataUpdated(true); // 追加: データ更新をトリガー
       }
     } catch (error) {
       console.error("記録の更新に失敗しました", error);
@@ -285,7 +288,7 @@ export function SetTimer() {
             )}
           </SelectContent>
         </Select>
-        <ViewTimerRecord />
+        <ViewTimerRecord dataUpdated={dataUpdated} />
       </div>
     </>
   );
