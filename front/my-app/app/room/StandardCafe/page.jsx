@@ -5,12 +5,9 @@ import { SetTimer } from "@/app/room/components/SetTimer";
 import GroupChat from "@/app/room/components/GroupChat";
 import RoomExitButton from "@/app/room/components/RoomExit";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
-import WaitingUserAvatar from "../components/WaitingUserAvatar";
+import WaitingUserAvatar from "@/app/room/components/WaitingUserAvatar";
 
 export default function Timer() {
-  const [selectedProject, setSelectedProject] = useState(null); // オブジェクトに変更
-  const [timerRecords, setTimerRecords] = useState([]);
-  const [projects, setProjects] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [userAvatars, setUserAvatars] = useState([]);
 
@@ -18,6 +15,7 @@ export default function Timer() {
     const fetchRoomMembers = async () => {
       try {
         const response = await fetch("http://localhost:3001/roomMembers");
+        if (!response.ok) throw new Error("Failed to fetch room members");
         const roomMembers = await response.json();
         const filteredUserIds = roomMembers
           .filter(
@@ -32,6 +30,7 @@ export default function Timer() {
           const userResponse = await fetch(
             `http://localhost:3000/api/v1/users/${userId}`
           );
+          if (!userResponse.ok) throw new Error("Failed to fetch user data");
           return userResponse.json();
         });
 
@@ -49,28 +48,6 @@ export default function Timer() {
 
     fetchRoomMembers();
   }, []);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/v1/projects`, {
-          credentials: "include",
-        });
-        const projectsData = await response.json();
-        setProjects(projectsData);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    if (currentUser) {
-      fetchProjects();
-    }
-  }, [currentUser]);
-
-  const addTimerRecord = (record) => {
-    setTimerRecords([...timerRecords, record]);
-  };
 
   return (
     <>
