@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
+import roomsData from "@/db/rooms.json";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const Room = () => {
@@ -16,10 +16,11 @@ const Room = () => {
 
       try {
         // ルームメンバーのデータを取得
-        const roomMembersResponse = await axios.get(
-          "http://localhost:3001/roomMembers"
+        const roomMembersResponse = await fetch(
+          "http://localhost:3000/api/v1/room_members",
+          { credentials: "include" }
         );
-        const roomMembers = roomMembersResponse.data;
+        const roomMembers = await roomMembersResponse.json();
         console.log("ルームメンバー:", roomMembers);
 
         // 現在のユーザーがどのルームに入室中かをチェック（leaved_atがnull）
@@ -29,9 +30,8 @@ const Room = () => {
         );
 
         if (currentRoomMember) {
-          // ルームのデータを取得
-          const roomsResponse = await axios.get("http://localhost:3001/rooms");
-          const rooms = roomsResponse.data;
+          // roomsData からルームのデータを取得
+          const rooms = roomsData;
           console.log("ルームデータ:", rooms);
 
           // 入室中のルームのpathを見つける
