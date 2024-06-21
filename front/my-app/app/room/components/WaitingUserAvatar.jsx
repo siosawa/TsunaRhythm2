@@ -1,4 +1,3 @@
-// components/WaitingUserAvatar.jsx
 import React from "react";
 
 const WaitingUserAvatar = ({ userAvatars }) => {
@@ -17,15 +16,16 @@ const WaitingUserAvatar = ({ userAvatars }) => {
               height={80}
               className="rounded-full"
             />
+            <div className="absolute bottom-[-8px] left-0 right-0 h-1 bg-black"></div>
           </div>
         ) : (
           <div
             key={user.id}
-            className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full"
+            className="relative flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full"
             style={{ width: 80, height: 80, whiteSpace: "nowrap" }}
           >
             NO IMAGE
-            <div className="absolute bottom-2 left-0 right-0 h-1 bg-black"></div>
+            <div className="absolute bottom-[-8px] left-0 right-0 h-1 bg-black"></div>
           </div>
         )
       )}
