@@ -94,21 +94,26 @@ const PostView = ({ reload }) => {
           <div key={post.id} className="border-b border-gray-200 py-4">
             <div className="flex items-center mb-2">
               {avatars[post.user_id] ? (
-                <img
-                  src={`http://localhost:3000${avatars[post.user_id]}`}
-                  alt={post.user.name}
-                  width={60}
-                  height={60}
-                  className="rounded-full mr-4"
-                />
+                <Link href={`http://localhost:8000/users/${post.user_id}`}>
+                  <img
+                    src={`http://localhost:3000${avatars[post.user_id]}`}
+                    alt={post.user.name}
+                    width={60}
+                    height={60}
+                    className="rounded-full mr-4"
+                  />
+                </Link>
               ) : (
-                <div
-                  className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full mr-4"
-                  style={{ width: 60, height: 60, whiteSpace: "nowrap" }}
-                >
-                  NO IMAGE
-                </div>
+                <Link href={`http://localhost:8000/users/${post.user_id}`}>
+                  <div
+                    className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full mr-4"
+                    style={{ width: 60, height: 60, whiteSpace: "nowrap" }}
+                  >
+                    NO IMAGE
+                  </div>
+                </Link>
               )}
+
               <div className="flex flex-col flex-1">
                 <div className="flex items-center">
                   <p className="text-lg font-semibold mr-2">{post.user.name}</p>

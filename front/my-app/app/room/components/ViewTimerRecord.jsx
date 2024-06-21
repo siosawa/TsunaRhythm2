@@ -4,7 +4,7 @@ import axios from "axios";
 import EditRecord from "./EditRecord"; // EditRecordコンポーネントをインポート
 import { IoNewspaperOutline, IoNewspaper } from "react-icons/io5";
 
-const ViewTimerRecord = () => {
+const ViewTimerRecord = ({ dataUpdated }) => {
   const [records, setRecords] = useState([]);
   const [projects, setProjects] = useState({});
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ const ViewTimerRecord = () => {
     };
 
     fetchRecords();
-  }, []);
+  }, [dataUpdated]);
 
   const fetchRecords = async () => {
     try {
