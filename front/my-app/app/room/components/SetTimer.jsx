@@ -46,7 +46,7 @@ export function SetTimer() {
 
         const fetchedRecords = recordsResponse.data;
 
-        // 取得した最初のレコードのwork_endがnullの場合の処理
+        // 取得した1番目のレコードのwork_endがnullの場合、enterd_atと現在時間の差分からタイマーをスタートさせる
         if (fetchedRecords.length > 0 && fetchedRecords[0].work_end === null) {
           const firstRecord = fetchedRecords[0];
           const recordDate = new Date(firstRecord.date);
