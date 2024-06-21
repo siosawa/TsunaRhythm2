@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class MessagesController < ActionController::API
@@ -21,11 +23,9 @@ module Api
       def create
         @message = Message.new(message_params)
         if @message.save
-          Rails.logger.debug "Message created successfully: #{@message.inspect}"
           ActionCable.server.broadcast("chat_#{@message.room_id}", @message.as_json)
           render json: @message, status: :created
         else
-          Rails.logger.debug "Message creation failed: #{@message.errors.full_messages}"
           render json: { errors: @message.errors.full_messages }, status: :unprocessable_entity
         end
       end

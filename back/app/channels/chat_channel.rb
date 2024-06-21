@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChatChannel < ApplicationCable::Channel
   def subscribed
     stream_from "chat_#{params[:room]}"
@@ -15,5 +17,3 @@ class ChatChannel < ApplicationCable::Channel
     )
   end
 end
-
-  

@@ -60,4 +60,4 @@ group :test do
   gem 'webdrivers', '5.2.0'
 end
 
-gem "redis", "~> 5.2"
+gem 'redis', '~> 5.2'
