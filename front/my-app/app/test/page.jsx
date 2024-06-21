@@ -4,16 +4,16 @@ import React, { useEffect, useState } from "react";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const Message = () => {
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
+const Chat = () => {
+  const [chats, setChats] = useState([]);
+  const [chat, setChat] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    const fetchChats = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/messages?room_id=1`,
+          `http://localhost:3000/api/v1/chats?room_id=1`,
           {
             method: "GET",
             credentials: "include",
@@ -24,24 +24,24 @@ const Message = () => {
         );
         if (response.ok) {
           const data = await response.json();
-          setMessages(data);
+          setChats(data);
         } else {
-          console.error("Failed to fetch messages");
+          console.error("Failed to fetch chats");
         }
       } catch (error) {
-        console.error("Error fetching messages:", error);
+        console.error("Error fetching chats:", error);
       }
     };
 
     if (currentUser) {
-      fetchMessages();
+      fetchChats();
 
       // Set up Action Cable subscription
       const subscription = cable.subscriptions.create(
         { channel: "ChatChannel", room: 1 },
         {
           received(data) {
-            setMessages((prevMessages) => [...prevMessages, data]);
+            setChats((prevChats) => [...prevChats, data]);
           },
         }
       );
@@ -52,43 +52,43 @@ const Message = () => {
     }
   }, [currentUser]);
 
-  const handleSendMessage = async () => {
+  const handleSendChat = async () => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
     }
 
-    const messageData = {
-      message: {
-        content: message,
+    const chatData = {
+      chat: {
+        content: chat,
         user_id: currentUser.id,
         room_id: 1,
       },
     };
 
-    console.log("Sending message:", messageData);
+    console.log("Sending chat:", chatData);
 
-    setMessage(""); // Clear input field immediately after sending the message to improve UX
+    setChat(""); // Clear input field immediately after sending the chat to improve UX
 
     try {
-      const response = await fetch("http://localhost:3000/api/v1/messages", {
+      const response = await fetch("http://localhost:3000/api/v1/chats", {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(messageData),
+        body: JSON.stringify(chatData),
       });
 
       if (!response.ok) {
-        console.error("Failed to send message", messageData);
+        console.error("Failed to send chat", chatData);
       } else {
-        const newMessage = await response.json();
-        console.log("Message sent successfully:", newMessage);
-        // No need to manually add the new message to state, as it will be received through Action Cable
+        const newChat = await response.json();
+        console.log("Chat sent successfully:", newChat);
+        // No need to manually add the new chat to state, as it will be received through Action Cable
       }
     } catch (error) {
-      console.error("Error sending message:", error, messageData);
+      console.error("Error sending chat:", error, chatData);
     }
   };
 
@@ -97,15 +97,15 @@ const Message = () => {
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div>
         <div>
-          {messages.map((msg) => (
+          {chats.map((msg) => (
             <div key={msg.id}>{msg.content}</div>
           ))}
         </div>
-        <input value={message} onChange={(e) => setMessage(e.target.value)} />
-        <button onClick={handleSendMessage}>Send</button>
+        <input value={chat} onChange={(e) => setChat(e.target.value)} />
+        <button onClick={handleSendChat}>Send</button>
       </div>
     </>
   );
 };
 
-export default Message;
+export default Chat;

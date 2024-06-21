@@ -26,7 +26,7 @@ Rails.application.routes.draw do
       resources :projects, only: %i[index show create update destroy]
       resources :records
       resources :room_members, only: %i[create update index show]
-      resources :messages, only: %i[create index show]
+      resources :chats, only: %i[create index show]
     end
   end
   get 'up' => 'rails/health#show', as: :rails_health_check
