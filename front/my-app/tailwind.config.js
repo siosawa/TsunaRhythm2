@@ -33,6 +33,8 @@ module.exports = {
         '1600s': '1600px',
         '3xl': '2200px',
         '2md': '1000px',
+        'w548': {'raw': '(min-width: 548px)'},
+        'h847': {'raw': '(min-height: 847px)'}
       },
       boxShadow: {
         "custom-dark": "0 4px 6px rgba(0, 0, 0, 0.3)", // カスタムシャドウの追加
