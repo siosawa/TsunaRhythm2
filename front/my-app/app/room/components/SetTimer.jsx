@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BsAlarmFill } from "react-icons/bs";
 import { BiSolidAlarmOff } from "react-icons/bi";
 import axios from "axios";
+import { useStopwatch } from "react-timer-hook";
 import {
   Select,
   SelectContent,
@@ -14,11 +15,8 @@ import ViewTimerRecord from "./ViewTimerRecord";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 export function SetTimer() {
-  const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [startTimestamp, setStartTimestamp] = useState("");
-  const intervalRef = useRef(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [records, setRecords] = useState([]);
   const [projects, setProjects] = useState({});
@@ -26,6 +24,9 @@ export function SetTimer() {
   const [loading, setLoading] = useState(true);
   const [currentRecordId, setCurrentRecordId] = useState(null);
   const [dataUpdated, setDataUpdated] = useState(false);
+
+  const { seconds, minutes, hours, start, pause, reset, isRunning } =
+    useStopwatch({ autoStart: false });
 
   useEffect(() => {
     const fetchRecords = async () => {
@@ -46,18 +47,16 @@ export function SetTimer() {
 
         const fetchedRecords = recordsResponse.data;
 
-        // 取得した1番目のレコードのwork_endがnullの場合、enterd_atと現在時間の差分からタイマーをスタートさせる
         if (fetchedRecords.length > 0 && fetchedRecords[0].work_end === null) {
           const firstRecord = fetchedRecords[0];
           const recordDate = new Date(firstRecord.date);
           const now = new Date();
           const diff = now.getTime() - recordDate.getTime();
 
-          // 16時間以上経過している場合
           if (diff > 16 * 60 * 60 * 1000) {
             const workEndDate = new Date(
               recordDate.getTime() + 16 * 60 * 60 * 1000
-            ); // 16時間後
+            );
             try {
               await axios.patch(
                 `http://localhost:3000/api/v1/records/${firstRecord.id}`,
@@ -69,24 +68,22 @@ export function SetTimer() {
                   withCredentials: true,
                 }
               );
-              // タイマーを途中からスタートさせない
               setStartTime(null);
-              setElapsedTime(0);
-              setIsRunning(false);
-              setDataUpdated(true); // 追加: データ更新をトリガー
+              setStartTimestamp("");
+              setDataUpdated(true);
             } catch (error) {
               console.error("記録の更新に失敗しました", error);
             }
           } else {
             setStartTime(recordDate);
-            setElapsedTime(diff);
-            setIsRunning(true);
             setStartTimestamp(formatTimestamp(recordDate));
             setCurrentRecordId(firstRecord.id);
-
-            intervalRef.current = setInterval(() => {
-              setElapsedTime(Date.now() - recordDate.getTime());
-            }, 10);
+            const offset = new Date();
+            offset.setSeconds(offset.getSeconds() + Math.floor(diff / 1000));
+            offset.setMinutes(offset.getMinutes() + Math.floor(diff / 60000));
+            offset.setHours(offset.getHours() + Math.floor(diff / 3600000));
+            reset(offset, false); // 差分を秒単位でリセット
+            start();
           }
         }
 
@@ -111,38 +108,19 @@ export function SetTimer() {
     return `${month}/${day} ${hours}:${minutes}`;
   };
 
-  const formatElapsedTime = (elapsedTime) => {
-    const totalSeconds = elapsedTime / 1000;
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = (totalSeconds % 60).toFixed(2);
-    return `${minutes}:${seconds}`;
-  };
-
-  const formatRecordTime = (elapsedTime) => {
-    const totalSeconds = Math.floor(elapsedTime / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return { minutes, seconds };
-  };
-
-  useEffect(() => {
-    if (isRunning && startTime) {
-      intervalRef.current = setInterval(() => {
-        setElapsedTime(Date.now() - startTime.getTime());
-      }, 10);
+  const handleButtonClick = () => {
+    if (isRunning) {
+      pause();
+      stopTimer();
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+      if (startTime) {
+        reset(0, false);
+        startTimer();
+      } else {
+        startTimer();
       }
     }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [isRunning, startTime]);
+  };
 
   const startTimer = async () => {
     if (!selectedProject) {
@@ -153,8 +131,6 @@ export function SetTimer() {
     const now = new Date();
     setStartTime(now);
     setStartTimestamp(formatTimestamp(now));
-    setIsRunning(true);
-    setElapsedTime(0);
 
     if (selectedProject && currentUser) {
       try {
@@ -177,6 +153,7 @@ export function SetTimer() {
     } else {
       console.error("プロジェクトまたはユーザーが選択されていません");
     }
+    start();
   };
 
   const stopTimer = async () => {
@@ -185,25 +162,21 @@ export function SetTimer() {
       return;
     }
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
     const now = new Date();
-    const diff = now.getTime() - startTime.getTime();
+    const elapsedTime = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
-    if (isNaN(diff) || diff < 0) {
+    if (isNaN(elapsedTime) || elapsedTime < 0) {
       console.error("無効な経過時間");
       return;
     }
 
-    setIsRunning(false);
+    setStartTime(null);
+    setStartTimestamp("");
+    reset(null, false);
 
-    // 状態の更新を非同期処理の前に行う
-    setElapsedTime(diff);
-
-    const recordTime = formatRecordTime(diff);
+    const recordTime = {
+      minutes: Math.floor(elapsedTime / 60000),
+    };
 
     if (!currentRecordId) {
       console.error("現在のレコードIDが存在しません");
@@ -215,7 +188,7 @@ export function SetTimer() {
         `http://localhost:3000/api/v1/records/${currentRecordId}`,
         {
           minutes: recordTime.minutes,
-          work_end: now.toISOString(), // work_endを現在時刻で更新
+          work_end: now.toISOString(),
         },
         {
           withCredentials: true,
@@ -230,18 +203,10 @@ export function SetTimer() {
         );
       } else {
         console.log("記録が正常に更新されました");
-        setDataUpdated(true); // 追加: データ更新をトリガー
+        setDataUpdated(true);
       }
     } catch (error) {
       console.error("記録の更新に失敗しました", error);
-    }
-  };
-
-  const handleButtonClick = () => {
-    if (isRunning) {
-      stopTimer();
-    } else {
-      startTimer();
     }
   };
 
@@ -258,8 +223,8 @@ export function SetTimer() {
         </button>
         <div className="ml-4">
           <div className="text-3xl">
-            {elapsedTime !== null ? (
-              formatElapsedTime(elapsedTime)
+            {isRunning ? (
+              `${hours}:${minutes}:${seconds}`
             ) : (
               <span className="text-base">タイマーは停止しています</span>
             )}
