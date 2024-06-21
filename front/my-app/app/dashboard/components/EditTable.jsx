@@ -136,8 +136,8 @@ const EditTable = ({ onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50">
-      <div className="mt-16">
-        <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative mx-7">
+      <div className="mt-16 mx-7">
+        <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative">
           <Button
             onClick={onClose}
             className="absolute top-4 right-4 bg-gray-300 hover:bg-gray-400 text-black"

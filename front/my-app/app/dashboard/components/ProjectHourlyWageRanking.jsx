@@ -69,10 +69,12 @@ const ProjectHourlyWageRanking = () => {
       {error && <p className="text-red-500">{error}</p>}
       <ul className="w-full">
         {ranking.map((project, index) => (
-          <li key={index} className="w-full flex justify-between my-1">
-            <span>{index + 1}位</span>
-            <span>{project.name}</span>
-            <span>{Math.floor(project.averageHourlyWage)}円</span>
+          <li key={index} className="flex justify-between my-1">
+            <span className="flex-1 text-left">{index + 1}位</span>
+            <span className="flex-2 text-left w-48">{project.name}</span>
+            <span className="flex-1 text-right">
+              {Math.floor(project.averageHourlyWage)}円
+            </span>
           </li>
         ))}
       </ul>

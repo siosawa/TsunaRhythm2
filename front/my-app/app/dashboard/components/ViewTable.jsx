@@ -40,10 +40,12 @@ const ViewTable = () => {
             <tr>
               <th className="px-2 py-1 border border-gray-200">企業名</th>
               <th className="px-2 py-1 border border-gray-200">案件名</th>
-              <th className="px-2 py-1 border border-gray-200">ワークの種類</th>
+              <th className="px-2 py-1 border border-gray-200 w-32">
+                ワークの種類
+              </th>
               <th className="px-2 py-1 border border-gray-200">単価</th>
-              <th className="px-2 py-1 border border-gray-200">報酬</th>
-              <th className="px-2 py-1 border border-gray-200">状態</th>
+              <th className="px-2 py-1 border border-gray-200 w-14">報酬</th>
+              <th className="px-2 py-1 border border-gray-200 w-14">状態</th>
             </tr>
           </thead>
           <tbody>
