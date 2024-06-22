@@ -4,7 +4,7 @@ const WaitingUserAvatar = ({ userAvatars }) => {
   return (
     <div
       className="absolute right-48 flex -space-x-4 z-30 p-4"
-      style={{ top: "185mm" }}
+      style={{ top: "165mm" }}
     >
       {userAvatars.map((user) =>
         user.avatarUrl ? (

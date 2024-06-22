@@ -152,7 +152,7 @@ const GroupChat = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="p-1 rounded-3xl bg-white shadow-custom-dark absolute z-30 w-68 right-10 mt-7 md:right-10 md:mt-52">
+      <div className="p-1 rounded-3xl bg-white shadow-custom-dark absolute w-68 right-10 mt-7 md:right-10 md:mt-20 z-40">
         <div className="flex justify-between items-center">
           <h2 className="text-xl text-center flex-grow">ルームチャット</h2>
           <button onClick={toggleChat} className="text-gray-500 mr-2">

@@ -64,9 +64,9 @@ export default function RootLayout({ children }) {
         >
           <source src="/background_movie.MP4" type="video/mp4" />
         </video>
-        <div className="relative z-10">
-          <header className="fixed top-0 left-0 right-0 h-16 pr-16 pl-8 flex items-center border-b justify-between rounded-3xl mx-12 my-3 bg-white backdrop-filter backdrop-blur-sm z-20">
-            <div className="z-10">
+        <div className="relative z-50">
+          <header className="fixed top-0 left-0 right-0 h-16 pr-16 pl-8 flex items-center border-b justify-between rounded-3xl mx-12 my-3 bg-white backdrop-filter backdrop-blur-sm z-50">
+            <div className="">
               <Image
                 src="/TsunaRhythm_header.JPG"
                 alt="TsunaRhythm"
