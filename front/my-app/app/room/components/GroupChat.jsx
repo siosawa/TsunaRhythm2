@@ -5,10 +5,10 @@ import { IoMdSend } from "react-icons/io";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const GroupChat = () => {
+const GroupChat = ({ room_id }) => {
   const [chats, setChats] = useState([]);
   const [newChat, setNewChat] = useState("");
-  const [isChatOpen, setIsChatOpen] = useState(false); // 初期状態を閉じる
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [otherUsers, setOtherUsers] = useState({});
 
@@ -18,7 +18,7 @@ const GroupChat = () => {
     const fetchChats = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/chats?room_id=1`,
+          `http://localhost:3000/api/v1/chats?room_id=${room_id}`,
           {
             method: "GET",
             credentials: "include",
@@ -43,7 +43,7 @@ const GroupChat = () => {
 
       // Set up Action Cable subscription
       const subscription = cable.subscriptions.create(
-        { channel: "ChatChannel", room: 1 },
+        { channel: "ChatChannel", room: room_id },
         {
           received(data) {
             setChats((prevChats) => [...prevChats, data]);
@@ -55,7 +55,7 @@ const GroupChat = () => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser]);
+  }, [currentUser, room_id]);
 
   useEffect(() => {
     const fetchOtherUser = async (userId) => {
@@ -98,13 +98,13 @@ const GroupChat = () => {
       chat: {
         content: newChat,
         user_id: currentUser.id,
-        room_id: 1,
+        room_id: room_id,
       },
     };
 
     console.log("Sending chat:", chatData);
 
-    setNewChat(""); // Clear input field immediately after sending the chat to improve UX
+    setNewChat("");
 
     try {
       const response = await fetch("http://localhost:3000/api/v1/chats", {
@@ -121,7 +121,6 @@ const GroupChat = () => {
       } else {
         const newChat = await response.json();
         console.log("Chat sent successfully:", newChat);
-        // No need to manually add the new chat to state, as it will be received through Action Cable
       }
     } catch (error) {
       console.error("Error sending chat:", error, chatData);

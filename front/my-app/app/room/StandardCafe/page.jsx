@@ -10,6 +10,7 @@ import WaitingUserAvatar from "@/app/room/components/WaitingUserAvatar";
 export default function Timer() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userAvatars, setUserAvatars] = useState([]);
+  const room_id = 1; // 現在のroom_idを設定
 
   useEffect(() => {
     const fetchRoomMembers = async () => {
@@ -21,7 +22,9 @@ export default function Timer() {
         if (!response.ok) throw new Error("Failed to fetch room members");
         const roomMembers = await response.json();
         const filteredUserIds = roomMembers
-          .filter((member) => member.room_id === 1 && member.leaved_at === null)
+          .filter(
+            (member) => member.room_id === room_id && member.leaved_at === null
+          )
           .map((member) => member.user_id);
 
         // currentUserがnullの場合はリダイレクトしないようにする
@@ -62,8 +65,8 @@ export default function Timer() {
       <div className="absolute z-40 mx-10 mt-20 flex flex-col items-start space-y-4">
         <SetTimer />
       </div>
-      <GroupChat className="absolute z-30" />
-      <RoomExitButton />
+      <GroupChat className="absolute z-30" room_id={room_id} />
+      <RoomExitButton room_id={room_id} /> {/* room_idを渡す */}
       <WaitingUserAvatar userAvatars={userAvatars} />
     </>
   );

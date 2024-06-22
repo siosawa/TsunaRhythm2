@@ -65,8 +65,8 @@ export default function Timer() {
       <div className="absolute z-40 mx-10 mt-20 flex flex-col items-start space-y-4">
         <SetTimer />
       </div>
-      <GroupChat className="absolute z-30" />
-      <RoomExitButton room_id={room_id} /> {/* room_idを渡す */}
+      <GroupChat className="absolute z-30" room_id={room_id} />
+      <RoomExitButton room_id={room_id} />
       <WaitingUserAvatar userAvatars={userAvatars} />
     </>
   );
