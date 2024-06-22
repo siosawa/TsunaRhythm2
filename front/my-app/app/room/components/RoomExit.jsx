@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-export default function RoomExitButton() {
+export default function RoomExitButton({ room_id }) {
   const [roomMembers, setRoomMembers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -54,7 +54,7 @@ export default function RoomExitButton() {
 
         // 座席レコードを削除
         const seatsResponse = await axios.get(
-          "http://localhost:3000/api/v1/seats?room_id=2",
+          `http://localhost:3000/api/v1/seats?room_id=${room_id}`,
           {
             withCredentials: true,
           }
