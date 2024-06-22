@@ -3,7 +3,7 @@ import React from "react";
 const WaitingUserAvatar = ({ userAvatars }) => {
   return (
     <div
-      className="absolute right-48 flex -space-x-4 z-30 p-4"
+      className="absolute right-48 flex -space-x-4 z-30 p-4 opacity-70"
       style={{ top: "165mm" }}
     >
       {userAvatars.map((user) =>
