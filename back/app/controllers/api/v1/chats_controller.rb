@@ -10,7 +10,14 @@ module Api
 
       # GET /api/v1/chats
       def index
-        @chats = Chat.where(room_id: params[:room_id])
+        @chats = Chat.where(room_id: params[:room_id]).order(created_at: :asc)
+
+        if @chats.count > 100
+          excess_chats = @chats.limit(@chats.count - 100)
+          excess_chats.destroy_all
+        end
+
+        @chats = @chats.limit(100)
         render json: @chats
       end
 
@@ -23,10 +30,11 @@ module Api
       def create
         @chat = Chat.new(chat_params)
         if @chat.save
+          cleanup_old_chats(@chat.room_id)
           ActionCable.server.broadcast("chat_#{@chat.room_id}", @chat.as_json)
           render json: @chat, status: :created
         else
-          render json: { errors: @chat.errors.full_chats }, status: :unprocessable_entity
+          render json: { errors: @chat.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
@@ -46,6 +54,15 @@ module Api
         return if logged_in?
 
         render json: { status: 'notLoggedIn', chat: 'ログインしてください' }, status: :unauthorized
+      end
+
+      def cleanup_old_chats(room_id)
+        chats = Chat.where(room_id: room_id).order(created_at: :asc)
+
+        if chats.count > 100
+          excess_chats = chats.limit(chats.count - 100)
+          excess_chats.destroy_all
+        end
       end
     end
   end
