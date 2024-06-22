@@ -12,31 +12,6 @@ const ViewTimerRecord = ({ dataUpdated }) => {
   const [isVisible, setIsVisible] = useState(true); // トグル用の状態を追加
 
   useEffect(() => {
-    const fetchRecords = async () => {
-      try {
-        const [recordsResponse, projectsResponse] = await Promise.all([
-          axios.get("http://localhost:3000/api/v1/records", {
-            withCredentials: true,
-          }),
-          axios.get("http://localhost:3000/api/v1/projects", {
-            withCredentials: true,
-          }),
-        ]);
-
-        const projectsMap = projectsResponse.data.reduce((acc, project) => {
-          acc[project.id] = project.name;
-          return acc;
-        }, {});
-
-        setRecords(recordsResponse.data);
-        setProjects(projectsMap);
-      } catch (error) {
-        console.error("データの取得に失敗しました", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRecords();
   }, [dataUpdated]);
 
