@@ -44,7 +44,7 @@ const ViewTable = () => {
                 ワークの種類
               </th>
               <th className="px-2 py-1 border border-gray-200">単価</th>
-              <th className="px-2 py-1 border border-gray-200 w-14">報酬</th>
+              <th className="px-2 py-1 border border-gray-200 w-14">本数</th>
               <th className="px-2 py-1 border border-gray-200 w-14">状態</th>
             </tr>
           </thead>

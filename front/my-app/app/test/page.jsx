@@ -1,19 +1,27 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const Chat = () => {
-  const [chats, setChats] = useState([]);
-  const [chat, setChat] = useState("");
+const CalmCafe = () => {
+  const [seats, setSeats] = useState({});
+  const [users, setUsers] = useState({});
   const [currentUser, setCurrentUser] = useState(null);
+  const [renderKey, setRenderKey] = useState(0); // 強制的に再レンダリングするためのステート
+  const seatPositions = [
+    { id: 1, top: "51%", right: "13%" },
+    { id: 2, top: "43%", right: "27%" },
+    { id: 3, top: "35%", right: "41%" },
+    { id: 4, top: "62%", right: "46%" },
+    { id: 5, top: "69%", right: "35%" },
+  ];
 
   useEffect(() => {
-    const fetchChats = async () => {
+    const fetchSeats = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/chats?room_id=1`,
+          "http://localhost:3000/api/v1/seats?room_id=2",
           {
             method: "GET",
             credentials: "include",
@@ -24,24 +32,67 @@ const Chat = () => {
         );
         if (response.ok) {
           const data = await response.json();
-          setChats(data);
+          setSeats(
+            data.reduce(
+              (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
+              {}
+            )
+          );
+          // ユーザー情報のフェッチ
+          const userResponses = await Promise.all(
+            data.map((seat) =>
+              fetch(`http://localhost:3000/api/v1/users/${seat.user_id}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+            )
+          );
+          const userData = await Promise.all(
+            userResponses.map((res) => res.json())
+          );
+          setUsers(
+            userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {})
+          );
         } else {
-          console.error("Failed to fetch chats");
+          console.error("Failed to fetch seats");
         }
       } catch (error) {
-        console.error("Error fetching chats:", error);
+        console.error("Error fetching seats:", error);
       }
     };
 
     if (currentUser) {
-      fetchChats();
+      fetchSeats();
 
-      // Set up Action Cable subscription
       const subscription = cable.subscriptions.create(
-        { channel: "ChatChannel", room: 1 },
+        { channel: "SeatChannel", room: 2 },
         {
           received(data) {
-            setChats((prevChats) => [...prevChats, data]);
+            setSeats((prevSeats) => ({
+              ...prevSeats,
+              [data.seat_id]: data.user_id,
+            }));
+            // ユーザー情報の更新
+            if (!users[data.user_id]) {
+              fetch(`http://localhost:3000/api/v1/users/${data.user_id}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+                .then((response) => response.json())
+                .then((user) => {
+                  setUsers((prevUsers) => ({
+                    ...prevUsers,
+                    [user.id]: user,
+                  }));
+                })
+                .catch((error) => console.error("Error fetching user:", error));
+            }
           },
         }
       );
@@ -50,62 +101,73 @@ const Chat = () => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser]);
+  }, [currentUser, renderKey]); // renderKeyを依存関係に追加
 
-  const handleSendChat = async () => {
+  const handleSeatClick = async (seatId) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
     }
 
-    const chatData = {
-      chat: {
-        content: chat,
-        user_id: currentUser.id,
-        room_id: 1,
-      },
-    };
-
-    console.log("Sending chat:", chatData);
-
-    setChat(""); // Clear input field immediately after sending the chat to improve UX
-
     try {
-      const response = await fetch("http://localhost:3000/api/v1/chats", {
+      const response = await fetch("http://localhost:3000/api/v1/seats", {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(chatData),
+        body: JSON.stringify({
+          seat: { seat_id: seatId, room_id: 2, user_id: currentUser.id },
+        }),
       });
-
-      if (!response.ok) {
-        console.error("Failed to send chat", chatData);
+      if (response.ok) {
+        // 成功したらページ全体を再レンダリングする
+        setRenderKey((prevKey) => prevKey + 1);
       } else {
-        const newChat = await response.json();
-        console.log("Chat sent successfully:", newChat);
-        // No need to manually add the new chat to state, as it will be received through Action Cable
+        console.error("Failed to reserve seat");
       }
     } catch (error) {
-      console.error("Error sending chat:", error, chatData);
+      console.error("Error reserving seat:", error);
     }
   };
 
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div>
-        <div>
-          {chats.map((msg) => (
-            <div key={msg.id}>{msg.content}</div>
+      <div className="flex items-center justify-center fixed inset-0 z-10">
+        <div className="relative w-[500px] md:w-[700px]">
+          <Image
+            src="/CalmCafe.PNG"
+            alt="Calm Cafe"
+            width={900}
+            height={500}
+            style={{ objectFit: "cover" }}
+            priority
+          />
+          {seatPositions.map((seat) => (
+            <div
+              key={seat.id}
+              className="absolute flex items-center"
+              style={{ top: seat.top, right: seat.right }}
+            >
+              <button
+                className="bg-white bg-opacity-50 w-9 h-9 md:w-12 md:h-12 rounded-full ml-2"
+                onClick={() => handleSeatClick(seat.id)}
+              >
+                {seats[seat.id] && users[seats[seat.id]] && (
+                  <img
+                    src={`http://localhost:3000${users[seats[seat.id]].avatar.url}`}
+                    alt="User Avatar"
+                    className="w-16 h-12 rounded-full"
+                  />
+                )}
+              </button>
+            </div>
           ))}
         </div>
-        <input value={chat} onChange={(e) => setChat(e.target.value)} />
-        <button onClick={handleSendChat}>Send</button>
       </div>
     </>
   );
 };
 
-export default Chat;
+export default CalmCafe;

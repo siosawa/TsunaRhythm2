@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       resources :records
       resources :room_members, only: %i[create update index show]
       resources :chats, only: %i[create index show]
+      resources :seats, only: %i[index create]
     end
   end
   get 'up' => 'rails/health#show', as: :rails_health_check
