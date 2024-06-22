@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import axios from "axios"; // axiosのインポートを追加
+import axios from "axios";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 export default function RoomExitButton() {
@@ -52,6 +52,23 @@ export default function RoomExitButton() {
           }
         );
 
+        // 座席レコードを削除
+        const seatsResponse = await axios.get(
+          "http://localhost:3000/api/v1/seats?room_id=2",
+          {
+            withCredentials: true,
+          }
+        );
+        const seats = seatsResponse.data;
+        const matchingSeats = seats.filter(
+          (seat) => seat.user_id === currentUser.id
+        );
+        for (const seat of matchingSeats) {
+          await axios.delete(`http://localhost:3000/api/v1/seats/${seat.id}`, {
+            withCredentials: true,
+          });
+        }
+
         // 状態を更新
         setRoomMembers((prevMembers) =>
           prevMembers.map((member) =>
@@ -67,7 +84,7 @@ export default function RoomExitButton() {
         console.error("Matching member not found or already left");
       }
     } catch (error) {
-      console.error("Error updating room member:", error);
+      console.error("Error updating room member or deleting seats:", error);
       // エラー通知を追加する場合はここに記述
     }
   };
