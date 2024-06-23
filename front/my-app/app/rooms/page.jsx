@@ -116,7 +116,8 @@ const Index = () => {
         { withCredentials: true }
       );
       setRoomMembers([newRoomMember, ...roomMembers]);
-      window.location.href = selectedRoom.path;
+      console.log(selectedRoom);
+      window.location.href = `/room/${selectedRoom.id}`;
     } catch (error) {
       console.error("Error joining room:", error);
     }
