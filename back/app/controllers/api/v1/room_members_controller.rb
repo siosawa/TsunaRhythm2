@@ -3,11 +3,6 @@
 module Api
   module V1
     class RoomMembersController < ApplicationController
-      include ActionController::Cookies
-      include SessionsHelper
-      before_action :logged_in_user, only: %i[index show create update]
-      before_action :correct_user, only: %i[update]
-
       def index
         room_members = RoomMember.all
         Rails.logger.debug { "Room members: #{room_members.inspect}" }
@@ -41,19 +36,6 @@ module Api
 
       def room_member_params
         params.require(:room_member).permit(:user_id, :room_id, :entered_at, :leaved_at)
-      end
-
-      def logged_in_user
-        return if logged_in?
-
-        render json: { status: 'notLoggedIn', message: 'ログインしてください' }, status: :unauthorized
-      end
-
-      def correct_user
-        @room_member = RoomMember.find(params[:id])
-        return if @room_member.user_id == current_user.id
-
-        render json: { error: 'Unauthorized access' }, status: :unauthorized
       end
     end
   end

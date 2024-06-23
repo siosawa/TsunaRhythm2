@@ -41,11 +41,8 @@ const Room = () => {
 
           if (currentRoom) {
             // リダイレクト先のルームパスを設定
-            setCurrentUserRoomPath(`http://localhost:8000${currentRoom.path}`);
-            console.log(
-              "リダイレクト先のパス:",
-              `http://localhost:8000${currentRoom.path}`
-            );
+            setCurrentUserRoomPath(`/room/${currentRoom.id}`);
+            console.log("リダイレクト先のパス:", `/room/${currentRoom.id}`);
           }
         }
       } catch (error) {

@@ -3,6 +3,10 @@
 require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
+  #httpsなら config.action_cable.url = 'ws://localhost:3000/cable' 
+  config.action_cable.url = 'ws://localhost:3000/cable'
+  config.action_cable.allowed_request_origins = ['http://localhost:3000']
+
   config.cache_classes = true
 
   config.eager_load = true

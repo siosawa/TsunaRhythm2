@@ -143,7 +143,7 @@ const EditRecord = ({ onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50">
-      <div className="mt-16 mx-7">
+      <div className="mt-28 mx-7">
         <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative">
           <Button
             onClick={onClose}
@@ -162,7 +162,7 @@ const EditRecord = ({ onClose, onSave }) => {
               <CiCirclePlus className="text-5xl m-2" />
             </button>
           </div>
-          <div className="overflow-y-auto max-h-[650px]">
+          <div className="overflow-y-auto max-h-[500px]">
             <table className="min-w-full table-auto border-collapse border border-gray-200">
               <thead className="bg-gray-100 whitespace-nowrap">
                 <tr>

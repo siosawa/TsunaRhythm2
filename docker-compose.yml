@@ -8,10 +8,12 @@ services:
       - 4306:3306
     volumes:
       - db_data:/var/lib/mysql
+  
   backend:
     tty: true
     depends_on:
       - db
+      - redis  # Redisに依存させる
     build:
       context: ./back/
       dockerfile: Dockerfile
@@ -20,6 +22,9 @@ services:
     volumes:
       - ./back:/back
       - gem_data:/usr/local/bundle
+    environment:
+      REDIS_URL: redis://redis:6379/1  # RedisのURLを環境変数に設定
+  
   frontend:
     build:
       context: ./front/
@@ -29,6 +34,15 @@ services:
     command: "yarn dev"
     ports:
       - "8000:3000"
+  
+  redis:
+    image: redis:6.2
+    ports:
+      - 6379:6379  # 必要に応じてポートを公開する
+    volumes:
+      - redis_data:/data
+
 volumes:
   db_data:
   gem_data:
+  redis_data:

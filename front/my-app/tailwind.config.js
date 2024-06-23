@@ -18,6 +18,7 @@ module.exports = {
     },
     extend: {
       margin: {
+        '0.5': '0.125rem', // ルームコンポーネントで使用
         '-21': '-5.25rem', // ルームのViewTimerRecordで使用
       },
       width: {
