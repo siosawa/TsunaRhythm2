@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Seat < ApplicationRecord
   validates :user_id, presence: true
   validates :room_id, presence: true
