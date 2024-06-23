@@ -24,10 +24,10 @@ module Api
         if seat
           room_id = seat.room_id
           seat.destroy
-          ActionCable.server.broadcast "room_#{room_id}", { action: "destroy", seat_id: seat.id }
+          ActionCable.server.broadcast "room_#{room_id}", { action: 'destroy', seat_id: seat.id }
           head :no_content
         else
-          render json: { error: "Seat not found" }, status: :not_found
+          render json: { error: 'Seat not found' }, status: :not_found
         end
       end
 

@@ -57,12 +57,12 @@ module Api
       end
 
       def cleanup_old_chats(room_id)
-        chats = Chat.where(room_id: room_id).order(created_at: :asc)
+        chats = Chat.where(room_id:).order(created_at: :asc)
 
-        if chats.count > 100
-          excess_chats = chats.limit(chats.count - 100)
-          excess_chats.destroy_all
-        end
+        return unless chats.count > 100
+
+        excess_chats = chats.limit(chats.count - 100)
+        excess_chats.destroy_all
       end
     end
   end
