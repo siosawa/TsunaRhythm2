@@ -96,8 +96,25 @@ const Index = () => {
           { leaved_at: new Date().toISOString() },
           { withCredentials: true }
         );
+
+        // room_id に基づいて seats を取得し、user_id が currentUser.id と一致するレコードを削除
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/seats?room_id=${existingMember.room_id}`,
+          { withCredentials: true }
+        );
+        const seats = response.data;
+
+        const deletePromises = seats
+          .filter((seat) => seat.user_id === currentUser.id)
+          .map((seat) =>
+            axios.delete(`http://localhost:3000/api/v1/seats/${seat.id}`, {
+              withCredentials: true,
+            })
+          );
+
+        await Promise.all(deletePromises);
       } catch (error) {
-        console.error("Error updating leaved_at:", error);
+        console.error("Error updating leaved_at or deleting seats:", error);
         return;
       }
     }
