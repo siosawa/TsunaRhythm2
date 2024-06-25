@@ -11,11 +11,5 @@ class AvatarUploader < CarrierWave::Uploader::Base
   def extension_allowlist
     %w[jpg jpeg png webp]
   end
-
-  # デフォルトのURLを指定
-  def default_url(*args)
-    random_number = rand(1..25)
-    "/uploads/user/sample_avatar/#{random_number}.webp"
-  end
 end
 

@@ -34,6 +34,8 @@ module Api
 
       def create
         @user = User.new(user_params)
+        @user.avatar = File.open(Rails.root.join('public', 'uploads', 'user', 'sample_avatar', "#{rand(1..25)}.webp")) if @user.avatar.blank?
+    
         if @user.save
           render json: { message: 'ユーザーが正常に作成されました', user: @user }, status: :created
         else
