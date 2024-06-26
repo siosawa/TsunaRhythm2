@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module UsersHelper
+  def user_params
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :work, :profile_text, :avatar)
+  end
+
   def user_info_json(user)
     {
       id: user.id,
