@@ -12,4 +12,3 @@ class AvatarUploader < CarrierWave::Uploader::Base
     %w[jpg jpeg png webp]
   end
 end
-
