@@ -34,9 +34,7 @@ module Api
 
       def create
         @user = User.new(user_params)
-        if @user.avatar.blank?
-          @user.avatar = File.open(Rails.public_path.join('uploads', 'user', 'sample_avatar', "#{rand(1..25)}.webp"))
-        end
+        assign_avatar(@user)
 
         if @user.save
           render json: { message: 'ユーザーが正常に作成されました', user: @user }, status: :created
@@ -108,8 +106,15 @@ module Api
 
       private
 
-      def user_params
-        params.require(:user).permit(:name, :email, :password, :password_confirmation, :work, :profile_text, :avatar)
+      def assign_avatar(user)
+        return if user.avatar.present?
+
+        begin
+          user.avatar = File.open(Rails.public_path.join('uploads', 'user', 'sample_avatar', "#{rand(1..25)}.webp"))
+        rescue StandardError => e
+          Rails.logger.error("アバター画像の設定に失敗しました: #{e.message}")
+          # アバター画像が設定できなくてもエラーにはしない
+        end
       end
 
       def correct_user
