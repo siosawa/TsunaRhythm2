@@ -73,7 +73,7 @@ const Universe = () => {
 
       // Action Cableの購読を作成
       const subscription = cable.subscriptions.create(
-        { channel: "SeatChannel", room: 1 },
+        { channel: "SeatChannel", room: 3 },
         {
           received(data) {
             // 座席情報を更新
