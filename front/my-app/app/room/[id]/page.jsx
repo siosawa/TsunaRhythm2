@@ -65,6 +65,18 @@ export default function Timer({ params }) {
     RoomComponent = require("@/components/room/CalmCafe").default;
   } else if (room_id === 3) {
     RoomComponent = require("@/components/room/Universe").default;
+  } else if (room_id === 4) {
+    RoomComponent = require("@/components/room/FrameBeach").default;
+  } else if (room_id === 5) {
+    RoomComponent = require("@/components/room/NewNomalCafe").default;
+  } else if (room_id === 6) {
+    RoomComponent = require("@/components/room/CountryHouse").default;
+  } else if (room_id === 7) {
+    RoomComponent = require("@/components/room/ModernCafe").default;
+  } else if (room_id === 8) {
+    RoomComponent = require("@/components/room/ModernLiving").default;
+  } else if (room_id === 9) {
+    RoomComponent = require("@/components/room/DiningRoom").default;
   } else {
     return <div>Invalid room ID</div>;
   }

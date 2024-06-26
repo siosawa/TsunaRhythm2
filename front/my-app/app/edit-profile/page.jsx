@@ -11,6 +11,7 @@ const ProfileReadPage = () => {
   const [error, setError] = useState("");
   const nameInputRef = useRef(null);
   const [avatar, setAvatar] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     fetchUserData();
@@ -35,9 +36,7 @@ const ProfileReadPage = () => {
     }, 0);
   };
 
-  const handleSaveClick = async (event) => {
-    event.preventDefault(); // フォームのデフォルトの送信を防ぐ
-
+  const handleSaveClick = async () => {
     const formData = new FormData();
     formData.append("user[name]", user.name);
     formData.append("user[email]", user.email);
@@ -61,7 +60,7 @@ const ProfileReadPage = () => {
         const updatedUserData = await response.json();
         console.log("ユーザーデータを更新しました:", updatedUserData);
         setIsEditable(false);
-        await fetchUserData(); // データを再取得
+        await fetchUserData(); // データを再取得して再レンダリング
       } else {
         console.error("ユーザーデータの更新に失敗しました");
       }
@@ -82,9 +81,35 @@ const ProfileReadPage = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     setAvatar(file);
+
+    // 画像変更後に自動的に保存
+    const formData = new FormData();
+    formData.append("user[avatar]", file);
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${user.id}`,
+        {
+          method: "PATCH",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const updatedUserData = await response.json();
+        console.log("アバターを更新しました:", updatedUserData);
+        setAvatar(null); // 一時的なステートをクリア
+        await fetchUserData(); // データを再取得して再レンダリング
+      } else {
+        console.error("アバターの更新に失敗しました");
+      }
+    } catch (error) {
+      console.error("アバターの更新中にエラーが発生しました:", error);
+    }
   };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -127,6 +152,10 @@ const ProfileReadPage = () => {
     }
   };
 
+  const handleNoImageClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <div className="min-h-screen flex items-start justify-center pt-24 ">
       <FetchCurrentUser setCurrentUser={setUser} />
@@ -134,16 +163,40 @@ const ProfileReadPage = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">プロフィール編集</h1>
         </div>
-        <div className="flex justify-center items-center">
-          {user && user.avatar && user.avatar.url && (
-            <img
-              src={`http://localhost:3000${user.avatar.url}`}
-              alt={user.name}
-              width={120}
-              height={120}
-              className="rounded-full"
-            />
+        <div className="flex justify-center items-center mb-4">
+          {user && user.avatar && user.avatar.url ? (
+            <div
+              className="relative group cursor-pointer"
+              onClick={handleNoImageClick}
+            >
+              <img
+                src={`http://localhost:3000${user.avatar.url}`}
+                alt={user.name}
+                width={120}
+                height={120}
+                className="rounded-full group-hover:opacity-75"
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+            </div>
+          ) : (
+            <button
+              className="bg-gray-200 rounded-full h-32 w-32 flex items-center justify-center text-gray-500"
+              onClick={handleNoImageClick}
+            >
+              NO IMAGE
+            </button>
           )}
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
         </div>
         <div className="flex justify-end items-center mb-4">
           {isEditable ? (
@@ -245,17 +298,6 @@ const ProfileReadPage = () => {
                   className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
                   rows="4"
                   autoComplete="off"
-                />
-              </div>
-            </div>
-            <div className="mb-4">
-              <div className="relative flex items-center border rounded-xl">
-                <input
-                  name="avatar"
-                  type="file"
-                  onChange={handleFileChange}
-                  disabled={!isEditable}
-                  className="w-full px-4 py-2 border rounded-xl text-right"
                 />
               </div>
             </div>

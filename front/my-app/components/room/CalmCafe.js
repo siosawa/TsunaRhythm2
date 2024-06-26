@@ -119,6 +119,12 @@ const CalmCafe = () => {
       return;
     }
 
+    // 座席が既に埋まっている場合はクリックを無効化
+    if (seats[seatId]) {
+      console.error("Seat already reserved");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/v1/seats", {
         method: "POST",
@@ -170,7 +176,7 @@ const CalmCafe = () => {
               <button
                 className="bg-white bg-opacity-50 w-11 h-11 md:w-14 md:h-14 rounded-full ml-2"
                 onClick={() => handleSeatClick(seat.id)}
-                disabled={isCurrentUserAssigned}
+                disabled={isCurrentUserAssigned || seats[seat.id]} // 座席が既に埋まっている場合に無効化
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img

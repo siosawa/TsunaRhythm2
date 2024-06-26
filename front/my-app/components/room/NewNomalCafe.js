@@ -4,19 +4,18 @@ import Image from "next/image";
 import cable from "@/utils/cable"; // Action Cableのセットアップが含まれていることを前提
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// StandardCafeコンポーネントの定義
-const StandardCafe = () => {
+// NewNomalCafeコンポーネントの定義
+const NewNomalCafe = () => {
   const [seats, setSeats] = useState({}); // 座席情報を保持するステート
   const [users, setUsers] = useState({}); // ユーザー情報を保持するステート
   const [currentUser, setCurrentUser] = useState(null); // 現在のユーザー情報を保持するステート
 
   // 座席の位置情報を定義
   const seatPositions = [
-    { id: 1, top: "45%", right: "48%" },
-    { id: 2, top: "39%", right: "28%" },
-    { id: 3, top: "30%", right: "39%" },
-    { id: 4, top: "57%", right: "32%" },
-    { id: 5, top: "67%", right: "46%" },
+    { id: 1, top: "50%", right: "66%" },
+    { id: 2, top: "72%", right: "61%" },
+    { id: 3, top: "63%", right: "77%" },
+    { id: 4, top: "60%", right: "50%" },
   ];
 
   // 座席情報とユーザー情報をフェッチする関数
@@ -40,7 +39,7 @@ const StandardCafe = () => {
   const fetchSeats = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/seats?room_id=1",
+        "http://localhost:3000/api/v1/seats?room_id=5",
         {
           method: "GET",
           credentials: "include",
@@ -73,7 +72,7 @@ const StandardCafe = () => {
 
       // Action Cableの購読を作成
       const subscription = cable.subscriptions.create(
-        { channel: "SeatChannel", room: 1 },
+        { channel: "SeatChannel", room: 5 },
         {
           received(data) {
             // 座席情報を更新
@@ -133,7 +132,7 @@ const StandardCafe = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          seat: { seat_id: seatId, room_id: 1, user_id: currentUser.id },
+          seat: { seat_id: seatId, room_id: 5, user_id: currentUser.id },
         }),
       });
       if (response.ok) {
@@ -158,13 +157,14 @@ const StandardCafe = () => {
       {/* 現在のユーザー情報を取得するためのコンポーネント */}
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="flex items-center justify-center fixed inset-0 z-10">
-        <div className="relative w-[500px] md:w-[700px]">
+        <div className="relative w-[450px] md:w-[600px]">
           <Image
-          src="/StandardCafe.PNG"
-          alt="Standard Cafe"
-          width={750}
-          height={500}
-          layout="intrinsic"
+            src="/NewNomalCafe.PNG"
+            alt="NewNomalCafe"
+            width={900}
+            height={500}
+            style={{ objectFit: "cover" }}
+            priority
           />
           {seatPositions.map((seat) => (
             <div
@@ -193,4 +193,4 @@ const StandardCafe = () => {
   );
 };
 
-export default StandardCafe;
+export default NewNomalCafe;

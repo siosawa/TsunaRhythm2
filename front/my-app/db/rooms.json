@@ -3,71 +3,55 @@
       "id": 1,
       "name": "普通のカフェ",
       "maxMembers": 5,
-      "image": "/StandardCafe.PNG",
-      "path": "/room/StandardCafe"
+      "image": "/StandardCafe.PNG"
     },
     {
       "id": 2,
       "name": "シックなカフェ",
       "maxMembers": 5,
-      "image": "/CalmCafe.PNG",
-      "path": "/room/CalmCafe"
+      "image": "/CalmCafe.PNG"
     },
     {
       "id": 3,
       "name": "宇宙空間",
       "maxMembers": 5,
-      "image": "/Universe.PNG",
-      "path": "/room/Universe"
+      "image": "/Universe.PNG"
     },
     {
       "id": 4,
       "name": "額縁ビーチ",
       "maxMembers": 1,
-      "image": "/Beach.jpg",
-      "path": "/room/Beach"
+      "image": "/FrameBeach.jpg"
     },
     {
       "id": 5,
-      "name": "さわたの部屋",
-      "maxMembers": 5,
-      "image": "/SawataRoom.PNG",
-      "path": "/room/SawataRoom"
+      "name": "NewNomalカフェ",
+      "maxMembers": 4,
+      "image": "/NewNomalCafe.PNG"
     },
     {
       "id": 6,
-      "name": "もくもく作業部屋1",
-      "maxMembers": 5,
-      "image": "/MokumokuRoom1.PNG",
-      "path": "/room/MokumokuRoom1"
+      "name": "カントリーハウス",
+      "maxMembers": 1,
+      "image": "/CountryHouse.PNG"
     },
     {
       "id": 7,
-      "name": "もくもく作業部屋2",
-      "maxMembers": 6,
-      "image": "/MokumokuRoom2.PNG",
-      "path": "/room/MokumokuRoom2"
+      "name": "モダンカフェ",
+      "maxMembers": 5,
+      "image": "/ModernCafe.PNG"
     },
     {
       "id": 8,
-      "name": "もくもく作業部屋3",
-      "maxMembers": 7,
-      "image": "/MokumokuRoom3.PNG",
-      "path": "/room/MokumokuRoom3"
+      "name": "モダンリビング",
+      "maxMembers": 3,
+      "image": "/ModernLiving.PNG"
     },
     {
       "id": 9,
-      "name": "もくもく作業部屋4",
-      "maxMembers": 10,
-      "image": "/MokumokuRoom4.PNG",
-      "path": "/room/MokumokuRoom4"
-    },
-    {
-      "id": 10,
-      "name": "さわたの部屋2",
-      "maxMembers": 4,
-      "image": "/SawataRoom2.PNG",
-      "path": "/room/SawataRoom2"
+      "name": "食堂",
+      "maxMembers": 6,
+      "image": "/DiningRoom.PNG"
     }
   ]
   
