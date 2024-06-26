@@ -24,8 +24,8 @@
       "id": 4,
       "name": "額縁ビーチ",
       "maxMembers": 1,
-      "image": "/Beach.jpg",
-      "path": "/room/Beach"
+      "image": "/FrameBeach.jpg",
+      "path": "/room/FrameBeach"
     },
     {
       "id": 5,

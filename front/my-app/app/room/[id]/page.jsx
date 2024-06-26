@@ -65,6 +65,8 @@ export default function Timer({ params }) {
     RoomComponent = require("@/components/room/CalmCafe").default;
   } else if (room_id === 3) {
     RoomComponent = require("@/components/room/Universe").default;
+  } else if (room_id === 4) {
+    RoomComponent = require("@/components/room/FrameBeach").default;
   } else {
     return <div>Invalid room ID</div>;
   }
