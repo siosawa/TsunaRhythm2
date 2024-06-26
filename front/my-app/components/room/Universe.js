@@ -40,7 +40,7 @@ const Universe = () => {
   const fetchSeats = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/seats?room_id=1",
+        "http://localhost:3000/api/v1/seats?room_id=3",
         {
           method: "GET",
           credentials: "include",
@@ -133,7 +133,7 @@ const Universe = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          seat: { seat_id: seatId, room_id: 1, user_id: currentUser.id },
+          seat: { seat_id: seatId, room_id: 3, user_id: currentUser.id },
         }),
       });
       if (response.ok) {
