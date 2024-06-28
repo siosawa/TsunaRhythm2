@@ -1,23 +1,24 @@
 # frozen_string_literal: true
 
 require 'faker'
+
 # ユーザー作成メソッド
 def create_user(name, email, work)
-  user = User.create!(
-    name: name,
-    email: email,
-    password: 'foobar',
-    password_confirmation: 'foobar',
-    work: work
-  )
+  user = User.find_or_initialize_by(email: email)
+  if user.new_record?
+    user.name = name
+    user.password = 'foobar'
+    user.password_confirmation = 'foobar'
+    user.work = work
 
-  # ランダムに1~25のアバターを設定
-  avatar_number = rand(1..25)
-  avatar_path = Rails.root.join("public/uploads/user/sample_avatar/#{avatar_number}.webp")
+    # ランダムに1~25のアバターを設定
+    avatar_number = rand(1..25)
+    avatar_path = Rails.root.join("public/uploads/user/sample_avatar/#{avatar_number}.webp")
 
-  # CarrierWaveを使ってアバターをアップロード
-  user.avatar = File.open(avatar_path)
-  user.save!
+    # CarrierWaveを使ってアバターをアップロード
+    user.avatar = File.open(avatar_path)
+    user.save!
+  end
 
   user
 end
@@ -33,10 +34,13 @@ work_types = [
   'バックエンドエンジニア(主にRails)'
 ]
 
+# Fakerの一意性をリセット
+Faker::UniqueGenerator.clear
+
 (1..user_count).each do |i|
-  email = "user#{i}@example.com"
-  name = "user#{i}"
-  work = work_types[i % work_types.size]
+  email = Faker::Internet.unique.email
+  name = Faker::Name.unique.name
+  work = work_types.sample
 
   create_user(name, email, work)
 end
@@ -44,7 +48,7 @@ end
 puts 'ユーザーが作成されました。'
 
 # postsを作成
-user_ids = (1..30).to_a
+user_ids = User.pluck(:id) # DBに存在するユーザーIDを取得
 user_ids.each do |user_id|
   15.times do
     Post.create!(
@@ -58,12 +62,11 @@ end
 puts "サンプルデータが作成されました。"
 
 # ランダムに六人をフォローする(relationshipテーブルの作成)
-user_ids = (1..30).to_a
 user_ids.each do |follower_id|
   potential_followees = user_ids - [follower_id]
-  followees = potential_followees.sample(6)  
+  followees = potential_followees.sample(6)
   followees.each do |followed_id|
-    Relationship.create!(
+    Relationship.find_or_create_by!(
       follower_id: follower_id,
       followed_id: followed_id
     )
@@ -74,7 +77,6 @@ puts "フォローデータが作成されました。"
 # projectsテーブルのサンプルデータ作成
 unit_price_range = (1000..10000).to_a
 quantity_range = (2..15).to_a
-user_ids = (1..30).to_a
 companies = ["三和農業株式会社", "ネットワークエキスパーツ株式会社", "東日本電力株式会社", "テクノロジーイノベーターズ株式会社", "教育支援株式会社", "サポートスペシャリスツ株式会社", "都市開発株式会社", "第一不動産株式会社", "マーケティンググルーズ株式会社", "未来技術研究所"]
 project_names = ["ウェブ開発プロジェクト", "モバイルアプリデザイン", "ビジネスコンサルティング", "デジタルマーケティングキャンペーン", "ITサポートサービス", "クラウドインフラ構築", "データ分析プロジェクト"]
 project_work_types = ["開発", "デザイン", "コンサルティング", "マーケティング", "サポート"]
@@ -98,18 +100,18 @@ end
 
 puts "サンプルデータが作成されました。"
 
-# recordsテーブルのサンプルデータ作成(userIdが1~30)
+# recordsテーブルのサンプルデータ作成
 user_ids.each do |user_id|
   user = User.find(user_id)
   projects = user.projects
-  
+
   projects.each do |project|
     record_count = rand(5..10)  # 各プロジェクトに対して5から10のレコードをランダムに作成
     record_count.times do
       minutes = rand(30..120)  # ランダムに30から120の間で時間を設定
       date = rand(3.months.ago..Time.now)  # ランダムに過去3ヶ月以内の日付を設定
       work_end = rand < 0.7 ? date + minutes.minutes : nil  # 7割はdateからminutes分だけ進んだ日付、3割はnullを設定
-      
+
       Record.create!(
         user_id: user_id,
         project_id: project.id,
