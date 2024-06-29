@@ -4,8 +4,9 @@ require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   #httpsなら config.action_cable.url = 'ws://localhost:3000/cable' 
-  config.action_cable.url = 'ws://localhost:3000/cable'
-  config.action_cable.allowed_request_origins = ['http://localhost:3000']
+  # 本番環境のWebSocket URLを設定
+  config.action_cable.url = 'wss://tsunarhythm.com/cable'
+  config.action_cable.allowed_request_origins = ['https://tsunarhythm.com']
 
   config.cache_classes = true
 
