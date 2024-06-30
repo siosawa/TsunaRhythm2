@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 80",
     "start:api": "npx json-server --watch ./db/db.json -p 3001",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -24,6 +24,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "glob": "^10.4.2",
+    "inflight": "^1.0.6",
     "jsdom": "^24.0.0",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
@@ -36,6 +38,7 @@
     "react-router-dom": "^6.23.1",
     "react-table": "^7.8.0",
     "react-timer-hook": "^3.0.7",
+    "rimraf": "^5.0.7",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0"
