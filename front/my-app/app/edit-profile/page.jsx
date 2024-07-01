@@ -20,7 +20,7 @@ const ProfileReadPage = () => {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/current_user",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/current_user`,
         { withCredentials: true }
       );
       setUser(response.data);
@@ -48,7 +48,7 @@ const ProfileReadPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}`,
         {
           method: "PATCH",
           body: formData,
@@ -91,7 +91,7 @@ const ProfileReadPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}`,
         {
           method: "PATCH",
           body: formData,
@@ -128,7 +128,7 @@ const ProfileReadPage = () => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/v1/users/${user.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}`,
         {
           withCredentials: true,
         }
@@ -170,7 +170,7 @@ const ProfileReadPage = () => {
               onClick={handleNoImageClick}
             >
               <img
-                src={`http://localhost:3000${user.avatar.url}`}
+                src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${user.avatar.url}`}
                 alt={user.name}
                 width={120}
                 height={120}

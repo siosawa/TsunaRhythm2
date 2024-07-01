@@ -22,10 +22,10 @@ export default function UserPage() {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/users/${userId}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`,
           {
             credentials: "include",
-          },
+          }
         );
         const userData = await response.json();
         setUser(userData);

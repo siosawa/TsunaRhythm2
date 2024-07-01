@@ -6,7 +6,7 @@ const FetchCurrentUser = ({ setCurrentUser }) => {
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/current_user",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/current_user`,
           {
             withCredentials: true,
           },

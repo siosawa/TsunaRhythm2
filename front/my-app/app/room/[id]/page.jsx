@@ -15,7 +15,7 @@ export default function Timer({ params }) {
     const fetchRoomMembers = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/v1/room_members",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
           { credentials: "include" }
         );
         if (!response.ok) throw new Error("Failed to fetch room members");
@@ -34,7 +34,7 @@ export default function Timer({ params }) {
 
         const userPromises = filteredUserIds.map(async (userId) => {
           const userResponse = await fetch(
-            `http://localhost:3000/api/v1/users/${userId}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`
           );
           if (!userResponse.ok) throw new Error("Failed to fetch user data");
           return userResponse.json();

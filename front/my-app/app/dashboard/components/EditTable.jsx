@@ -14,7 +14,7 @@ const EditTable = ({ onClose, onSave }) => {
     const fetchData = async () => {
       try {
         const result = await axios.get(
-          `http://localhost:3000/api/v1/projects`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
           {
             withCredentials: true, // クッキーを含める設定
           }
@@ -85,7 +85,7 @@ const EditTable = ({ onClose, onSave }) => {
       if (originalItem) {
         try {
           await axios.delete(
-            `http://localhost:3000/api/v1/projects/${originalItem.originalId}`, // 元のIDを使用
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${originalItem.originalId}`, // 元のIDを使用
             {
               withCredentials: true,
             }
@@ -100,9 +100,13 @@ const EditTable = ({ onClose, onSave }) => {
       const newItem = data.find((item) => item.id === id);
       if (newItem) {
         try {
-          await axios.post(`http://localhost:3000/api/v1/projects`, newItem, {
-            withCredentials: true,
-          });
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
+            newItem,
+            {
+              withCredentials: true,
+            }
+          );
         } catch (error) {
           console.error("Error adding data:", error);
         }
@@ -119,7 +123,7 @@ const EditTable = ({ onClose, onSave }) => {
       ) {
         try {
           await axios.put(
-            `http://localhost:3000/api/v1/projects/${originalItem.originalId}`, // 元のIDを使用
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${originalItem.originalId}`, // 元のIDを使用
             newItem,
             {
               withCredentials: true,

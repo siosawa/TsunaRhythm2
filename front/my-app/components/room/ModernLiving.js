@@ -21,7 +21,7 @@ const ModernLiving = () => {
   const fetchSeatsAndUsers = async (seatsData) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
-        fetch(`http://localhost:3000/api/v1/users/${seat.user_id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
           method: "GET",
           credentials: "include",
           headers: {
@@ -38,7 +38,7 @@ const ModernLiving = () => {
   const fetchSeats = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/seats?room_id=8",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=8`,
         {
           method: "GET",
           credentials: "include",
@@ -81,7 +81,7 @@ const ModernLiving = () => {
             }));
             // 新しいユーザー情報をフェッチ
             if (!users[data.user_id]) {
-              fetch(`http://localhost:3000/api/v1/users/${data.user_id}`, {
+              fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`, {
                 method: "GET",
                 credentials: "include",
                 headers: {
@@ -124,7 +124,7 @@ const ModernLiving = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/v1/seats", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -178,7 +178,7 @@ const ModernLiving = () => {
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
-                    src={`http://localhost:3000${users[seats[seat.id]].avatar.url}`}
+                    src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${users[seats[seat.id]].avatar.url}`}
                     alt="User Avatar"
                     className="h-9 w-9 md:w-12 md:h-12 rounded-full ml-1 md:ml-1"
                   />

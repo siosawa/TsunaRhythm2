@@ -11,11 +11,11 @@ const WorkTypeHourlyWageRanking = () => {
   const fetchRankingData = async () => {
     try {
       const { data: records } = await axios.get(
-        `http://localhost:3000/api/v1/records`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         { withCredentials: true }
       );
       const { data: projects } = await axios.get(
-        `http://localhost:3000/api/v1/projects`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         { withCredentials: true }
       );
 

@@ -23,19 +23,22 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/v1/sessions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          session: {
-            email: email,
-            password: password,
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/sessions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          credentials: "include",
+          body: JSON.stringify({
+            session: {
+              email: email,
+              password: password,
+            },
+          }),
+        }
+      );
 
       const responseData = await response.json();
       if (!response.ok) {

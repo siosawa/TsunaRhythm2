@@ -14,7 +14,7 @@ const FetchUsers = (
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/v1/users?page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users?page=${currentPage}`,
           {
             withCredentials: true,
           },
@@ -37,7 +37,7 @@ const FetchUsers = (
       if (currentUserId) {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/v1/users/${currentUserId}/following`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${currentUserId}/following`,
             {
               withCredentials: true,
             },

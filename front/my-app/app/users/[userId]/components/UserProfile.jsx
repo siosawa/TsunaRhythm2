@@ -10,7 +10,7 @@ const UserProfile = ({ user }) => {
       <div className="flex items-center space-x-4">
         {user && user.avatar && user.avatar.url ? (
           <img
-            src={`http://localhost:3000${user.avatar.url}`}
+            src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${user.avatar.url}`}
             alt={user.name}
             width={100}
             height={100}

@@ -29,7 +29,7 @@ const PostView = ({ reload }) => {
   const handleSave = async (postId, title, content) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/posts/${postId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/${postId}`,
         { title, content },
         {
           withCredentials: true,
@@ -56,7 +56,7 @@ const PostView = ({ reload }) => {
   const fetchUserAvatar = async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/users/${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`
       );
       return response.data.avatar?.url || null;
     } catch (error) {
@@ -96,7 +96,7 @@ const PostView = ({ reload }) => {
               {avatars[post.user_id] ? (
                 <Link href={`http://localhost:8000/users/${post.user_id}`}>
                   <img
-                    src={`http://localhost:3000${avatars[post.user_id]}`}
+                    src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${avatars[post.user_id]}`}
                     alt={post.user.name}
                     width={60}
                     height={60}

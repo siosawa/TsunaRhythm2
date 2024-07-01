@@ -26,10 +26,10 @@ const FollowUnfollowButton = ({
     const relationshipId = followStates[`relationship_${userId}`];
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/v1/relationships/${relationshipId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/relationships/${relationshipId}`,
         {
           withCredentials: true,
-        },
+        }
       );
       if (response.status === 200) {
         updateFollowState(false);
@@ -44,11 +44,11 @@ const FollowUnfollowButton = ({
   const handleFollow = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/relationships",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/relationships`,
         { followed_id: userId },
         {
           withCredentials: true,
-        },
+        }
       );
       if (response.status === 201) {
         const data = response.data;

@@ -15,7 +15,7 @@ const PostDetail = () => {
     const fetchPost = async () => {
       try {
         const postRes = await axios.get(
-          `http://localhost:3000/api/v1/posts/${id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/${id}`,
           {
             withCredentials: true,
           }
@@ -25,7 +25,7 @@ const PostDetail = () => {
 
         // Fetch user data
         const userRes = await axios.get(
-          `http://localhost:3000/api/v1/users/${userId}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`,
           {
             withCredentials: true,
           }
@@ -57,7 +57,7 @@ const PostDetail = () => {
       <div className="flex items-center mb-4">
         {user.avatar.url ? (
           <img
-            src={`http://localhost:3000${user.avatar.url}`}
+            src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${user.avatar.url}`}
             alt={user.name}
             width={60}
             height={60}

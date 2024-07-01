@@ -80,7 +80,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/posts",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts`,
         {
           post: {
             title: finalTitle,
@@ -89,7 +89,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
         },
         {
           withCredentials: true, // クッキーを含める設定
-        },
+        }
       );
 
       if (response.status === 201) {

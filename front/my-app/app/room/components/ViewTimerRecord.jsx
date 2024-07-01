@@ -18,10 +18,10 @@ const ViewTimerRecord = ({ dataUpdated }) => {
   const fetchRecords = async () => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
-        axios.get("http://localhost:3000/api/v1/records", {
+        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
           withCredentials: true,
         }),
-        axios.get("http://localhost:3000/api/v1/projects", {
+        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
           withCredentials: true,
         }),
       ]);
