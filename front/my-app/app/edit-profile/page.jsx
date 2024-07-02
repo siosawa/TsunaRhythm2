@@ -170,7 +170,7 @@ const ProfileReadPage = () => {
               onClick={handleNoImageClick}
             >
               <img
-                src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${user.avatar.url}`}
+                src={`${process.env.NEXT_PUBLIC_RAILS_URL}${user.avatar.url}`}
                 alt={user.name}
                 width={120}
                 height={120}

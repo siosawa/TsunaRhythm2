@@ -96,7 +96,7 @@ const PostView = ({ reload }) => {
               {avatars[post.user_id] ? (
                 <Link href={`http://localhost:8000/users/${post.user_id}`}>
                   <img
-                    src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${avatars[post.user_id]}`}
+                    src={`${process.env.NEXT_PUBLIC_RAILS_URL}${avatars[post.user_id]}`}
                     alt={post.user.name}
                     width={60}
                     height={60}

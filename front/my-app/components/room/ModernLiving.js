@@ -178,7 +178,7 @@ const ModernLiving = () => {
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
-                    src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${users[seats[seat.id]].avatar.url}`}
+                    src={`${process.env.NEXT_PUBLIC_RAILS_URL}${users[seats[seat.id]].avatar.url}`}
                     alt="User Avatar"
                     className="h-9 w-9 md:w-12 md:h-12 rounded-full ml-1 md:ml-1"
                   />

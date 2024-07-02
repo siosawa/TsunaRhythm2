@@ -10,7 +10,7 @@ const WaitingUserAvatar = ({ userAvatars }) => {
         user.avatarUrl ? (
           <div key={user.id} className="relative w548:h847:block hidden">
             <img
-              src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${user.avatarUrl}`}
+              src={`${process.env.NEXT_PUBLIC_RAILS_URL}${user.avatarUrl}`}
               alt={user.name}
               width={80}
               height={80}

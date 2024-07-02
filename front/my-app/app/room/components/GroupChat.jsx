@@ -176,7 +176,7 @@ const GroupChat = ({ room_id }) => {
                   {chat.user_id !== currentUser?.id &&
                     otherUsers[chat.user_id] && (
                       <img
-                        src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${otherUsers[chat.user_id].avatar.url}`}
+                        src={`${process.env.NEXT_PUBLIC_RAILS_URL}${otherUsers[chat.user_id].avatar.url}`}
                         alt="otherUser Avatar"
                         className="w-10 h-10 rounded-full mr-2"
                       />
@@ -205,7 +205,7 @@ const GroupChat = ({ room_id }) => {
                   </div>
                   {chat.user_id === currentUser?.id && (
                     <img
-                      src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${currentUser.avatar.url}`}
+                      src={`${process.env.NEXT_PUBLIC_RAILS_URL}${currentUser.avatar.url}`}
                       alt="User Avatar"
                       className="w-10 h-10 rounded-full ml-2"
                     />

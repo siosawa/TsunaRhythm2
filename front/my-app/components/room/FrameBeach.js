@@ -176,7 +176,7 @@ const FrameBeach = () => {
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
-                    src={`${process.env.NEXT_PUBLIC_FRONT_BASE_URL}${users[seats[seat.id]].avatar.url}`}
+                    src={`${process.env.NEXT_PUBLIC_RAILS_URL}${users[seats[seat.id]].avatar.url}`}
                     alt="User Avatar"
                     className="h-14 w-14 md:w-16 md:h-16 rounded-full ml-1 md:ml-2"
                   />
