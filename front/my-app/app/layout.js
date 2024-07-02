@@ -8,7 +8,6 @@ import Link from "next/link";
 import Settings from "@/components/Settings";
 import { TbMenu } from "react-icons/tb"; // ハンバーガーメニューアイコンをインポート
 import FetchCurrentUser from "@/components/FetchCurrentUser";
-import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -66,16 +65,16 @@ export default function RootLayout({ children }) {
         </video>
         <div className="relative z-50">
           <header className="fixed top-0 left-0 right-0 h-16 pr-16 pl-8 flex items-center border-b justify-between rounded-3xl mx-12 my-3 bg-white backdrop-filter backdrop-blur-sm z-50">
-            <div className="">
-              <Image
-                src="/TsunaRhythm_header.JPG"
-                alt="TsunaRhythm"
-                width={100}
-                height={100}
-                className="rounded-xl"
-                // style={{ width: 'auto', height: 'auto' }} // アスペクト比を保つようにすると警告が消えるが縦横の大きさが動かせなくなるのでコメントアウト
-              />
-            </div>
+          <div className="">
+            <img
+              src="/TsunaRhythm_header.JPG"
+              alt="TsunaRhythm"
+              width={60}
+              height={60}
+              className="rounded-xl"
+              style={{ width: '100px', height: '40px', objectFit: 'cover' }} // アスペクト比を保つようにしつつ、サイズを固定
+            />
+          </div>
             {currentUser && (
               <>
                 <div className="md:hidden">
@@ -107,7 +106,7 @@ export default function RootLayout({ children }) {
           {/* ポップアップメニュー */}
           {isMenuOpen && currentUser && (
             <div
-              className={`fixed top-16 right-10 left-10 bg-white backdrop-filter backdrop-blur-sm z-30 p-4 flex flex-col gap-4 shadow-custom-dark rounded-3xl ${
+              className={`fixed top-16 right-10 left-10 bg-white backdrop-filter backdrop-blur-sm z-50 p-4 flex flex-col gap-4 shadow-custom-dark rounded-3xl ${
                 isMenuOpen ? "animate-slide-down" : ""
               }`}
             >
