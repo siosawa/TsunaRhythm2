@@ -16,7 +16,10 @@ RUN gem update --system && bundle update --bundler && bundle install
 # アプリケーションのソースコードをコピー
 COPY . /myapp
 
-VOLUME /myapp/public
+# 公開ディレクトリを削除し、再コピー
+RUN rm -rf /myapp/public
+COPY public /myapp/public
+
 VOLUME /myapp/tmp
 
 # エントリーポイントスクリプトをコピーし、実行可能にする
