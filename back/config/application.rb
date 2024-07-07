@@ -41,7 +41,7 @@ module TsunaRhythm
     # frontからのリソース取得を許可する
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'http://localhost:8000', 'https://tsunarhythm.com','http://localhost:8000'
+        origins 'http://localhost:8000', 'https://tsunarhythm.com'
         resource '*',
                  headers: :any,
                  credentials: true,

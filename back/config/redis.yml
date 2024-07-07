@@ -1,0 +1,11 @@
+development:
+  url: redis://redis:6379/0
+
+test:
+  url: redis://redis:6379/0
+
+production:
+  url: rediss://redis-elasticache-vpwoxv.serverless.apne1.cache.amazonaws.com:6379/0
+  ssl: true
+  ssl_params:
+    verify_mode: "none"

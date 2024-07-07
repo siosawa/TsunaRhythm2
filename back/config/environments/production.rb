@@ -3,11 +3,10 @@
 require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
-
   # Action Cable設定
-  config.action_cable.url = "wss://tsunathythm.com/cable"
-  config.action_cable.allowed_request_origins = [ 'https://tsunathythm.com', /https:\/\/tsunathythm.*/ ]
-  ActionCable.server.config.disable_request_forgery_protection = true
+  config.action_cable.url = "wss://backend.tsunarhythm.com/cable"
+  config.action_cable.allowed_request_origins = ['https://tsunarhythm.com', /https:\/\/tsunarhythm.*/, 'https://backend.tsunarhythm.com']
+  config.action_cable.disable_request_forgery_protection = true
 
   config.cache_classes = true
   config.eager_load = true
