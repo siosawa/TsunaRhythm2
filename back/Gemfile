@@ -62,3 +62,5 @@ end
 
 gem 'rails_same_site_cookie', '~> 0.1.8'
 gem 'redis', '~> 5.2'
+gem 'redis-rails'
+gem 'retryable'
