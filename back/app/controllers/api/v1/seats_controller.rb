@@ -4,7 +4,7 @@ module Api
   module V1
     class SeatsController < ApplicationController
       def index
-        seats = Seat.where(room_id: params[:room_id])
+        seats = Seat.where(room_id: params[:room_id].to_i)
         render json: seats
       end
 
@@ -12,7 +12,7 @@ module Api
         seat = Seat.find_or_initialize_by(seat_params)
         seat.user_id = current_user.id
         if seat.save
-          ActionCable.server.broadcast "room_#{params[:room_id]}", { seat_id: seat.seat_id, user_id: seat.user_id }
+          ActionCable.server.broadcast "room_#{params[:room_id].to_i}", { seat_id: seat.seat_id, user_id: seat.user_id }
           render json: seat, status: :created
         else
           render json: seat.errors, status: :unprocessable_entity
@@ -20,7 +20,7 @@ module Api
       end
 
       def destroy
-        seat = Seat.find_by(id: params[:id])
+        seat = Seat.find_by(id: params[:id].to_i)
         if seat
           room_id = seat.room_id
           seat.destroy
@@ -34,7 +34,10 @@ module Api
       private
 
       def seat_params
-        params.require(:seat).permit(:seat_id, :room_id)
+        params.require(:seat).permit(:seat_id, :room_id).tap do |seat_params|
+          seat_params[:seat_id] = seat_params[:seat_id].to_i
+          seat_params[:room_id] = seat_params[:room_id].to_i
+        end
       end
     end
   end
