@@ -5,7 +5,14 @@ require 'active_support/core_ext/integer/time'
 Rails.application.configure do
   # Action Cable設定
   config.action_cable.url = "wss://backend.tsunarhythm.com/cable"
-  config.action_cable.allowed_request_origins = ['https://tsunarhythm.com', /https:\/\/tsunarhythm.*/, 'https://backend.tsunarhythm.com']
+  config.action_cable.allowed_request_origins = [
+    'https://tsunarhythm.com',
+    %r{\Ahttps://tsunarhythm.*\z},
+    'https://backend.tsunarhythm.com',
+    'http://tsunarhythm.com',
+    %r{\Ahttp://tsunarhythm.*\z},
+    'http://backend.tsunarhythm.com'
+  ]
   config.action_cable.disable_request_forgery_protection = true
 
   config.cache_classes = true
@@ -20,7 +27,17 @@ Rails.application.configure do
 
   config.active_storage.service = :amazon
 
-  config.log_level = :info
+  # Redisキャッシュの設定
+  config.cache_store = :redis_cache_store, {
+    url: "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT'].to_i}/0",
+    namespace: 'cache',
+    expires_in: 1.hour  # キャッシュの有効期限を設定
+  }
+  
+
+  # ログレベルをdebugに設定
+  config.log_level = :debug
+
   config.log_tags = [:request_id]
 
   config.action_mailer.perform_caching = false
@@ -42,8 +59,12 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # セッションの設定
-  config.middleware.use ActionDispatch::Session::CookieStore,
-                        domain: :all,
-                        tld_length: 2,
-                        secure: true
+  config.session_store :redis_store, servers: [
+    {
+      host: ENV['REDIS_HOST'],
+      port: ENV['REDIS_PORT'].to_i,
+      db: 0,
+      namespace: 'sessions'
+    }
+  ], expire_after: 1.day, secure: true, domain: :all, tld_length: 2
 end
