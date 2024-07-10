@@ -5,7 +5,7 @@ test:
   url: redis://redis:6379/0
 
 production:
-  url: rediss://redis-elasticache-vpwoxv.serverless.apne1.cache.amazonaws.com:6379/0
+  url: rediss://<%= ENV['REDIS_HOST'] %>:<%= ENV['REDIS_PORT'].to_i %>/0
   ssl: true
   ssl_params:
-    verify_mode: "none"
+    verify_mode: OpenSSL::SSL::VERIFY_NONE

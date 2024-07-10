@@ -10,8 +10,7 @@ test:
 
 production:
   adapter: redis
-  url: rediss://redis-elasticache-vpwoxv.serverless.apne1.cache.amazonaws.com:6379/0
-  channel_prefix: back_production
-  ssl: true
+  url: rediss://<%= ENV['REDIS_HOST'] %>:<%= ENV['REDIS_PORT'].to_i %>/0
+  channel_prefix: myapp_production
   ssl_params:
-    verify_mode: "none"
+    verify_mode: OpenSSL::SSL::VERIFY_NONE
