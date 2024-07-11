@@ -59,6 +59,10 @@ jobs:
         working-directory: back
         run: cp config/database.yml.ci config/database.yml
 
+      - name: ケーブル設定ファイルをコピー
+        working-directory: back
+        run: cp config/cable.yml.ci config/cable.yml
+
       - name: Redisクライアントツールのインストール
         run: sudo apt-get install -y redis-tools
 
