@@ -59,6 +59,18 @@ jobs:
         working-directory: back
         run: cp config/database.yml.ci config/database.yml
 
+      - name: Redisクライアントツールのインストール
+        run: sudo apt-get install -y redis-tools
+
+      - name: 環境変数の確認
+        run: printenv
+
+      - name: ホスト名解決の確認
+        run: nslookup db && nslookup redis
+
+      - name: Wait for MySQL and Redis
+        run: sleep 30
+
       - name: Redisの状態確認
         run: |
           for i in {1..10}; do
@@ -66,6 +78,35 @@ jobs:
             echo "Waiting for Redis..."
             sleep 5
           done || { echo "Redis did not start"; exit 1; }
+
+      - name: Redisのヘルスチェックの結果
+        run: |
+          if [ "$(docker inspect --format='{{.State.Health.Status}}' redis)" = "healthy" ]; then
+            echo "Redis is healthy"
+          else
+            echo "Redis is not healthy"
+            exit 1
+          fi
+
+      - name: MySQLの状態確認
+        run: |
+          sudo apt-get install -y mysql-client
+          for i in {1..10}; do
+            mysqladmin ping -h db -u root -ppassword && echo "MySQL is up" && break
+            echo "Waiting for MySQL..."
+            sleep 5
+          done || { echo "MySQL did not start"; exit 1; }
+
+      - name: MySQLに接続できるか確認
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h db -u root -ppassword -e "SHOW DATABASES;"
+          mysql -h db -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS app_test;"
+
+      - name: MySQL権限の確認
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h db -u root -ppassword -e "SHOW GRANTS FOR 'root'@'%';"
 
       - name: データベースを作成およびマイグレーション
         working-directory: back
