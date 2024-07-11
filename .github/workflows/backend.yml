@@ -67,6 +67,7 @@ jobs:
         run: |
           sudo apt-get install -y mysql-client
           mysql -h db -u root -ppassword -e "SHOW DATABASES;"
+          mysql -h db -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS app_test;"
 
       - name: MySQL権限の確認
         run: |
