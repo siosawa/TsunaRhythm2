@@ -63,16 +63,16 @@ jobs:
       - name: Wait for MySQL
         run: sleep 30
 
-      - name: MySQLに接続できるか確認
-        run: |
-          sudo apt-get install -y mysql-client
-          mysql -h db -u root -ppassword -e "SHOW DATABASES;"
-          mysql -h db -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS app_test;"
-
       - name: MySQL権限の確認
         run: |
           sudo apt-get install -y mysql-client
           mysql -h db -u root -ppassword -e "SHOW GRANTS FOR 'root'@'%';"
+
+      - name: MySQLに接続できるか確認
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h localhost -P 4306 -u root -ppassword -e "SHOW DATABASES;"
+          mysql -h localhost -P 4306 -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS app_test;"
 
       - name: データベースを作成およびマイグレーション
         working-directory: back
