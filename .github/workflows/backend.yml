@@ -57,11 +57,29 @@ jobs:
         working-directory: back
         run: cp config/database.yml.ci config/database.yml
 
+      - name: 環境変数の確認
+        run: printenv
+
+      - name: Wait for MySQL
+        run: sleep 30
+
+      - name: MySQLに接続できるか確認
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h db -u root -ppassword -e "SHOW DATABASES;"
+
+      - name: MySQL権限の確認
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql -h db -u root -ppassword -e "SHOW GRANTS FOR 'root'@'%';"
+
       - name: データベースを作成およびマイグレーション
         working-directory: back
         run: |
           bundle exec rake db:create RAILS_ENV=test --trace
           bundle exec rake db:migrate RAILS_ENV=test --trace
+        env:
+          RAILS_ENV: test
 
       - name: RSpecを実行
         working-directory: back
