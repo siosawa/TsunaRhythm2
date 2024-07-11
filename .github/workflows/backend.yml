@@ -60,8 +60,13 @@ jobs:
       - name: 環境変数の確認
         run: printenv
 
-      - name: Wait for MySQL
-        run: sleep 30
+      - name: MySQLの状態確認
+        run: |
+          for i in {1..10}; do
+            mysqladmin ping -h db -u root -ppassword && echo "MySQL is up" && break
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
 
       - name: MySQL権限の確認
         run: |
