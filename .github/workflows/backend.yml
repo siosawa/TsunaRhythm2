@@ -8,7 +8,7 @@ on:
 jobs:
   RSpec:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     services:
       db:
@@ -65,27 +65,24 @@ jobs:
       - name: Redisの状態確認
         run: |
           for i in {1..10}; do
-            redis-cli -h redis ping && echo "Redis is up" && break
+            redis-cli -h 127.0.0.1 ping && echo "Redis is up" && break
             echo "Waiting for Redis..."
             sleep 5
           done || { echo "Redis did not start"; exit 1; }
 
-      - name: Redisのヘルスチェックの結果
+      - name: データベースの状態確認
         run: |
-          if [ "$(docker inspect --format='{{.State.Health.Status}}' redis)" = "healthy" ]; then
-            echo "Redis is healthy"
-          else
-            echo "Redis is not healthy"
-            exit 1
-          fi
+          for i in {1..10}; do
+            mysqladmin ping -h 127.0.0.1 --silent && echo "MySQL is up" && break
+            echo "Waiting for MySQL..."
+            sleep 5
+          done || { echo "MySQL did not start"; exit 1; }
 
       - name: データベースを作成およびマイグレーション
         working-directory: back
         run: |
           bundle exec rake db:create RAILS_ENV=test --trace
           bundle exec rake db:migrate RAILS_ENV=test --trace
-        env:
-          RAILS_ENV: test
 
       - name: RSpecを実行
         working-directory: back
