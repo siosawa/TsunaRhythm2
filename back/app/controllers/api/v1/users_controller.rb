@@ -12,7 +12,7 @@ module Api
 
       def index
         per_page = 10
-        page = (params[:page]&.to_i || 1)
+        page = params[:page]&.to_i || 1
 
         users = fetch_users_with_counts
         paginated_users, total_pages = paginate_index(users, per_page, page)
@@ -20,7 +20,7 @@ module Api
         render json: {
           users: paginated_users.as_json(only: %i[id name created_at work profile_text avatar],
                                          methods: %i[posts_count followers_count following_count]),
-          total_pages: total_pages,
+          total_pages:,
           current_page: page
         }
       end

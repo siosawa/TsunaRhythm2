@@ -60,7 +60,7 @@ module Api
       end
 
       def cleanup_old_chats(room_id)
-        chats = Chat.where(room_id: room_id).order(created_at: :asc)
+        chats = Chat.where(room_id:).order(created_at: :asc)
 
         return unless chats.count > 100
 
