@@ -14,15 +14,17 @@ jobs:
       db:
         image: mysql:8.0
         options: >-
-          --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
           --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
-        env:
-          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: "%"
+        volumes:
+          - db_data:/var/lib/mysql
 
       redis:
         image: redis:6.2
@@ -57,15 +59,6 @@ jobs:
         working-directory: back
         run: cp config/database.yml.ci config/database.yml
 
-      - name: 環境変数の確認
-        run: printenv
-
-      - name: ホスト名解決の確認
-        run: nslookup db && nslookup redis
-
-      - name: Wait for MySQL and Redis
-        run: sleep 30
-
       - name: Redisの状態確認
         run: |
           for i in {1..10}; do
@@ -73,26 +66,6 @@ jobs:
             echo "Waiting for Redis..."
             sleep 5
           done || { echo "Redis did not start"; exit 1; }
-
-      - name: MySQLの状態確認
-        run: |
-          sudo apt-get install -y mysql-client
-          for i in {1..10}; do
-            mysqladmin ping -h db -u root -ppassword && echo "MySQL is up" && break
-            echo "Waiting for MySQL..."
-            sleep 5
-          done || { echo "MySQL did not start"; exit 1; }
-
-      - name: MySQLに接続できるか確認
-        run: |
-          sudo apt-get install -y mysql-client
-          mysql -h db -u root -ppassword -e "SHOW DATABASES;"
-          mysql -h db -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS app_test;"
-
-      - name: MySQL権限の確認
-        run: |
-          sudo apt-get install -y mysql-client
-          mysql -h db -u root -ppassword -e "SHOW GRANTS FOR 'root'@'%';"
 
       - name: データベースを作成およびマイグレーション
         working-directory: back
