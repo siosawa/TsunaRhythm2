@@ -14,7 +14,6 @@ jobs:
       db:
         image: mysql:8.0
         options: >-
-          --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
           --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
           --health-timeout 5s
@@ -58,21 +57,11 @@ jobs:
         working-directory: back
         run: cp config/database.yml.ci config/database.yml
 
-      - name: Wait for MySQL
-        run: sleep 30
-
-      - name: MySQLに接続できるか確認
-        run: |
-          sudo apt-get install -y mysql-client
-          mysql -h db -u root -ppassword -e "SHOW DATABASES;"
-
       - name: データベースを作成およびマイグレーション
         working-directory: back
         run: |
           bundle exec rake db:create RAILS_ENV=test --trace
           bundle exec rake db:migrate RAILS_ENV=test --trace
-        env:
-          RAILS_ENV: test
 
       - name: RSpecを実行
         working-directory: back
@@ -102,3 +91,24 @@ jobs:
       - name: RuboCopを実行
         working-directory: back
         run: bundle exec rubocop
+  # ESlintはbabelの問題が改善できればおそらく以下のコードで実行できる
+  # ESLint:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+
+  #     - name: Yarnをインストール
+  #       working-directory: front/my-app
+  #       run: yarn install --check-files
+
+  #     - name: Run ESLint
+  #       working-directory: front/my-app
+  #       run: yarn run lint
