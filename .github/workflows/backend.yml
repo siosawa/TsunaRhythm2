@@ -63,11 +63,11 @@ jobs:
       - name: デバッグ情報を表示
         run: |
           echo "MySQLのデータベースを表示します"
-          mysql -h localhost -u root -ppassword -e 'SHOW DATABASES;'
+          mysql -h 127.0.0.1 -u root -ppassword -e 'SHOW DATABASES;'
           echo "MySQLのユーザーを表示します"
-          mysql -h localhost -u root -ppassword -e 'SELECT User, Host FROM mysql.user;'
+          mysql -h 127.0.0.1 -u root -ppassword -e 'SELECT User, Host FROM mysql.user;'
           echo "MySQLの接続情報を表示します"
-          mysqladmin -h localhost -u root -ppassword version
+          mysqladmin -h 127.0.0.1 -u root -ppassword version
 
       - name: データベースを作成およびマイグレーション
         working-directory: back
