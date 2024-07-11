@@ -46,7 +46,7 @@ const EditPassword = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.id}/update_password`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}/update_password`,
         {
           method: "PATCH",
           headers: {

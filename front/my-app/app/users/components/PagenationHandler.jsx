@@ -10,16 +10,16 @@ const fetchUsersAndFollowing = (
   setTotalPages,
   setFollowings,
   setFollowStates,
-  setError,
+  setError
 ) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/v1/users?page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users?page=${currentPage}`,
           {
             withCredentials: true,
-          },
+          }
         );
 
         if (res.data && Array.isArray(res.data.users)) {
@@ -43,10 +43,10 @@ const fetchUsersAndFollowing = (
       if (userId) {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/v1/users/${userId}/following`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}/following`,
             {
               withCredentials: true,
-            },
+            }
           );
           const data = response.data;
 

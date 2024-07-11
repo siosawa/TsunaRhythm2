@@ -11,7 +11,7 @@ const ViewTable = () => {
     // 関数をコンポーネントの外に移動
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/projects",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
           withCredentials: true,
         }

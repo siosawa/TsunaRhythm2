@@ -11,7 +11,7 @@ export default function RoomExitButton({ room_id }) {
     async function fetchData() {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/v1/room_members",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
           {
             method: "GET",
             credentials: "include",
@@ -45,7 +45,7 @@ export default function RoomExitButton({ room_id }) {
       if (matchingMember) {
         // 該当するレコードを更新
         await axios.patch(
-          `http://localhost:3000/api/v1/room_members/${matchingMember.id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members/${matchingMember.id}`,
           { leaved_at: now },
           {
             withCredentials: true,
@@ -54,7 +54,7 @@ export default function RoomExitButton({ room_id }) {
 
         // 座席レコードを削除
         const seatsResponse = await axios.get(
-          `http://localhost:3000/api/v1/seats?room_id=${room_id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=${room_id}`,
           {
             withCredentials: true,
           }
@@ -64,9 +64,12 @@ export default function RoomExitButton({ room_id }) {
           (seat) => seat.user_id === currentUser.id
         );
         for (const seat of matchingSeats) {
-          await axios.delete(`http://localhost:3000/api/v1/seats/${seat.id}`, {
-            withCredentials: true,
-          });
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${seat.id}`,
+            {
+              withCredentials: true,
+            }
+          );
         }
 
         // 状態を更新

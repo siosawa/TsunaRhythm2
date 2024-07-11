@@ -15,10 +15,10 @@ const EditRecord = ({ onClose, onSave }) => {
     const fetchData = async () => {
       try {
         const [recordsResponse, projectsResponse] = await Promise.all([
-          axios.get(`http://localhost:3000/api/v1/records`, {
+          axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
             withCredentials: true,
           }),
-          axios.get(`http://localhost:3000/api/v1/projects`, {
+          axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
             withCredentials: true,
           }),
         ]);
@@ -92,7 +92,7 @@ const EditRecord = ({ onClose, onSave }) => {
       if (originalItem) {
         try {
           await axios.delete(
-            `http://localhost:3000/api/v1/records/${originalItem.originalId}`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${originalItem.originalId}`,
             {
               withCredentials: true,
             }
@@ -107,9 +107,13 @@ const EditRecord = ({ onClose, onSave }) => {
       const newItem = data.find((item) => item.id === id);
       if (newItem) {
         try {
-          await axios.post(`http://localhost:3000/api/v1/records`, newItem, {
-            withCredentials: true,
-          });
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
+            newItem,
+            {
+              withCredentials: true,
+            }
+          );
         } catch (error) {
           console.error("Error adding data:", error);
         }
@@ -126,7 +130,7 @@ const EditRecord = ({ onClose, onSave }) => {
       ) {
         try {
           await axios.put(
-            `http://localhost:3000/api/v1/records/${originalItem.originalId}`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${originalItem.originalId}`,
             newItem,
             {
               withCredentials: true,

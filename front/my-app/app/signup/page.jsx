@@ -31,25 +31,28 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: {
-            name: name,
-            email: email,
-            password: password,
-            password_confirmation: confirmPassword,
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            user: {
+              name: name,
+              email: email,
+              password: password,
+              password_confirmation: confirmPassword,
+            },
+          }),
+        }
+      );
 
       const responseData = await response.json();
       if (!response.ok) {
         setError(
-          responseData.errors.join(", ") || "ユーザー登録に失敗しました",
+          responseData.errors.join(", ") || "ユーザー登録に失敗しました"
         );
         return;
       }
@@ -57,7 +60,7 @@ const SignUp = () => {
       try {
         // 自動ログインのためのAPI呼び出し
         const loginResponse = await fetch(
-          "http://localhost:3000/api/v1/sessions",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/sessions`,
           {
             method: "POST",
             headers: {
@@ -70,7 +73,7 @@ const SignUp = () => {
                 password: password,
               },
             }),
-          },
+          }
         );
 
         const loginResponseData = await loginResponse.json();

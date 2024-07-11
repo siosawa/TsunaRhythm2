@@ -22,8 +22,7 @@ services:
     volumes:
       - ./back:/back
       - gem_data:/usr/local/bundle
-    environment:
-      REDIS_URL: redis://redis:6379/1  # RedisのURLを環境変数に設定
+    command: bundle exec rails server -b 0.0.0.0 -p 3000  # この行を追加
   
   frontend:
     build:

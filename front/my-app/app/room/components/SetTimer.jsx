@@ -32,10 +32,10 @@ export function SetTimer() {
     const fetchRecords = async () => {
       try {
         const [recordsResponse, projectsResponse] = await Promise.all([
-          axios.get("http://localhost:3000/api/v1/records", {
+          axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
             withCredentials: true,
           }),
-          axios.get("http://localhost:3000/api/v1/projects", {
+          axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
             withCredentials: true,
           }),
         ]);
@@ -59,7 +59,7 @@ export function SetTimer() {
             );
             try {
               await axios.patch(
-                `http://localhost:3000/api/v1/records/${firstRecord.id}`,
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${firstRecord.id}`,
                 {
                   work_end: workEndDate.toISOString(),
                   minutes: 960,
@@ -135,7 +135,7 @@ export function SetTimer() {
     if (selectedProject && currentUser) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/v1/records",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
           {
             user_id: currentUser.id,
             project_id: selectedProject.id,
@@ -185,7 +185,7 @@ export function SetTimer() {
 
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/records/${currentRecordId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${currentRecordId}`,
         {
           minutes: recordTime.minutes,
           work_end: now.toISOString(),

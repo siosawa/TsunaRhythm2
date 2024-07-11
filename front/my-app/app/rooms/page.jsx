@@ -20,7 +20,7 @@ const Index = () => {
     const fetchRoomMembers = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/v1/room_members",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
           {
             method: "GET",
             credentials: "include",
@@ -38,7 +38,7 @@ const Index = () => {
             ) {
               try {
                 await axios.patch(
-                  `http://localhost:3000/api/v1/room_members/${member.id}`,
+                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members/${member.id}`,
                   { leaved_at: now.toISOString() },
                   { withCredentials: true }
                 );
@@ -92,14 +92,14 @@ const Index = () => {
       try {
         // PATCHリクエストでleaved_atを更新
         await axios.patch(
-          `http://localhost:3000/api/v1/room_members/${existingMember.id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members/${existingMember.id}`,
           { leaved_at: new Date().toISOString() },
           { withCredentials: true }
         );
 
         // room_id に基づいて seats を取得し、user_id が currentUser.id と一致するレコードを削除
         const response = await axios.get(
-          `http://localhost:3000/api/v1/seats?room_id=${existingMember.room_id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=${existingMember.room_id}`,
           { withCredentials: true }
         );
         const seats = response.data;
@@ -107,9 +107,12 @@ const Index = () => {
         const deletePromises = seats
           .filter((seat) => seat.user_id === currentUser.id)
           .map((seat) =>
-            axios.delete(`http://localhost:3000/api/v1/seats/${seat.id}`, {
-              withCredentials: true,
-            })
+            axios.delete(
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${seat.id}`,
+              {
+                withCredentials: true,
+              }
+            )
           );
 
         await Promise.all(deletePromises);
@@ -128,7 +131,7 @@ const Index = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/v1/room_members",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
         newRoomMember,
         { withCredentials: true }
       );

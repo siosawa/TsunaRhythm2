@@ -12,7 +12,7 @@ const MonthHWAT = () => {
   const fetchData = async (userId) => {
     try {
       const recordsResponse = await axios.get(
-        `http://localhost:3000/api/v1/records`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         {
           withCredentials: true, //クッキーを含める設定
         }
@@ -21,7 +21,7 @@ const MonthHWAT = () => {
       console.log("Records:", records);
 
       const projectsResponse = await axios.get(
-        `http://localhost:3000/api/v1/projects`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
           withCredentials: true, //クッキーを含める設定
         }

@@ -11,11 +11,11 @@ const WorkTypeHourlyWageRanking = () => {
   const fetchRankingData = async () => {
     try {
       const { data: records } = await axios.get(
-        `http://localhost:3000/api/v1/records`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         { withCredentials: true }
       );
       const { data: projects } = await axios.get(
-        `http://localhost:3000/api/v1/projects`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         { withCredentials: true }
       );
 
@@ -65,10 +65,12 @@ const WorkTypeHourlyWageRanking = () => {
       {error && <p className="text-red-500">{error}</p>}
       <ul>
         {ranking.map((work_type, index) => (
-          <li key={index} className="w-full flex justify-between my-1">
-            <span>{index + 1}位</span>
-            <span className="w-48 text-left">{work_type.name}</span>
-            <span>{Math.floor(work_type.averageHourlyWage)}円</span>
+          <li key={index} className="flex justify-between my-1">
+            <span className="flex-1 text-left">{index + 1}位</span>
+            <span className="w-48 flex-2 text-left">{work_type.name}</span>
+            <span className="flex-1 text-right w-32">
+              {Math.floor(work_type.averageHourlyWage)}円
+            </span>
           </li>
         ))}
       </ul>

@@ -16,7 +16,12 @@ def create_user(name, email, work)
     avatar_path = Rails.root.join("public/uploads/user/sample_avatar/#{avatar_number}.webp")
 
     # CarrierWaveを使ってアバターをアップロード
-    user.avatar = File.open(avatar_path)
+    if File.exist?(avatar_path)
+      user.avatar = File.open(avatar_path)
+    else
+      puts "Avatar file not found: #{avatar_path}"
+    end
+
     user.save!
   end
 
@@ -27,7 +32,7 @@ end
 create_user('さわた', 'sawata@example.com', '動画編集')
 create_user('ゲスト', 'guest@example.com', 'バックエンドエンジニア')
 
-user_count = 30
+user_count = 10
 work_types = [
   'YouTube専門動画編集者', 'Shortsが得意な動画編集者', 'NFT・Web3専門ライター',
   'Webライター', 'ライター/動画編集者', 'フロントエンドエンジニア(主にReact)',
@@ -59,7 +64,7 @@ user_ids.each do |user_id|
     )
   end
 end
-puts "サンプルデータが作成されました。"
+puts "ポストデータが作成されました。"
 
 # ランダムに六人をフォローする(relationshipテーブルの作成)
 user_ids.each do |follower_id|
@@ -82,7 +87,7 @@ project_names = ["ウェブ開発プロジェクト", "モバイルアプリデ�
 project_work_types = ["開発", "デザイン", "コンサルティング", "マーケティング", "サポート"]
 
 user_ids.each do |user_id|
-  project_count = rand(7..21)  # 各ユーザーに対して7から21のプロジェクトをランダムに作成
+  project_count = rand(7..13)  # 各ユーザーに対して7から13のプロジェクトをランダムに作成
   project_count.times do |i|
     created_at = rand(3.months.ago.to_f..Time.now.to_f).to_i
     Project.create!(
@@ -98,7 +103,7 @@ user_ids.each do |user_id|
   end
 end
 
-puts "サンプルデータが作成されました。"
+puts "プロジェクトデータが作成されました。"
 
 # recordsテーブルのサンプルデータ作成
 user_ids.each do |user_id|
@@ -112,15 +117,19 @@ user_ids.each do |user_id|
       date = rand(3.months.ago..Time.now)  # ランダムに過去3ヶ月以内の日付を設定
       work_end = rand < 0.7 ? date + minutes.minutes : nil  # 7割はdateからminutes分だけ進んだ日付、3割はnullを設定
 
-      Record.create!(
-        user_id: user_id,
-        project_id: project.id,
-        minutes: minutes,
-        date: date,
-        work_end: work_end
-      )
+      begin
+        Record.create!(
+          user_id: user_id,
+          project_id: project.id,
+          minutes: minutes,
+          date: date,
+          work_end: work_end
+        )
+      rescue => e
+        puts "Error creating record for user_id #{user_id}, project_id #{project.id}: #{e.message}"
+      end
     end
   end
 end
 
-puts "サンプルデータが作成されました。"
+puts "レコードデータが作成されました。"

@@ -45,9 +45,12 @@ const GraphWorkingMinutes = () => {
 
   const fetchData = async (userId, month) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/v1/records`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
+        {
+          withCredentials: true,
+        }
+      );
       const records = response.data || [];
       const minutesPerDay = {};
       const selectedMonthRecords = records.filter(

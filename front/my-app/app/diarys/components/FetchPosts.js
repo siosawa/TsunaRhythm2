@@ -6,7 +6,7 @@ const FetchPosts = ({ currentPage, setPosts, setTotalPages, reload }) => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/posts?page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts?page=${currentPage}`,
           {
             withCredentials: true,
           },

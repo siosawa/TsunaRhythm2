@@ -23,7 +23,7 @@ const UserCard = ({
     >
       {user && user.avatar && user.avatar.url ? (
         <img
-          src={`http://localhost:3000${user.avatar.url}`}
+          src={`${process.env.NEXT_PUBLIC_RAILS_URL}${user.avatar.url}`}
           alt={user.name}
           width={70}
           height={70}

@@ -26,7 +26,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
   const handleSave = async (postId, title, content) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/posts/${postId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/${postId}`,
         { title, content },
         {
           withCredentials: true,
@@ -53,7 +53,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
   const fetchUserAvatar = async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/users/${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`
       );
       return response.data.avatar?.url || null;
     } catch (error) {
@@ -66,7 +66,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
     const fetchUserPostsData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/posts/user/${user.id}?page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/user/${user.id}?page=${currentPage}`,
           {
             credentials: "include",
           }
@@ -105,7 +105,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
             <div className="flex items-center mb-2">
               {avatars[post.user_id] ? (
                 <img
-                  src={`http://localhost:3000${avatars[post.user_id]}`}
+                  src={`${process.env.NEXT_PUBLIC_RAILS_URL}${avatars[post.user_id]}`}
                   alt={post.user.name}
                   width={60}
                   height={60}

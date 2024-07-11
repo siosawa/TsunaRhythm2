@@ -9,9 +9,12 @@ const PostDelete = ({ postId, posts, setPosts }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/api/v1/posts/${postId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/${postId}`,
+        {
+          withCredentials: true,
+        }
+      );
       setPosts(posts.filter((post) => post.id !== postId));
       closeDialog();
     } catch (error) {

@@ -1,0 +1,30 @@
+FROM --platform=linux/x86_64 ruby:3.3.0
+
+ENV LANG C.UTF-8
+ENV TZ Asia/Tokyo
+ENV RAILS_ENV=production
+
+RUN mkdir -p /myapp/tmp/sockets /myapp/tmp/pids
+WORKDIR /myapp
+
+# GemfileとGemfile.lockを先にコピーし、キャッシュを利用する
+COPY Gemfile Gemfile.lock /myapp/
+
+# Bundlerのバグを処理
+RUN gem update --system && bundle update --bundler && bundle install
+
+# アプリケーションのソースコードをコピー
+COPY . /myapp
+
+# 公開ディレクトリを削除し、再コピー
+RUN rm -rf /myapp/public
+COPY public /myapp/public
+
+VOLUME /myapp/tmp
+
+# エントリーポイントスクリプトをコピーし、実行可能にする
+COPY entrypoint.prod.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.prod.sh
+
+ENTRYPOINT ["entrypoint.prod.sh"]
+EXPOSE 3000

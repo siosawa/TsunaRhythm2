@@ -10,7 +10,7 @@ module Api
 
       # GET /api/v1/chats
       def index
-        @chats = Chat.where(room_id: params[:room_id]).order(created_at: :asc)
+        @chats = Chat.where(room_id: params[:room_id].to_i).order(created_at: :asc)
 
         if @chats.count > 100
           excess_chats = @chats.limit(@chats.count - 100)
@@ -47,7 +47,10 @@ module Api
       end
 
       def chat_params
-        params.require(:chat).permit(:content, :user_id, :room_id)
+        params.require(:chat).permit(:content, :user_id, :room_id).tap do |chat_params|
+          chat_params[:user_id] = chat_params[:user_id].to_i
+          chat_params[:room_id] = chat_params[:room_id].to_i
+        end
       end
 
       def logged_in_user

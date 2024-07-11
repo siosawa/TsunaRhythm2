@@ -17,7 +17,7 @@ const Room = () => {
       try {
         // ルームメンバーのデータを取得
         const roomMembersResponse = await fetch(
-          "http://localhost:3000/api/v1/room_members",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
           { credentials: "include" }
         );
         const roomMembers = await roomMembersResponse.json();

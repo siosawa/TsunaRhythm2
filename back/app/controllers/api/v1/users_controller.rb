@@ -26,7 +26,7 @@ module Api
       end
 
       def show
-        @user = fetch_users_with_counts.find(params[:id])
+        @user = fetch_users_with_counts.find(params[:id].to_i)
         render json: @user.as_json(
           except: %i[email password_digest]
         )
@@ -44,7 +44,7 @@ module Api
       end
 
       def update
-        @user = User.find(params[:id])
+        @user = User.find(params[:id].to_i)
         if @user.update(user_params)
           render json: { message: 'ユーザー情報の更新に成功しました', user: @user }, status: :ok
         else
@@ -53,7 +53,7 @@ module Api
       end
 
       def destroy
-        user = User.find_by(id: params[:id])
+        user = User.find_by(id: params[:id].to_i)
         if user.nil?
           render json: { message: 'ユーザーが見つかりませんでした' }, status: :not_found
           return
@@ -118,7 +118,7 @@ module Api
       end
 
       def correct_user
-        @user = User.find_by(id: params[:id])
+        @user = User.find_by(id: params[:id].to_i)
         return if current_user?(@user)
 
         render json: { status: 'failure', message: '不正なアクセスです' }, status: :forbidden

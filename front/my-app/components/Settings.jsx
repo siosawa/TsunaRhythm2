@@ -17,10 +17,13 @@ const Setting = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/v1/logout", {
-        method: "DELETE",
-        credentials: "include", // 必要に応じてクッキーを含める
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`,
+        {
+          method: "DELETE",
+          credentials: "include", // 必要に応じてクッキーを含める
+        }
+      );
 
       if (res.ok) {
         window.location.href = "/";
