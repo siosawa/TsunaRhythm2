@@ -4,7 +4,7 @@ test:
   collation: utf8mb4_unicode_ci
   username: root
   password: password
-  host: 127.0.0.1
+  host: db
   database: app_test
   reconnect: false
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
