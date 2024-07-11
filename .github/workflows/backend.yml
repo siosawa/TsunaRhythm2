@@ -23,8 +23,6 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306:3306
-        networks:
-          - test-network
 
       redis:
         image: redis:6.2
@@ -35,8 +33,6 @@ jobs:
           --health-retries 10
         ports:
           - 6379:6379
-        networks:
-          - test-network
 
     steps:
       - name: コードをチェックアウト
