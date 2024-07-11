@@ -10,6 +10,6 @@ test:
 
 production:
   adapter: redis
-  url: rediss://<%= ENV['REDIS_HOST'] %>:<%= ENV['REDIS_PORT']%>/0
+  url: rediss://<%= ENV['REDIS_HOST'] %>:<%= ENV['REDIS_PORT'].to_i%>/0
   channel_prefix: myapp_production
   ssl_params: { verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %> }
