@@ -57,6 +57,18 @@ jobs:
         working-directory: back
         run: cp config/database.yml.ci config/database.yml
 
+      - name: Wait for MySQL
+        run: sleep 30
+
+      - name: デバッグ情報を表示
+        run: |
+          echo "MySQLのデータベースを表示します"
+          mysql -h localhost -u root -ppassword -e 'SHOW DATABASES;'
+          echo "MySQLのユーザーを表示します"
+          mysql -h localhost -u root -ppassword -e 'SELECT User, Host FROM mysql.user;'
+          echo "MySQLの接続情報を表示します"
+          mysqladmin -h localhost -u root -ppassword version
+
       - name: データベースを作成およびマイグレーション
         working-directory: back
         run: |
@@ -91,24 +103,3 @@ jobs:
       - name: RuboCopを実行
         working-directory: back
         run: bundle exec rubocop
-  # ESlintはbabelの問題が改善できればおそらく以下のコードで実行できる
-  # ESLint:
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 10
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-
-  #     - name: Yarnをインストール
-  #       working-directory: front/my-app
-  #       run: yarn install --check-files
-
-  #     - name: Run ESLint
-  #       working-directory: front/my-app
-  #       run: yarn run lint
