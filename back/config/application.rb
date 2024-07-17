@@ -27,6 +27,9 @@ module TsunaRhythm
     # デフォルト設定で初期化
     config.load_defaults 7.0
 
+    # API専用とする
+    config.api_only = true
+
     # タイムゾーンを日本とする
     config.time_zone = 'Tokyo'
     config.active_record.default_timezone = :local
@@ -51,7 +54,8 @@ module TsunaRhythm
 
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
-    config.action_dispatch.cookies_same_site_protection = :none  
+    # config.middleware.use ActionController::RequestForgeryProtection
+    config.action_dispatch.cookies_same_site_protection = :lax
     config.active_storage.variant_processor = :mini_magick
   end
 end
