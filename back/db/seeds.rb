@@ -12,20 +12,17 @@ def create_user(name, email, work)
     user.work = work
     user.profile_text = "よろしくお願いします"
 
-    # ランダムに1~25のアバターを設定
-    avatar_number = rand(1..25)
-    # avatar_path = Rails.root.join("public/uploads/user/sample_avatar/#{avatar_number}.webp")
-    avatar_url = "/uploads/user/sample_avatar/#{avatar_number}.webp"
+    # 既存のユーザー数に基づいてアバター番号を設定
+    user_count = User.count
+    avatar_number = (user_count % 12) + 1
+    avatar_path = Rails.root.join("public/uploads/user/sample_avatar/#{avatar_number}.webp")
 
-    # アバターのURLを直接設定
-    user.avatar = avatar_url
-
-    # # CarrierWaveを使ってアバターをアップロード
-    # if File.exist?(avatar_path)
-    #   user.avatar = File.open(avatar_path)
-    # else
-    #   puts "Avatar file not found: #{avatar_path}"
-    # end
+    # CarrierWaveを使ってアバターをアップロード
+    if File.exist?(avatar_path)
+      user.avatar = File.open(avatar_path)
+    else
+      puts "Avatar file not found: #{avatar_path}"
+    end
 
     user.save!
   end
