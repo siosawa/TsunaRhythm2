@@ -2,11 +2,15 @@ require 'redis'
 require 'retryable'
 require 'openssl'
 require 'yaml'
+require 'mock_redis'
 
 # 既に$redisが設定されている場合は再設定を回避
 $redis ||= begin
   Retryable.retryable(tries: 5, on: Redis::CannotConnectError, sleep: 3) do
-    if Rails.env.production?
+    if Rails.env.test?
+      # テスト環境の場合、MockRedisを使用
+      redis = MockRedis.new
+    elsif Rails.env.production?
       redis_host = ENV['REDIS_HOST'] || 'localhost'
       redis_port = (ENV['REDIS_PORT'] || 6379).to_i  # 環境変数がない場合、デフォルト値を使用
 
