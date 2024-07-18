@@ -9,14 +9,13 @@ module Api
       def create
         user = User.find_by(email: params[:session][:email].downcase)
 
-        # userが有効かつ、パスワードが正しいか
         if user&.authenticate(params[:session][:password])
           reset_session
           remember(user)
           log_in(user)
-          render json: {}, status: :ok
+          render json: { message: 'ログインに成功しました。', user: user.as_json(only: %i[id email]) }, status: :ok
         else
-          render json: { error: 'ログイン失敗' }, status: :bad_request
+          render json: { error: 'ログインに失敗しました。' }, status: :unprocessable_entity
         end
       end
 
