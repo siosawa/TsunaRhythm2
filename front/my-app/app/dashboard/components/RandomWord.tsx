@@ -1,8 +1,8 @@
-import React from "react";
+import * as React from "react";
 
-const RandomWord = () => {
+const RandomWord: React.FC = () => {
   // 静的なランダムメッセージの配列
-  const randomWords = [
+  const randomWords: string[] = [
     "自分を信じて、一歩一歩進んでいこう。",
     "小さな進歩も大きな成果につながる。",
     "休むことも大切。リフレッシュしてまた頑張ろう。",
@@ -26,8 +26,8 @@ const RandomWord = () => {
   ];
 
   // ランダムなインデックスを生成
-  const randomIndex = Math.floor(Math.random() * randomWords.length);
-  const word = randomWords[randomIndex];
+  const randomIndex: number = Math.floor(Math.random() * randomWords.length);
+  const word: string = randomWords[randomIndex];
 
   return (
     <div className="p-5 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
