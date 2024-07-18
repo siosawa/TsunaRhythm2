@@ -25,7 +25,7 @@ RSpec.describe 'Sessions' do
         json = response.parsed_body
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(json['error']).to eq(I18n.t('sessions.create.flash.danger'))
+        expect(json['error']).to eq('ログインに失敗しました。')
       end
     end
   end

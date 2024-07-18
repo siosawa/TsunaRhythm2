@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import nookies from "nookies";
 
 const Setting = () => {
   const [error, setError] = useState("");
@@ -26,6 +27,11 @@ const Setting = () => {
       );
 
       if (res.ok) {
+        // クッキーを削除
+        nookies.destroy(null, "session_token");
+        nookies.destroy(null, "user_id");
+
+        // ログアウト成功後にホームページにリダイレクト
         window.location.href = "/";
       } else {
         const errorData = await res.json();

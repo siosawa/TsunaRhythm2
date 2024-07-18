@@ -19,7 +19,7 @@ class User < ApplicationRecord
 
   has_many :followers, through: :passive_relationships, source: :follower
 
-  # attr_accessor :remember_token, :reset_token
+  attr_accessor :remember_token, :reset_token
 
   # 大文字と小文字で複数メールアドレスを登録できないようにする。大抵のデータベースでは必要ない。
   before_save :downcase_email
@@ -35,6 +35,17 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   mount_uploader :avatar, AvatarUploader
+
+  # 永続的セッションのためにユーザーをデータベースに記憶する
+  def remember
+    self.remember_token = User.new_token
+    update_attribute(:remember_digest, User.digest(remember_token))
+  end
+
+  # ユーザーのログイン情報を破棄する
+  def forget
+    update_attribute(:remember_digest, nil)
+  end
 
   # 渡された文字列のハッシュ値を返す
   def self.digest(string)
@@ -53,7 +64,7 @@ class User < ApplicationRecord
 
   # セッションハイジャック防止のためにセッショントークンを返す(必要ない、もしくは無意味かもしれない)
   def session_token
-    # remember_digest || remember
+    remember_digest || remember
   end
 
   # 渡されたトークンがダイジェストと一致したらtrueを返す

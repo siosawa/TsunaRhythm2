@@ -10,9 +10,11 @@ def create_user(name, email, work)
     user.password = 'foobar'
     user.password_confirmation = 'foobar'
     user.work = work
+    user.profile_text = "よろしくお願いします"
 
-    # ランダムに1~25のアバターを設定
-    avatar_number = rand(1..25)
+    # 既存のユーザー数に基づいてアバター番号を設定
+    user_count = User.count
+    avatar_number = (user_count % 12) + 1
     avatar_path = Rails.root.join("public/uploads/user/sample_avatar/#{avatar_number}.webp")
 
     # CarrierWaveを使ってアバターをアップロード

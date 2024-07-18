@@ -4,6 +4,7 @@ import { TbTriangleInvertedFilled } from "react-icons/tb";
 import { IoMdSend } from "react-icons/io";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import { User } from "lucide-react";
 
 const GroupChat = ({ room_id }) => {
   const [chats, setChats] = useState([]);
@@ -190,7 +191,7 @@ const GroupChat = ({ room_id }) => {
                       }
                     >
                       {chat.user_id === currentUser?.id
-                        ? "You"
+                        ? currentUser.name
                         : otherUsers[chat.user_id]?.name || "User"}
                     </strong>
                     <div
