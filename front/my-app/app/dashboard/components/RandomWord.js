@@ -7,8 +7,8 @@ var RandomWord = function () {
         "自分を信じて、一歩一歩進んでいこう。",
         "小さな進歩も大きな成果につながる。",
         "休むことも大切。リフレッシュしてまた頑張ろう。",
-        "努力は必ず報われる。諦めないで。",
-        "夢に向かって進むあなたを応援しているよ。",
+        "努力はあなたの自信になる",
+        "目標に向かって進むあなたを応援しているよ。",
         "自分のペースで進んで大丈夫。",
         "失敗は成長のチャンス。前向きに捉えよう。",
         "焦らず、ゆっくり進んでいこう。",
@@ -28,8 +28,11 @@ var RandomWord = function () {
     // ランダムなインデックスを生成
     var randomIndex = Math.floor(Math.random() * randomWords.length);
     var word = randomWords[randomIndex];
-    return (<div className="p-5 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
-      <p className="font-bold">{word}</p>
-    </div>);
+    return (
+      <div className="relative p-5 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
+        <p className="absolute top-2 left-2 text-sm font-bold opacity-60 underline">今日のひとこと</p>
+        <p className="font-bold">{word}</p>
+      </div>
+    );
 };
 exports.default = RandomWord;
