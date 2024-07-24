@@ -152,7 +152,7 @@ const GraphProjectWorkingMinutes = () => {
   };
 
   return (
-    <div className="w-96 h-52 p-4 bg-white rounded-3xl custom_shadow_dark relative">
+    <div className="w-96 h-52 p-4 bg-white rounded-3xl shadow-custom-dark relative">
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex justify-center">

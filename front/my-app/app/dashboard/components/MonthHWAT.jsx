@@ -94,29 +94,35 @@ const MonthHWAT = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
-        <div className="w-full px-4">
-          <div className="flex items-center mb-2">
-            <RiMoneyCnyCircleLine className="text-black mr-2 text-5xl" />
-            <div className="flex flex-col text-left w-full">
-              <p className="text-xs font-normal text-black">今月の平均時給は</p>
-              <div className="flex justify-between">
-                <span className="text-2xl font-bold mt-1 italic underline">
-                  {averageHourlyWage}
-                </span>
-                <span className="text-2xl font-bold mt-1">&nbsp;円</span>
+      <div className="pb-3">
+        <div className="w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
+          <div className="w-full px-4">
+            <div className="flex items-center mb-2">
+              <RiMoneyCnyCircleLine className="text-black mr-2 text-5xl" />
+              <div className="flex flex-col text-left w-full">
+                <p className="text-xs font-normal text-black">
+                  今月の平均時給は
+                </p>
+                <div className="flex justify-between">
+                  <span className="text-2xl font-bold mt-1 italic underline">
+                    {averageHourlyWage}
+                  </span>
+                  <span className="text-2xl font-bold mt-1">&nbsp;円</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="flex items-center mt-4">
-            <RiMoneyCnyCircleFill className="text-black mr-2 text-5xl" />
-            <div className="flex flex-col text-left w-full">
-              <p className="text-xs font-normal text-black">今月の給与合計は</p>
-              <div className="flex justify-between">
-                <span className="text-2xl font-bold mt-1 italic underline">
-                  {totalSalary}
-                </span>
-                <span className="text-2xl font-bold mt-1">&nbsp;円</span>
+            <div className="flex items-center mt-4">
+              <RiMoneyCnyCircleFill className="text-black mr-2 text-5xl" />
+              <div className="flex flex-col text-left w-full">
+                <p className="text-xs font-normal text-black">
+                  今月の給与合計は
+                </p>
+                <div className="flex justify-between">
+                  <span className="text-2xl font-bold mt-1 italic underline">
+                    {totalSalary}
+                  </span>
+                  <span className="text-2xl font-bold mt-1">&nbsp;円</span>
+                </div>
               </div>
             </div>
           </div>

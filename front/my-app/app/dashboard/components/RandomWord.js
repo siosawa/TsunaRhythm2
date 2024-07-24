@@ -29,7 +29,7 @@ var RandomWord = function () {
     var randomIndex = Math.floor(Math.random() * randomWords.length);
     var word = randomWords[randomIndex];
     return (
-      <div className="relative p-5 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
+      <div className="relative p-4 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
         <p className="absolute top-2 left-2 text-sm font-bold opacity-60 underline">今日のひとこと</p>
         <p className="font-bold">{word}</p>
       </div>

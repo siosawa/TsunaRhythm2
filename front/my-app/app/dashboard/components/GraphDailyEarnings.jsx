@@ -140,7 +140,7 @@ const GraphDailyEarnings = () => {
   };
 
   return (
-    <div className="w-96 h-58 p-4 bg-white rounded-3xl shadow-md relative">
+    <div className="w-96 h-58 p-4 bg-white rounded-3xl shadow-custom-dark relative">
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       {error && <p className="text-red-500">{error}</p>}
       <Bar
