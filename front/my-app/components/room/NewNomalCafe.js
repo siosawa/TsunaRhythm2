@@ -118,39 +118,66 @@ const NewNomalCafe = () => {
       return;
     }
 
-    // 座席が既に埋まっている場合はクリックを無効化
-    if (seats[seatId]) {
-      console.error("Seat already reserved");
-      return;
-    }
-
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
-        method: "POST",
+      // 既存の座席情報を取得
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=5`, {
+        method: "GET",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          seat: { seat_id: seatId, room_id: 5, user_id: currentUser.id },
-        }),
       });
+
       if (response.ok) {
-        // 座席情報を更新して再レンダリングをトリガー
-        setSeats((prevSeats) => ({
-          ...prevSeats,
-          [seatId]: currentUser.id,
-        }));
+        const data = await response.json();
+        // 現在のユーザーが既に座席を持っているかチェック
+        const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
+
+        if (currentUserSeat) {
+          // 現在のユーザーの座席情報を削除
+          await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${currentUserSeat.id}`, {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          // 座席情報を更新して再レンダリングをトリガー
+          setSeats((prevSeats) => {
+            const updatedSeats = { ...prevSeats };
+            delete updatedSeats[currentUserSeat.seat_id];
+            return updatedSeats;
+          });
+        }
+
+        // 新しい座席を予約
+        const reserveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            seat: { seat_id: seatId, room_id: 5, user_id: currentUser.id },
+          }),
+        });
+
+        if (reserveResponse.ok) {
+          // 座席情報を更新して再レンダリングをトリガー
+          setSeats((prevSeats) => ({
+            ...prevSeats,
+            [seatId]: currentUser.id,
+          }));
+        } else {
+          console.error("Failed to reserve seat");
+        }
       } else {
-        console.error("Failed to reserve seat");
+        console.error("Failed to fetch seats");
       }
     } catch (error) {
-      console.error("Error reserving seat:", error);
+      console.error("Error handling seat click:", error);
     }
   };
-
-  // 現在のユーザーが既に座席を割り当てられているかをチェック
-  const isCurrentUserAssigned = Object.values(seats).includes(currentUser?.id);
 
   return (
     <>
@@ -175,7 +202,7 @@ const NewNomalCafe = () => {
               <button
                 className="bg-white bg-opacity-50 w-11 h-11 md:w-14 md:h-14 rounded-full ml-2"
                 onClick={() => handleSeatClick(seat.id)}
-                disabled={isCurrentUserAssigned || seats[seat.id]} // 座席が既に埋まっている場合に無効化
+                disabled={seats[seat.id] && seats[seat.id] !== currentUser?.id} // 自分以外のユーザーが座っている場合に無効化
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
