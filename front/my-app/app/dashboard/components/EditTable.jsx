@@ -9,6 +9,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 const EditTable = ({ onClose, onSave }) => {
   const [data, setData] = useState([]);
   const [originalData, setOriginalData] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージ用のステート
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +74,14 @@ const EditTable = ({ onClose, onSave }) => {
   };
 
   const saveData = async () => {
+    // プロジェクト名の重複をチェック
+    const projectNames = data.map((item) => item.name);
+    const uniqueProjectNames = new Set(projectNames);
+    if (projectNames.length !== uniqueProjectNames.size) {
+      setErrorMessage("同じ案件名は使えません");
+      return;
+    }
+
     const originalIds = originalData.map((item) => item.id);
     const currentIds = data.map((item) => item.id);
 
@@ -159,6 +168,9 @@ const EditTable = ({ onClose, onSave }) => {
               <CiCirclePlus className="text-5xl m-2" />
             </button>
           </div>
+          {errorMessage && ( // エラーメッセージの表示
+            <div className="text-red-500 mb-4">{errorMessage}</div>
+          )}
           <div className="overflow-y-auto max-h-[650px]">
             <table className="min-w-full table-auto border-collapse border border-gray-200">
               <thead className="bg-gray-100 whitespace-nowrap">
