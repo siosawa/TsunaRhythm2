@@ -81,7 +81,8 @@ https://tsunarhythm.com <br />
 | GitHub Actions(RSpec自動テスト,Rubocopコード整形) |
 
 <br />
-# 画面設計図/画面遷移圖
+
+# 画面設計図/画面遷移圖(figma)
 ※アプリ作成前のイメージサイトとして作成したものなので、実際のアプリケーションと多少乖離があります。
 https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%E3%82%BA%E3%83%A0?node-id=0-1&m=dev 
 
