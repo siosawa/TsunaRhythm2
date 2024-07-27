@@ -122,7 +122,7 @@ const ProjectHourlyWageRanking = () => {
           <li key={index} className="flex justify-between my-1">
             <span className="w-12 text-left px-4">{index + 1}位</span>
             <span className="flex-1 text-left">{project.name}</span>
-            <span className=" w-20 text-right px-4">
+            <span className="w-28 text-right px-4">
               {Math.floor(project.averageHourlyWage)}円
             </span>
           </li>
