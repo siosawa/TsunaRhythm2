@@ -2,12 +2,13 @@ import * as React from "react";
 
 const RandomWord: React.FC = () => {
   // 静的なランダムメッセージの配列
-  const randomWords: string[] = [
+  // VSコードがstingと理解しているのでコロンStrongは不要。基本的に型推論がつかないときだけ型を明示するようにする。
+  const randomWords = [
     "自分を信じて、一歩一歩進んでいこう。",
     "小さな進歩も大きな成果につながる。",
     "休むことも大切。リフレッシュしてまた頑張ろう。",
-    "努力は必ず報われる。諦めないで。",
-    "夢に向かって進むあなたを応援しているよ。",
+    "努力はあなたの自信になる",
+    "目標に向かって進むあなたを応援しているよ。",
     "自分のペースで進んで大丈夫。",
     "失敗は成長のチャンス。前向きに捉えよう。",
     "焦らず、ゆっくり進んでいこう。",
@@ -30,7 +31,7 @@ const RandomWord: React.FC = () => {
   const word: string = randomWords[randomIndex];
 
   return (
-    <div className="p-5 w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
+    <div className="mb-2 p-4 w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
       <p className="font-bold">{word}</p>
     </div>
   );

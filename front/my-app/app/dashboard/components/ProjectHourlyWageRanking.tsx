@@ -3,18 +3,62 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const ProjectHourlyWageRanking = () => {
-  const [ranking, setRanking] = useState([]);
-  const [error, setError] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+// ProjectとRecordの型を定義
+interface Project {
+  id: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-  const fetchRankingData = async () => {
+interface Record {
+  id: number;
+  user_id: number;
+  project_id: number;
+  minutes: number;
+  date: string;
+  created_at: string;
+  updated_at: string;
+  work_end: string;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+}
+
+interface ProjectHourlyWage {
+  name: string;
+  averageHourlyWage: number;
+}
+
+const ProjectHourlyWageRanking = () => {
+  const [ranking, setRanking] = useState<ProjectHourlyWage[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  const fetchRankingData = async (userId: number) => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
+        axios.get<Record[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
           withCredentials: true,
         }),
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
+        axios.get<Project[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
           withCredentials: true,
         }),
       ]);
@@ -23,7 +67,13 @@ const ProjectHourlyWageRanking = () => {
       const projects = projectsResponse.data || [];
 
       // projectごとの時給平均を計算
-      const projectHourlyWages = {};
+      const projectHourlyWages: {
+        [key: number]: {
+          totalUnitPriceTimesQuantity: number;
+          totalMinutes: number;
+          projectName: string;
+        };
+      } = {};
 
       records.forEach((record) => {
         const project = projects.find((p) => p.id === record.project_id);
@@ -63,16 +113,16 @@ const ProjectHourlyWageRanking = () => {
   }, [currentUser]);
 
   return (
-    <div className="p-5 w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center h-52 overflow-auto">
+    <div className="py-4 w-96 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center h-52 overflow-auto">
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <p className="font-bold">プロジェクト別時給平均ランキング</p>
       {error && <p className="text-red-500">{error}</p>}
       <ul className="w-full">
         {ranking.map((project, index) => (
           <li key={index} className="flex justify-between my-1">
-            <span className="flex-1 text-left">{index + 1}位</span>
-            <span className="flex-2 text-left w-48">{project.name}</span>
-            <span className="flex-1 text-right">
+            <span className="w-12 text-left px-4">{index + 1}位</span>
+            <span className="flex-1 text-left">{project.name}</span>
+            <span className=" w-20 text-right px-4">
               {Math.floor(project.averageHourlyWage)}円
             </span>
           </li>
@@ -80,6 +130,7 @@ const ProjectHourlyWageRanking = () => {
       </ul>
     </div>
   );
+  
 };
 
 export default ProjectHourlyWageRanking;

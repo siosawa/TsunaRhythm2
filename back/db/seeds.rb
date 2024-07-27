@@ -85,27 +85,42 @@ puts "フォローデータが作成されました。"
 unit_price_range = (1000..10000).to_a
 quantity_range = (2..15).to_a
 companies = ["三和農業株式会社", "ネットワークエキスパーツ株式会社", "東日本電力株式会社", "テクノロジーイノベーターズ株式会社", "教育支援株式会社", "サポートスペシャリスツ株式会社", "都市開発株式会社", "第一不動産株式会社", "マーケティンググルーズ株式会社", "未来技術研究所"]
-project_names = ["ウェブ開発プロジェクト", "モバイルアプリデザイン", "ビジネスコンサルティング", "デジタルマーケティングキャンペーン", "ITサポートサービス", "クラウドインフラ構築", "データ分析プロジェクト"]
+project_names = [
+  "ウェブ開発プロジェクト", 
+  "モバイルアプリデザイン", 
+  "ビジネスコンサルティング", 
+  "デジタルマーケティングキャンペーン", 
+  "ITサポートサービス", 
+  "クラウドインフラ構築", 
+  "データ分析プロジェクト",
+  "Eコマースプラットフォーム開発",
+  "サイバーセキュリティ監査",
+  "顧客関係管理システム導入",
+  "ERPシステム導入",
+  "オンライン教育プラットフォーム開発",
+  "機械学習モデル開発"
+]
 project_work_types = ["開発", "デザイン", "コンサルティング", "マーケティング", "サポート"]
 
 user_ids.each do |user_id|
-  project_count = rand(7..13)  # 各ユーザーに対して7から13のプロジェクトをランダムに作成
-  project_count.times do |i|
+  project_names.each_with_index do |project_name, i|
     created_at = rand(3.months.ago.to_f..Time.now.to_f).to_i
     Project.create!(
       user_id: user_id,
       company: companies.sample,
-      name: project_names.sample,
+      name: project_name,
       work_type: project_work_types.sample,
       unit_price: unit_price_range.sample,
       quantity: quantity_range.sample,
-      is_completed: i < project_count / 2 ? false : true,  # 半分はfalse、半分はtrueに設定
+      is_completed: i < project_names.size / 2 ? false : true,  # 半分はfalse、半分はtrueに設定
       created_at: Time.at(created_at)
     )
   end
 end
 
 puts "プロジェクトデータが作成されました。"
+
+
 
 # recordsテーブルのサンプルデータ作成
 user_ids.each do |user_id|

@@ -23,14 +23,40 @@ ChartJS.register(
   Legend
 );
 
+// Recordの型を定義
+interface Record {
+  id: number;
+  user_id: number;
+  project_id: number;
+  minutes: number;
+  date: string;
+  created_at: string;
+  updated_at: string;
+  work_end: string;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+}
+
 const GraphWorkingMinutes = () => {
   const currentMonth = new Date().getMonth(); // 現在の月を取得
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: [] as string[],
     datasets: [
       {
         label: "",
-        data: [],
+        data: [] as number[],
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
@@ -39,20 +65,20 @@ const GraphWorkingMinutes = () => {
     ],
   });
 
-  const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
-  const [error, setError] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [monthIndex, setMonthIndex] = useState<number>(currentMonth); // 初期値を現在の月に設定
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
-  const fetchData = async (userId, month) => {
+  const fetchData = async (userId: number, month: number) => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<Record[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         {
           withCredentials: true,
         }
       );
       const records = response.data || [];
-      const minutesPerDay = {};
+      const minutesPerDay: { [key: string]: number } = {};
       const selectedMonthRecords = records.filter(
         (record) => new Date(record.date).getMonth() === month
       );
@@ -117,7 +143,15 @@ const GraphWorkingMinutes = () => {
   };
 
   return (
-    <div className="w-96 h-58 p-4 bg-white rounded-3xl custom_shadow_dark relative">
+    <div className="w-96 h-56 p-6 bg-white rounded-3xl shadow-custom-dark relative">
+      <div className="absolute top-4 right-4 flex space-x-0">
+        <button onClick={handlePreviousMonth}>
+          <FiTriangle style={{ transform: 'rotate(270deg)' }} />
+        </button>
+        <button onClick={handleNextMonth}>
+          <FiTriangle style={{ transform: 'rotate(90deg)' }} />
+        </button>
+      </div>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       {error && <p className="text-red-500">{error}</p>}
       <Bar
@@ -139,18 +173,6 @@ const GraphWorkingMinutes = () => {
           },
         }}
       />
-      <button
-        onClick={handlePreviousMonth}
-        className="absolute top-6 right-7 transform -rotate-90"
-      >
-        <FiTriangle />
-      </button>
-      <button
-        onClick={handleNextMonth}
-        className="absolute top-6 right-3 transform rotate-90"
-      >
-        <FiTriangle />
-      </button>
     </div>
   );
 };
