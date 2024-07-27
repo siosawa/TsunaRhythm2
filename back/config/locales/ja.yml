@@ -36,6 +36,7 @@ ja:
         restrict_dependent_destroy:
           has_one: "%{record}が存在しているので削除できません"
           has_many: "%{record}が存在しているので削除できません"
+        taken_with_user: "案件名は重複しないようにしてください"
 
   sessions:
     create:
