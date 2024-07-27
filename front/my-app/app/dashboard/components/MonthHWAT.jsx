@@ -14,7 +14,7 @@ const MonthHWAT = () => {
       const recordsResponse = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         {
-          withCredentials: true, //クッキーを含める設定
+          withCredentials: true, // クッキーを含める設定
         }
       );
       const records = recordsResponse.data || [];
@@ -23,7 +23,7 @@ const MonthHWAT = () => {
       const projectsResponse = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
-          withCredentials: true, //クッキーを含める設定
+          withCredentials: true, // クッキーを含める設定
         }
       );
       const projects = projectsResponse.data || [];
@@ -32,11 +32,11 @@ const MonthHWAT = () => {
       // 現在の月を取得
       const currentMonth = new Date().getMonth();
 
-      // 初期設定を忘れずに
+      // 初期設定
       let totalSalary = 0;
       let totalMinutes = 0;
 
-      // おそらくmap関数でも可能。projectごとにループ処理を行う。
+      // プロジェクトごとにループ処理を行う
       projects.forEach((project) => {
         // すでに完了しているプロジェクトだけを抽出
         if (project.is_completed) {
@@ -75,7 +75,9 @@ const MonthHWAT = () => {
       });
 
       // 今月の平均時給を計算
-      const averageHourlyWage = (totalSalary / totalMinutes) * 60;
+      const averageHourlyWage = totalMinutes
+        ? (totalSalary / totalMinutes) * 60
+        : 0;
 
       // 結果をステートに設定
       setAverageHourlyWage(Math.floor(averageHourlyWage)); // 端数を切り捨て
@@ -85,6 +87,7 @@ const MonthHWAT = () => {
     }
   };
 
+  // currentUserの変更を監視してfetchDataを呼び出す
   useEffect(() => {
     if (currentUser) {
       fetchData(currentUser.id);
