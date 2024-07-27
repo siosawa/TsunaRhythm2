@@ -77,7 +77,6 @@ https://tsunarhythm.com <br />
 ----|
 | Docker/docker-compose |
 | AWS（ECS,ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ElastiCache） |
-| Terraform(インフラのコード管理) |
 | GitHub Actions(RSpec自動テスト,Rubocopコード整形) |
 
 <br />
