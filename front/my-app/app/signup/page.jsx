@@ -81,8 +81,8 @@ const SignUp = () => {
           setError(loginResponseData.error || "ログインに失敗しました");
           return;
         }
-        // アカウント作成・ログイン成功時に/roomへ遷移
-        window.location.href = "/rooms";
+        // アカウント作成時にダッシュボードページへ遷移
+        window.location.href = "/dashboard";
       } catch (error) {
         setError("ログインに失敗しました");
       }
