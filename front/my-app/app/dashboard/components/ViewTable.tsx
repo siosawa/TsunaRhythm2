@@ -3,14 +3,26 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EditTable from "./EditTable"; // EditTableコンポーネントのパスを適切に設定してください
 
+interface Project {
+  id: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 const ViewTable = () => {
-  const [projects, setProjects] = useState([]);
-  const [showEditTable, setShowEditTable] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showEditTable, setShowEditTable] = useState<boolean>(false);
 
   const fetchProjects = async () => {
-    // 関数をコンポーネントの外に移動
     try {
-      const response = await axios.get(
+      const response = await axios.get<Project[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
           withCredentials: true,
@@ -27,7 +39,6 @@ const ViewTable = () => {
   }, []);
 
   const handleSave = async () => {
-    // onSave 関数を追加
     await fetchProjects(); // データを再取得
     setShowEditTable(false); // モーダルを閉じる
   };
@@ -75,7 +86,7 @@ const ViewTable = () => {
           <tfoot className="bg-gray-100 sticky bottom-0 z-10">
             <tr>
               <td
-                colSpan="6"
+                colSpan={6}
                 className="px-2 py-1 border border-gray-200 text-center"
               >
                 <button

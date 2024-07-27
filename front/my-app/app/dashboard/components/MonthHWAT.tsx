@@ -5,13 +5,53 @@ import FetchCurrentUser from "@/components/FetchCurrentUser";
 import { RiMoneyCnyCircleLine } from "react-icons/ri";
 import { RiMoneyCnyCircleFill } from "react-icons/ri";
 
+// ProjectとRecordの型を定義
+interface Project {
+  id: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Record {
+  id: number;
+  user_id: number;
+  project_id: number;
+  minutes: number;
+  date: string;
+  created_at: string;
+  updated_at: string;
+  work_end: string;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+}
+
 const MonthHWAT = () => {
-  const [averageHourlyWage, setAverageHourlyWage] = useState(0);
-  const [totalSalary, setTotalSalary] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
-  const fetchData = async (userId) => {
+  const [averageHourlyWage, setAverageHourlyWage] = useState<number>(0);
+  const [totalSalary, setTotalSalary] = useState<number>(0);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  const fetchData = async (userId: number) => {
     try {
-      const recordsResponse = await axios.get(
+      const recordsResponse = await axios.get<Record[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         {
           withCredentials: true, // クッキーを含める設定
@@ -20,7 +60,7 @@ const MonthHWAT = () => {
       const records = recordsResponse.data || [];
       console.log("Records:", records);
 
-      const projectsResponse = await axios.get(
+      const projectsResponse = await axios.get<Project[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
           withCredentials: true, // クッキーを含める設定
@@ -40,7 +80,7 @@ const MonthHWAT = () => {
       projects.forEach((project) => {
         // すでに完了しているプロジェクトだけを抽出
         if (project.is_completed) {
-          // そのプロジェクトに関連するrecordsテーブルのレコードを取得。テーブル名わかりづらいかも？
+          // そのプロジェクトに関連するrecordsテーブルのレコードを取得
           const projectRecords = records.filter(
             (record) => record.project_id === project.id
           );
@@ -98,7 +138,7 @@ const MonthHWAT = () => {
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="pb-3">
-        <div className="w-[5cm] h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
+        <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
           <div className="w-full px-4">
             <div className="flex items-center mb-2">
               <RiMoneyCnyCircleLine className="text-black mr-2 text-5xl" />
@@ -115,7 +155,7 @@ const MonthHWAT = () => {
               </div>
             </div>
             <div className="flex items-center mt-4">
-              <RiMoneyCnyCircleFill className="text-black mr-2 text-5xl" />
+              <RiMoneyCnyCircleFill className="text-black mr-2 text-6xl" />
               <div className="flex flex-col text-left w-full">
                 <p className="text-xs font-normal text-black">
                   今月の給与合計は

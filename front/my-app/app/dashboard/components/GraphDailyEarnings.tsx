@@ -14,6 +14,7 @@ import { Bar } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
 import FetchCurrentUser from "@/components/FetchCurrentUser"; // FetchCurrentUserをインポート
 
+// Chart.jsの設定を登録
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -23,31 +24,70 @@ ChartJS.register(
   Legend
 );
 
+// ProjectとRecordの型を定義
+interface Project {
+  id: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Record {
+  id: number;
+  user_id: number;
+  project_id: number;
+  minutes: number;
+  date: string;
+  created_at: string;
+  updated_at: string;
+  work_end: string;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+}
+
 const GraphDailyEarnings = () => {
   const currentMonth = new Date().getMonth(); // 現在の月を取得
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: [] as string[],
     datasets: [
       {
         label: "",
-        data: [],
+        data: [] as number[],
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
       },
     ],
   });
-  const [monthIndex, setMonthIndex] = useState(currentMonth); // 初期値を現在の月に設定
-  const [error, setError] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null); // currentUserの状態を追加
+  const [monthIndex, setMonthIndex] = useState<number>(currentMonth); // 初期値を現在の月に設定
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); // currentUserの状態を追加
 
-  const fetchData = async (userId, month) => {
+  const fetchData = async (userId: number, month: number) => {
     try {
       const [projectsResponse, recordsResponse] = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
+        axios.get<Project[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
           withCredentials: true,
         }),
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
+        axios.get<Record[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
           withCredentials: true,
         }),
       ]);
@@ -59,7 +99,7 @@ const GraphDailyEarnings = () => {
         (project) => project.is_completed
       );
 
-      const earningsPerDay = {};
+      const earningsPerDay: { [key: string]: number } = {};
       const year = new Date().getFullYear();
 
       // 今月のrecordsデータを取得
@@ -140,7 +180,15 @@ const GraphDailyEarnings = () => {
   };
 
   return (
-    <div className="w-96 h-58 p-4 bg-white rounded-3xl shadow-custom-dark relative">
+    <div className="w-96 h-56 p-6 bg-white rounded-3xl shadow-custom-dark relative">
+      <div className="absolute top-4 right-4 flex space-x-0">
+        <button onClick={handlePreviousMonth}>
+          <FiTriangle style={{ transform: 'rotate(270deg)' }} />
+        </button>
+        <button onClick={handleNextMonth}>
+          <FiTriangle style={{ transform: 'rotate(90deg)' }} />
+        </button>
+      </div>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       {error && <p className="text-red-500">{error}</p>}
       <Bar
@@ -162,18 +210,6 @@ const GraphDailyEarnings = () => {
           },
         }}
       />
-      <button
-        onClick={handlePreviousMonth}
-        className="absolute top-6 right-7 transform -rotate-90"
-      >
-        <FiTriangle />
-      </button>
-      <button
-        onClick={handleNextMonth}
-        className="absolute top-6 right-3 transform rotate-90"
-      >
-        <FiTriangle />
-      </button>
     </div>
   );
 };

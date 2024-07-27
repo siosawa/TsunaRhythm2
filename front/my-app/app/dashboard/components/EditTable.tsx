@@ -1,32 +1,52 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
 import { CiCirclePlus } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 
-const EditTable = ({ onClose, onSave }) => {
-  const [data, setData] = useState([]);
-  const [originalData, setOriginalData] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージ用のステート
+// Projectインターフェースを定義
+interface Project {
+  id: number;
+  originalId: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// コンポーネントのプロパティの型を定義
+interface EditTableProps {
+  onClose: () => void;
+  onSave: () => void;
+}
+
+const EditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
+  const [data, setData] = useState<Project[]>([]);
+  const [originalData, setOriginalData] = useState<Project[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get(
+        const result = await axios.get<Project[]>(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
           {
-            withCredentials: true, // クッキーを含める設定
+            withCredentials: true,
           }
         );
         const dataWithId = result.data.map((item) => ({
           ...item,
-          id: uuidv4(),
+          id: item.id,
           originalId: item.id,
         }));
         setData(dataWithId);
-        console.log(dataWithId);
         setOriginalData(dataWithId);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -36,10 +56,14 @@ const EditTable = ({ onClose, onSave }) => {
     fetchData();
   }, []);
 
-  const handleChange = (e, id, field) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    id: number,
+    field: keyof Project
+  ) => {
     const newData = data.map((item) => {
       if (item.id === id) {
-        let value = e.target.value;
+        let value: any = e.target.value;
         if (e.target.type === "checkbox") {
           value = e.target.checked;
         }
@@ -50,14 +74,24 @@ const EditTable = ({ onClose, onSave }) => {
     setData(newData);
   };
 
-  const handleNumberChange = (e, id, field) => {
-    const value = Math.max(0, e.target.value);
-    handleChange({ target: { value } }, id, field);
+  const handleNumberChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    id: number,
+    field: keyof Project
+  ) => {
+    const value = Math.max(0, parseInt(e.target.value, 10));
+    const event = {
+      ...e,
+      target: { ...e.target, value: value.toString() } as EventTarget & HTMLInputElement,
+    };
+    handleChange(event as ChangeEvent<HTMLInputElement>, id, field);
   };
 
   const addEmptyRow = () => {
-    const newRow = {
-      id: uuidv4(),
+    const newRow: Project = {
+      id: uuidv4() as unknown as number,
+      originalId: 0,
+      user_id: 0,
       company: "",
       name: "",
       work_type: "",
@@ -68,13 +102,12 @@ const EditTable = ({ onClose, onSave }) => {
     setData([newRow, ...data]);
   };
 
-  const deleteRow = (id) => {
+  const deleteRow = (id: number) => {
     const newData = data.filter((item) => item.id !== id);
     setData(newData);
   };
 
   const saveData = async () => {
-    // プロジェクト名の重複をチェック
     const projectNames = data.map((item) => item.name);
     const uniqueProjectNames = new Set(projectNames);
     if (projectNames.length !== uniqueProjectNames.size) {
@@ -94,7 +127,7 @@ const EditTable = ({ onClose, onSave }) => {
       if (originalItem) {
         try {
           await axios.delete(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${originalItem.originalId}`, // 元のIDを使用
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${originalItem.originalId}`,
             {
               withCredentials: true,
             }
@@ -132,7 +165,7 @@ const EditTable = ({ onClose, onSave }) => {
       ) {
         try {
           await axios.put(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${originalItem.originalId}`, // 元のIDを使用
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${originalItem.originalId}`,
             newItem,
             {
               withCredentials: true,
@@ -158,17 +191,14 @@ const EditTable = ({ onClose, onSave }) => {
             ✕
           </Button>
           <div className="flex items-center mb-4">
-            <Button
-              onClick={saveData}
-              className="bg-emerald-500 hover:bg-emerald-600"
-            >
+            <Button onClick={saveData} className="bg-emerald-500 hover:bg-emerald-600">
               保存
             </Button>
-            <button onClick={addEmptyRow}>
+            <Button variant="ghost" onClick={addEmptyRow}>
               <CiCirclePlus className="text-5xl m-2" />
-            </button>
+            </Button>
           </div>
-          {errorMessage && ( // エラーメッセージの表示
+          {errorMessage && (
             <div className="text-red-500 mb-4">{errorMessage}</div>
           )}
           <div className="overflow-y-auto max-h-[650px]">
@@ -255,8 +285,9 @@ const EditTable = ({ onClose, onSave }) => {
                     </td>
                     <td className="px-1 py-1 border border-gray-200">
                       <Button
+                        variant="ghost"
                         onClick={() => deleteRow(item.id)}
-                        className="bg-white text-brack hover:bg-gray-50"
+                        className="bg-white text-black hover:bg-gray-50"
                       >
                         <RiDeleteBinLine />
                       </Button>
