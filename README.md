@@ -1,6 +1,11 @@
 # オンラインワークスペース「つなリズム」 
 https://tsunarhythm.com <br />
 登録せずにお試しいただくことができます。
+
+Qiitaはこちら→ https://qiita.com/sawata0324
+はてなブログはこちら→ https://sawata0324.hatenablog.com/
+Wantedlyはこちら→ https://www.wantedly.com/id/sawata_0324
+
 # サービス概要・制作背景
 ◇サービス名 : オンラインワークスペース「つなリズム」
 <br />
