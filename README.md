@@ -13,7 +13,7 @@ https://tsunarhythm.com <br />
 ◇差別化した点 : 本サービスは、ただのワークスペースではなく、ユーザーの自己分析を支援し、同業者との繋がりを深めることを可能にするSNS機能を備えています。また、作業時間の追跡や時給計算を自動化し、プロジェクト管理を容易にするツールを提供します。
 
 # アプリケーションのイメージ
-![イメージ動画 2](https://github.com/user-attachments/assets/287f9021-e6e6-419d-a41f-e0e2410d0b6c)
+![イメージ動画 4](https://github.com/user-attachments/assets/93b2b3f6-dad8-4c73-9ee5-d322630ffcbd)
 ### アカウント作成/ログイン後の基本的な使用フロー
 #### ダッシュボードページにて自分の獲得した案件の詳細を記入します。
 https://github.com/user-attachments/assets/24756487-d816-465c-bccc-010162d3762e
