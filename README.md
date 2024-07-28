@@ -134,7 +134,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 # 学習・作成工程
 ※は途中までという意味です。
 1. 2022/10中頃から2ヶ月間:
-    1. キタミ式IT塾基本情報技術者検定 第17章まで
+    - キタミ式IT塾基本情報技術者検定 第17章まで
     2. Linux標準教科書 ハンズオンで1冊
     3. Progate修了(HTML/CSS,Git,CLI※,JavaScript/Ruby※/SQL/Python※)
     4. Udemy 「GitとGithub(山浦清透)」修了
