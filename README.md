@@ -135,9 +135,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 ※は途中までという意味です。
 1. 番号付きリスト1
     1. 番号付きリスト1-1
-    1. 番号付きリスト1-2
-1. 番号付きリスト2
-1. 番号付きリスト3
+        1. 番号付きリスト1-2
 1. 2022/10中頃から2ヶ月間:
     1. キタミ式IT塾基本情報技術者検定 第17章まで
     2. Linux標準教科書 ハンズオンで1冊
@@ -145,30 +143,30 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
     4. Udemy 「GitとGithub(山浦清透)」修了
     5. アルゴリズムとデータ構造※(石畑清)
 2. 2023/11~12:
-  1. Railsチュートリアルを修了
-  2. ポートフォリオの企画作成
-  3. ポートフォリオの計画作成
-  4. Figmaを使った画面設計図と画面遷移図の作成
-  5. ER図の学習・作成
+    1. Railsチュートリアルを修了
+    2. ポートフォリオの企画作成
+    3. ポートフォリオの計画作成
+    4. Figmaを使った画面設計図と画面遷移図の作成
+    5. ER図の学習・作成
 3. 2023/1:
-  1. 各言語とLinux・IT基礎知識の総復習
-  2. Githubとの接続
-  3. ポートフォリオの作成(基本機能のみ)
+    1. 各言語とLinux・IT基礎知識の総復習
+    2. Githubとの接続
+    3. ポートフォリオの作成(基本機能のみ)
 4. 2023/2~3:
-  1. docker-composeによる環境作成
-  2. リーダブルコードの読了
-  3. Rspecのテスト作成(75)
-  4. Rubocopのコード整形
-  5. Prettierの導入
-  6. ESlintの導入
-  7. GithubActionsによるCI設定
-  8. AWS
-    1. Udemy「AWSコンテナサービス入門 しま(5時間)」修了
-     Udemy「GithubActionsで学ぶCI/CD入門 しま(4時間)」修了
-     RDS,S3,ACM,ECR,VPSを使用してEC2によるデプロイ
-     ECSonFargateへのデプロイ
-     Codeシリーズを使ったCI/CDパイプラインを作成
-     ALBによる負荷分散
+    1. docker-composeによる環境作成
+    2. リーダブルコードの読了
+    3. Rspecのテスト作成(75)
+    4. Rubocopのコード整形
+    5. Prettierの導入
+    6. ESlintの導入
+    7. GithubActionsによるCI設定
+    8. AWS
+        1. Udemy「AWSコンテナサービス入門 しま(5時間)」修了
+        2. Udemy「GithubActionsで学ぶCI/CD入門 しま(4時間)」修了
+        3. RDS,S3,ACM,ECR,VPSを使用してEC2によるデプロイ
+        4. ECSonFargateへのデプロイ
+        5. Codeシリーズを使ったCI/CDパイプラインを作成
+        6. ALBによる負荷分散
 12. 2024/4:
 　　1. Udemy「React完全入門ガイド CodeMafia(27時間)」修了
 　　2. Udemy「TailwindCSS3.0 shincode(3.5時間)」修了
