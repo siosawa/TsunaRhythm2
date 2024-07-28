@@ -202,4 +202,3 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 10. 7/11~:
     - 軽微なバグ改善、軽微なUI/UXの改善
     - ダッシュボード機能のTypeScript化
-    - 転職活動のための準備
