@@ -132,7 +132,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
  - WebSocket通信を行うためのredisをタスク定義で立ち上げるのではなくElastiCacheを使って立ち上げることで運用管理の負担を軽減しました。
  - GithubActionsを利用してCIを実現しました。
 
-# 学習・作成工程
+# IT学習・ポートフォリオ作成工程
 ※は途中までという意味です。
 1. 2022/10~11:
     - キタミ式IT塾基本情報技術者検定 第17章まで
