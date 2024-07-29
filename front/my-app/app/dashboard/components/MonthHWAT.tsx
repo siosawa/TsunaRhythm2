@@ -1,9 +1,8 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
-import { RiMoneyCnyCircleLine } from "react-icons/ri";
-import { RiMoneyCnyCircleFill } from "react-icons/ri";
+import { RiMoneyCnyCircleLine, RiMoneyCnyCircleFill } from "react-icons/ri";
 
 // ProjectとRecordの型を定義
 interface Project {
@@ -44,17 +43,17 @@ interface CurrentUser {
   };
 }
 
-const MonthHWAT = () => {
+const MonthHWAT: React.FC = () => {
   const [averageHourlyWage, setAverageHourlyWage] = useState<number>(0);
   const [totalSalary, setTotalSalary] = useState<number>(0);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
-  const fetchData = async (userId: number) => {
+  const fetchData = async (userId: number): Promise<void> => {
     try {
       const recordsResponse = await axios.get<Record[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         {
-          withCredentials: true, // クッキーを含める設定
+          withCredentials: true,
         }
       );
       const records = recordsResponse.data || [];
@@ -63,7 +62,7 @@ const MonthHWAT = () => {
       const projectsResponse = await axios.get<Project[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
-          withCredentials: true, // クッキーを含める設定
+          withCredentials: true,
         }
       );
       const projects = projectsResponse.data || [];
@@ -127,7 +126,6 @@ const MonthHWAT = () => {
     }
   };
 
-  // currentUserの変更を監視してfetchDataを呼び出す
   useEffect(() => {
     if (currentUser) {
       fetchData(currentUser.id);
@@ -137,35 +135,29 @@ const MonthHWAT = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="pb-3">
-        <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
-          <div className="w-full px-4">
-            <div className="flex items-center mb-2">
-              <RiMoneyCnyCircleLine className="text-black mr-2 text-5xl" />
-              <div className="flex flex-col text-left w-full">
-                <p className="text-xs font-normal text-black">
-                  今月の平均時給は
-                </p>
-                <div className="flex justify-between">
-                  <span className="text-2xl font-bold mt-1 italic underline">
-                    {averageHourlyWage}
-                  </span>
-                  <span className="text-2xl font-bold mt-1">&nbsp;円</span>
-                </div>
+      <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
+        <div className="w-full px-4">
+          <div className="flex items-center mb-2">
+            <RiMoneyCnyCircleLine className="text-black mr-2 text-4xl" />
+            <div className="flex flex-col text-left w-full">
+              <p className="text-xs font-normal text-black">今月の平均時給は</p>
+              <div className="flex justify-between">
+                <span className="text-2xl font-bold mt-1 italic underline">
+                  {averageHourlyWage}
+                </span>
+                <span className="text-2xl font-bold mt-1">&nbsp;円</span>
               </div>
             </div>
-            <div className="flex items-center mt-4">
-              <RiMoneyCnyCircleFill className="text-black mr-2 text-6xl" />
-              <div className="flex flex-col text-left w-full">
-                <p className="text-xs font-normal text-black">
-                  今月の給与合計は
-                </p>
-                <div className="flex justify-between">
-                  <span className="text-2xl font-bold mt-1 italic underline">
-                    {totalSalary}
-                  </span>
-                  <span className="text-2xl font-bold mt-1">&nbsp;円</span>
-                </div>
+          </div>
+          <div className="flex items-center mt-4">
+            <RiMoneyCnyCircleFill className="text-black mr-2 text-4xl" />
+            <div className="flex flex-col text-left w-full">
+              <p className="text-xs font-normal text-black">今月の給与合計は</p>
+              <div className="flex justify-between">
+                <span className="text-2xl font-bold mt-1 italic underline">
+                  {totalSalary}
+                </span>
+                <span className="text-2xl font-bold mt-1">&nbsp;円</span>
               </div>
             </div>
           </div>
