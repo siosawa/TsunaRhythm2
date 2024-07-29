@@ -63,15 +63,22 @@ const WorkTypeHourlyWageRanking = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-96 h-56 py-4 text-sm bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto">
-        <p className="font-bold">ワークの種類別時給平均ランキング</p>
+      <div className="w-96 h-56 bg-white text-mx shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto border-2 border-blue-500">
+        <p className="py-2 w-full font-bold bg-blue-500 text-white">
+          ワークの種類別時給平均ランキング
+        </p>
         {error && <p className="text-red-500">{error}</p>}
-        <ul className="w-full">
+        <ul className="w-96 rounded-full">
           {ranking.map((work_type, index) => (
-            <li key={index} className="flex justify-between my-1">
+            <li
+              key={index}
+              className={`flex justify-between my-1 ${
+                index % 2 === 0 ? "bg-sky-100" : "bg-sky-200"
+              }`}
+            >
               <span className="w-16 text-left px-4">{index + 1}位</span>
               <span className="flex-1 text-left">{work_type.name}</span>
-              <span className="w-24 text-right px-4">
+              <span className="w-28 text-right px-4">
                 {Math.floor(work_type.averageHourlyWage)}円
               </span>
             </li>

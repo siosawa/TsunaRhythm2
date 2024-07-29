@@ -31,7 +31,7 @@ const RandomWord = () => {
   const word = randomWords[randomIndex];
 
   return (
-    <div className="px-4 w-48 h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center">
+    <div className="px-4 w-48 h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center border-2 border-blue-500">
       <p className="font-bold">{word}</p>
     </div>
   );

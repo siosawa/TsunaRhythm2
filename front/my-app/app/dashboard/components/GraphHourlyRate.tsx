@@ -192,7 +192,7 @@ const GraphHourlyRate = () => {
   };
 
   return (
-    <div className="w-96 h-56 p-6 bg-white rounded-3xl shadow-custom-dark relative">
+    <div className="w-96 h-56 p-6 bg-white rounded-3xl shadow-custom-dark relative border-2 border-blue-500">
       <div className="absolute top-4 right-4 flex space-x-0">
         <button onClick={handlePreviousMonth}>
           <FiTriangle style={{ transform: 'rotate(270deg)' }} />
