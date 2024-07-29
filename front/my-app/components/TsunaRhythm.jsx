@@ -7,8 +7,8 @@ const TsunaRhythm = () => {
       <Image
         src="/TsunaRhythm_logo.PNG"
         alt="TsunaRhythm"
-        width={350}
-        height={320}
+        width={400}
+        height={300}
         layout="intrinsic"
       />
     </div>
