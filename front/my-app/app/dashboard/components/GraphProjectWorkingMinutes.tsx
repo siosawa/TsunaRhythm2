@@ -85,7 +85,7 @@ const GraphProjectWorkingMinutes = () => {
   const [projects, setProjects] = useState<Project[]>([]); // プロジェクトデータを保存
   const [selectedProject, setSelectedProject] = useState<string>(
     "案件別作業時間：案件を選択"
-  ); 
+  );
 
   const fetchData = async (userId: number, month: number) => {
     try {
@@ -143,12 +143,17 @@ const GraphProjectWorkingMinutes = () => {
 
     const year = new Date().getFullYear();
 
+    // 日付順にソート
+    const sortedDates = Object.keys(minutesPerDay).sort((a, b) => {
+      return new Date(a).getTime() - new Date(b).getTime();
+    });
+
     setChartData({
-      labels: Object.keys(minutesPerDay),
+      labels: sortedDates,
       datasets: [
         {
           label: `${year}年${month + 1}月の作業時間(分) 計: ${totalHours}時間`,
-          data: Object.values(minutesPerDay),
+          data: sortedDates.map(date => minutesPerDay[date]),
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,

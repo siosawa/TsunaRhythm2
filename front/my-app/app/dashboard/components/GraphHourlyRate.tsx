@@ -143,12 +143,17 @@ const GraphHourlyRate = () => {
           earningsPerDay[date] / (workMinutesPerDay[date] / 60);
       });
 
+      // 日付順にソート
+      const sortedDates = Object.keys(hourlyRatePerDay).sort((a, b) => {
+        return new Date(a).getTime() - new Date(b).getTime();
+      });
+
       setChartData({
-        labels: Object.keys(hourlyRatePerDay),
+        labels: sortedDates,
         datasets: [
           {
             label: `${year}年${month + 1}月の日毎の時給`,
-            data: Object.values(hourlyRatePerDay),
+            data: sortedDates.map(date => hourlyRatePerDay[date]),
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
