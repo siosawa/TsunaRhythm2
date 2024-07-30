@@ -21,15 +21,15 @@ const Dashboard = () => {
           </div>
           <ViewTable />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-5">
           <GraphWorkingMinutes />
           <GraphProjectWorkingMinutes />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-5">
           <GraphHourlyRate />
           <GraphDailyEarnings />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-5">
           <ProjectHourlyWageRanking />
           <WorkTypeHourlyWageRanking />
         </div>
