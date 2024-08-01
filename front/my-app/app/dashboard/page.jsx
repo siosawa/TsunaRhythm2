@@ -1,4 +1,3 @@
-import { Calendar } from "@/components/ui/calendar";
 import MonthHWAT from "./components/MonthHWAT";
 import RandomWord from "./components/RandomWord";
 import GraphWorkingMinutes from "./components/GraphWorkingMinutes";
@@ -7,7 +6,6 @@ import GraphDailyEarnings from "./components/GraphDailyEarnings";
 import GraphProjectWorkingMinutes from "./components/GraphProjectWorkingMinutes";
 import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
 import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
-import TsunaRhythm from "@/components/TsunaRhythm";
 import ViewTable from "./components/ViewTable";
 
 const Dashboard = () => {
@@ -33,10 +31,6 @@ const Dashboard = () => {
           <ProjectHourlyWageRanking />
           <WorkTypeHourlyWageRanking />
         </div>
-        {/* <Calendar /> */}
-        {/* <div className="col-span-2 justify-center items-center bg-orange-200 rounded-3xl shadow-custom-dark">
-          <TsunaRhythm />
-        </div> */}
       </div>
     </>
   );
