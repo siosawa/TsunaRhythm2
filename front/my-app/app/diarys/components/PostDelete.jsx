@@ -57,7 +57,7 @@ const PostDelete = ({ postId, posts, setPosts }) => {
               </Button>
               <Button
                 variant="destructive"
-                className="rounded-3xl  bg-red-600 hover:bg-red-700"
+                className="rounded-3xl  bg-red-600 hover:bg-red-700 text-white"
                 onClick={handleDelete}
               >
                 削除する

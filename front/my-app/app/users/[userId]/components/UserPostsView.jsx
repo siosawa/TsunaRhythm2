@@ -127,7 +127,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
                     {post.user_id === post.current_user_id && (
                       <>
                         <Button
-                          className="bg-sky-500 hover:bg-sky-600"
+                          className="bg-sky-500 hover:bg-sky-600 text-white"
                           onClick={() => handleEditClick(post)}
                         >
                           編集
