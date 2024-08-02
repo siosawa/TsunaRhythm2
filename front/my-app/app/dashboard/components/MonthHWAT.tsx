@@ -135,7 +135,7 @@ const MonthHWAT: React.FC = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center border-2 border-blue-500">
+      <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center border-2 border-orange-500">
         <div className="w-full px-3">
           <div className="flex items-center mb-2">
             <RiMoneyCnyCircleLine className="text-black mr-2 text-4xl" />

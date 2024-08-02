@@ -32,9 +32,9 @@ const ViewTable = () => {
 
   return (
     <div>
-      <div className="mt-6 w-96 h-56 bg-white rounded-3xl shadow-custom-dark max-w-2xl overflow-y-auto border-2 border-blue-500">
+      <div className="mt-9 w-96 h-56 bg-white rounded-3xl shadow-custom-dark max-w-2xl overflow-y-auto border-2 border-orange-500">
         <table className="min-w-full table-auto">
-          <thead className="bg-blue-500 text-white sticky top-0 z-10">
+          <thead className="bg-orange-400 text-white sticky top-0 z-10">
             <tr>
               <th className="px-2 py-1 text-sm">案件名</th>
               <th className="px-1 py-1 text-sm w-14">単価</th>
@@ -47,7 +47,7 @@ const ViewTable = () => {
               <tr
                 key={project.id}
                 className={`text-center ${
-                  index % 2 === 0 ? "bg-sky-100" : "bg-sky-200"
+                  index % 2 === 0 ? "bg-orange-100" : "bg-orange-200"
                 }`}
               >
                 <td className="px-1 py-1 border border-gray-200 text-sm">
@@ -69,7 +69,7 @@ const ViewTable = () => {
             <tr>
               <td
                 colSpan={5}
-                className="px-2 text-center bg-blue-500 text-white font-bold"
+                className="px-2 text-center bg-orange-400 text-white font-bold"
               >
                 <button
                   className="hover:underline"

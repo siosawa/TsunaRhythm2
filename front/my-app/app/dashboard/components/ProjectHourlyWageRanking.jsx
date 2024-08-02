@@ -65,8 +65,8 @@ const ProjectHourlyWageRanking = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-96 h-56 text-xm bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto border-2 border-blue-500">
-        <p className="w-full py-2 bg-blue-500 text-white font-bold">
+      <div className="w-96 h-56 text-xm bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto border-2 border-orange-500">
+        <p className="w-full py-2 bg-orange-400 text-white font-bold">
           プロジェクト別時給平均ランキング
         </p>
         {error && <p className="text-red-500">{error}</p>}
@@ -75,7 +75,7 @@ const ProjectHourlyWageRanking = () => {
             <li
               key={index}
               className={`flex justify-between my-1 ${
-                index % 2 === 0 ? "bg-sky-100" : "bg-sky-200"
+                index % 2 === 0 ? "bg-orange-100" : "bg-orange-200"
               }`}
             >
               <span className="w-16 text-left px-4">{index + 1}位</span>
