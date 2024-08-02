@@ -66,7 +66,7 @@ const ProjectHourlyWageRanking = () => {
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="w-96 h-56 text-xm bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto border-2 border-orange-500">
-        <p className="w-full py-2 bg-orange-400 text-white font-bold">
+        <p className="w-full py-2 bg-orange-400 text-white font-bold sticky top-0 z-10">
           プロジェクト別時給平均ランキング
         </p>
         {error && <p className="text-red-500">{error}</p>}

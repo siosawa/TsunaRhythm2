@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import EditRecord from "./EditRecord"; // EditRecordコンポーネントをインポート
+import EditRecord from "./EditRecord";
 import { IoNewspaperOutline, IoNewspaper } from "react-icons/io5";
+import { FiTriangle } from "react-icons/fi";
 
 const ViewTimerRecord = ({ dataUpdated }) => {
   const [records, setRecords] = useState([]);
@@ -141,8 +142,12 @@ const ModalTimerRecord = ({ records, projects, handleEditClick }) => {
                 colSpan="3"
                 className="px-1 py-1 border border-gray-200 text-center"
               >
-                <button className="hover:underline" onClick={handleEditClick}>
+                <button
+                  className="hover:underline inline-flex items-center"
+                  onClick={handleEditClick}
+                >
                   編集
+                  <FiTriangle className="ml-1 transform rotate-180" size={12} />
                 </button>
               </td>
             </tr>

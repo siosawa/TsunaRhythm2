@@ -6,7 +6,7 @@ import GraphDailyEarnings from "./components/GraphDailyEarnings";
 import GraphProjectWorkingMinutes from "./components/GraphProjectWorkingMinutes";
 import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
 import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
-import ViewTable from "./components/ViewTable";
+import ProjectViewTable from "./components/ProjectViewTable";
 
 const Dashboard = () => {
   return (
@@ -17,7 +17,11 @@ const Dashboard = () => {
             <MonthHWAT />
             <RandomWord />
           </div>
-          <ViewTable />
+          <ProjectViewTable />
+        </div>
+        <div className="space-y-5">
+          <ProjectHourlyWageRanking />
+          <WorkTypeHourlyWageRanking />
         </div>
         <div className="space-y-5">
           <GraphWorkingMinutes />
@@ -26,10 +30,6 @@ const Dashboard = () => {
         <div className="space-y-5">
           <GraphHourlyRate />
           <GraphDailyEarnings />
-        </div>
-        <div className="space-y-5">
-          <ProjectHourlyWageRanking />
-          <WorkTypeHourlyWageRanking />
         </div>
       </div>
     </>
