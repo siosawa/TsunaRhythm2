@@ -27,7 +27,7 @@ interface EditTableProps {
   onSave: () => void;
 }
 
-const EditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
+const ProjectEditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
   const [data, setData] = useState<Project[]>([]);
   const [originalData, setOriginalData] = useState<Project[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -183,7 +183,7 @@ const EditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50">
       <div className="mt-16 mx-7">
-        <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative">
+        <div className="bg-white rounded-3xl shadow-custom-dark max-w-3xl w-full px-6 pb-6 pt-10 relative ">
           <Button
             onClick={onClose}
             className="absolute top-4 right-4 bg-gray-300 hover:bg-gray-400 text-black"
@@ -191,7 +191,7 @@ const EditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
             ✕
           </Button>
           <div className="flex items-center mb-4">
-            <Button onClick={saveData} className="bg-emerald-500 hover:bg-emerald-600">
+            <Button onClick={saveData} className="bg-emerald-500 hover:bg-emerald-600 text-white">
               保存
             </Button>
             <Button variant="ghost" onClick={addEmptyRow}>
@@ -303,4 +303,4 @@ const EditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
   );
 };
 
-export default EditTable;
+export default ProjectEditTable;

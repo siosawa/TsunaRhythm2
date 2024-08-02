@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import EditTable from "./EditTable"; // EditTableコンポーネントのパスを適切に設定してください
+import ProjectEditTable from "./ProjectEditTable"; // EditTableコンポーネントのパスを適切に設定してください
+import { FiTriangle } from "react-icons/fi";
 
-const ViewTable = () => {
+const ProjectViewTable = () => {
   const [projects, setProjects] = useState([]);
   const [showEditTable, setShowEditTable] = useState(false);
 
@@ -72,10 +73,14 @@ const ViewTable = () => {
                 className="px-2 text-center bg-orange-400 text-white font-bold"
               >
                 <button
-                  className="hover:underline"
+                  className="hover:underline inline-flex items-center"
                   onClick={() => setShowEditTable(true)}
                 >
                   編集
+                  <FiTriangle
+                    className="ml-1 transform rotate-180 text-white"
+                    size={12}
+                  />
                 </button>
               </td>
             </tr>
@@ -83,7 +88,7 @@ const ViewTable = () => {
         </table>
       </div>
       {showEditTable && (
-        <EditTable
+        <ProjectEditTable
           onClose={() => setShowEditTable(false)}
           onSave={handleSave}
         />
@@ -92,4 +97,4 @@ const ViewTable = () => {
   );
 };
 
-export default ViewTable;
+export default ProjectViewTable;
