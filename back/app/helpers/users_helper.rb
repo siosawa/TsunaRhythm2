@@ -62,23 +62,32 @@ module UsersHelper
 
   def fetch_relationships(user, relationship_type, relationship_model, foreign_key)
     user.send(relationship_type).includes(relationship_model).map do |related_user|
-      relationship = user.send(relationship_model).find_by(foreign_key => related_user.id)
-      {
-        id: related_user.id,
-        name: related_user.name,
-        work: related_user.work,
-        profile_text: related_user.profile_text,
-        avatar: {
-          url: "#{related_user.avatar}"
-        },
-        relationship_id: relationship.id,
-        followers_count: related_user.followers.count,
-        following_count: related_user.following.count,
-        posts_count: related_user.posts.count
-      }
+      relationship = find_relationship(user, relationship_model, foreign_key, related_user)
+      build_relationship_data(related_user, relationship)
     end
   end
-  
+
+  def find_relationship(user, relationship_model, foreign_key, related_user)
+    user.send(relationship_model).find_by(foreign_key => related_user.id)
+  end
+
+  def build_relationship_data(related_user, relationship)
+    {
+      id: related_user.id,
+      name: related_user.name,
+      work: related_user.work,
+      profile_text: related_user.profile_text,
+      avatar: build_avatar_data(related_user),
+      relationship_id: relationship&.id,
+      followers_count: related_user.followers.count,
+      following_count: related_user.following.count,
+      posts_count: related_user.posts.count
+    }
+  end
+
+  def build_avatar_data(related_user)
+    { url: related_user.avatar.to_s }
+  end
 
   def cal_paginate_relationships(relationships, page, per_page)
     if page
