@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module SessionsHelper
+  # ログイン処理を行い、セッションとクッキーを設定する
   def log_in(user)
     create_session(user)
     store_cookies(user)
@@ -47,6 +48,7 @@ module SessionsHelper
     cookies.delete(:remember_token)
   end
 
+  # ユーザーをログアウトさせる
   def log_out
     Rails.logger.info "ログアウト処理開始 - カレントユーザーID: #{@current_user&.id}"
     forget(current_user)
@@ -66,23 +68,28 @@ end
 
 private
 
+# セッションからユーザーIDを取得する
 def session_user_id
   session[:user_id]
 end
 
+# クッキーからユーザーIDを取得する
 def cookie_user_id
   cookies.encrypted[:user_id]
 end
 
+# セッションに基づいてユーザーを検索し、現在のユーザーとして設定する
 def find_user_by_session
   user = User.find_by(id: session_user_id)
   @current_user ||= user if user && valid_session_token?(user)
 end
 
+# セッションのトークンが有効か確認する
 def valid_session_token?(user)
   session[:session_token] == user.session_token
 end
 
+# クッキーに基づいてユーザーを検索し、現在のユーザーとして設定する
 def find_user_by_cookie
   user = User.find_by(id: cookie_user_id)
   return unless user&.authenticated?(:remember, cookies[:remember_token])
@@ -91,16 +98,19 @@ def find_user_by_cookie
   @current_user = user
 end
 
+# セッションを作成する
 def create_session(user)
   session[:user_id] = user.id
   session[:session_token] = user.session_token
 end
 
+# クッキーを設定する
 def store_cookies(user)
   store_encrypted_cookie(:user_id, user.id)
   store_encrypted_cookie(:session_token, user.session_token)
 end
 
+# 暗号化されたクッキーを保存する
 def store_encrypted_cookie(name, value)
   cookies.encrypted[name] = {
     value:,

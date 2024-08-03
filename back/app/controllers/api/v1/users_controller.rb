@@ -10,6 +10,7 @@ module Api
       before_action :logged_in_user, only: %i[index update destroy following followers update_password]
       before_action :correct_user, only: %i[update destroy update_password]
 
+      # ユーザー一覧をページネーションして返す
       def index
         per_page = 10
         page = params[:page]&.to_i || 1
@@ -25,6 +26,7 @@ module Api
         }
       end
 
+      # 指定したIDのユーザー情報を返す
       def show
         @user = fetch_users_with_counts.find(params[:id].to_i)
         render json: @user.as_json(
@@ -32,6 +34,7 @@ module Api
         )
       end
 
+      # 新しいユーザーを作成する
       def create
         @user = User.new(user_params)
         assign_avatar(@user)
@@ -43,6 +46,7 @@ module Api
         end
       end
 
+      # ユーザー情報を更新する
       def update
         @user = User.find(params[:id].to_i)
         if @user.update(user_params)
@@ -52,6 +56,7 @@ module Api
         end
       end
 
+      # ユーザーを削除する
       def destroy
         user = User.find_by(id: params[:id].to_i)
         if user.nil?
@@ -65,7 +70,7 @@ module Api
         end
       end
 
-      # パスワード変更アクション
+      # パスワードを変更する
       def update_password
         if current_user.authenticate(params[:current_password])
           if current_user.update(password: params[:new_password])
@@ -78,14 +83,17 @@ module Api
         end
       end
 
+      # フォローしているユーザーを返す
       def following
         paginate_relationships(:following, :active_relationships, :followed_id)
       end
 
+      # フォロワーを返す
       def followers
         paginate_relationships(:followers, :passive_relationships, :follower_id)
       end
 
+      # ログインしているユーザー情報を返す
       def current_user_info
         if logged_in?
           render json: user_info_json(current_user)
@@ -94,6 +102,7 @@ module Api
         end
       end
 
+      # ログインしているユーザーの投稿を返す
       def current_user_posts
         if logged_in?
           render json: {
@@ -106,6 +115,7 @@ module Api
 
       private
 
+      # ユーザーのアバターを設定する
       def assign_avatar(user)
         return if user.avatar.present?
 
@@ -117,6 +127,7 @@ module Api
         end
       end
 
+      # ユーザーがログインしているか確認する
       def correct_user
         @user = User.find_by(id: params[:id].to_i)
         return if current_user?(@user)
