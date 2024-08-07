@@ -4,11 +4,28 @@ import Image from "next/image";
 import cable from "@/utils/cable"; // Action Cableのセットアップが含まれていることを前提
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
+// User 型の定義
+interface User {
+  id: number;
+  name: string;
+  avatar: {
+    url: string;
+  };
+}
+
+// Seat 型の定義
+interface Seat {
+  id: number;
+  room_id: number;
+  seat_id: number;
+  user_id: number;
+}
+
 // ModernCafeコンポーネントの定義
-const ModernCafe = () => {
-  const [seats, setSeats] = useState({}); // 座席情報を保持するステート
-  const [users, setUsers] = useState({}); // ユーザー情報を保持するステート
-  const [currentUser, setCurrentUser] = useState(null); // 現在のユーザー情報を保持するステート
+const ModernCafe = (): JSX.Element => {
+  const [seats, setSeats] = useState<Record<number, number>>({}); // 座席情報を保持するステート
+  const [users, setUsers] = useState<Record<number, User>>({}); // ユーザー情報を保持するステート
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // 現在のユーザー情報を保持するステート
 
   // 座席の位置情報を定義
   const seatPositions = [
@@ -20,7 +37,7 @@ const ModernCafe = () => {
   ];
 
   // 座席情報とユーザー情報をフェッチする関数
-  const fetchSeatsAndUsers = async (seatsData) => {
+  const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
@@ -32,7 +49,7 @@ const ModernCafe = () => {
         })
       )
     );
-    const userData = await Promise.all(userResponses.map((res) => res.json()));
+    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
@@ -50,7 +67,7 @@ const ModernCafe = () => {
         }
       );
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         setSeats(
           data.reduce(
             (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
@@ -75,7 +92,7 @@ const ModernCafe = () => {
       const subscription = cable.subscriptions.create(
         { channel: "SeatChannel", room: 7 },
         {
-          received(data) {
+          received(data: Seat) {
             // 座席情報を更新
             setSeats((prevSeats) => ({
               ...prevSeats,
@@ -90,8 +107,8 @@ const ModernCafe = () => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((response) => response.json())
-                .then((user) => {
+                .then((response) => response.json() as Promise<User>)
+                .then((user: User) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
@@ -113,7 +130,7 @@ const ModernCafe = () => {
   }, [currentUser, seats]); // seatsを依存関係に追加
 
   // 座席クリック時のハンドラ関数
-  const handleSeatClick = async (seatId) => {
+  const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
@@ -130,9 +147,9 @@ const ModernCafe = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         // 現在のユーザーが既に座席を持っているかチェック
-        const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
+        const currentUserSeat = data.find(seat => seat.user_id === currentUser?.id);
 
         if (currentUserSeat) {
           // 現在のユーザーの座席情報を削除
@@ -188,7 +205,7 @@ const ModernCafe = () => {
         <div className="relative w-[500px] md:w-[700px]">
           <Image
             src="/ModernCafe.PNG"
-            alt="Calm Cafe"
+            alt="Modern Cafe"
             width={900}
             height={500}
             style={{ objectFit: "cover" }}
@@ -203,7 +220,7 @@ const ModernCafe = () => {
               <button
                 className="bg-white bg-opacity-50 w-11 h-11 md:w-14 md:h-14 rounded-full ml-2"
                 onClick={() => handleSeatClick(seat.id)}
-                disabled={seats[seat.id] && seats[seat.id] !== currentUser?.id} // 自分以外のユーザーが座っている場合に無効化
+                disabled={Boolean(seats[seat.id] && seats[seat.id] !== currentUser?.id)} // 自分以外のユーザーが座っている場合に無効化
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
