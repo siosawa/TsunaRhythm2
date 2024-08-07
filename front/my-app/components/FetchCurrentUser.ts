@@ -21,7 +21,7 @@ interface FetchCurrentUserProps {
   setCurrentUser: (user: CurrentUser | null) => void;
 }
 
-const FetchCurrentUser: React.FC<FetchCurrentUserProps> = ({ setCurrentUser }) => {
+const FetchCurrentUser = ({ setCurrentUser }: FetchCurrentUserProps): null => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {

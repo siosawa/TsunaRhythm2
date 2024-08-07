@@ -27,7 +27,7 @@ interface EditTableProps {
   onSave: () => void;
 }
 
-const ProjectEditTable: React.FC<EditTableProps> = ({ onClose, onSave }) => {
+const ProjectEditTable = ({ onClose, onSave }: EditTableProps): JSX.Element => {
   const [data, setData] = useState<Project[]>([]);
   const [originalData, setOriginalData] = useState<Project[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
