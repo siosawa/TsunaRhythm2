@@ -158,7 +158,7 @@ const EditRecord = ({ onClose, onSave }) => {
           <div className="flex items-center mb-4">
             <Button
               onClick={saveData}
-              className="bg-emerald-500 hover:bg-emerald-600"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white"
             >
               保存
             </Button>
@@ -173,7 +173,9 @@ const EditRecord = ({ onClose, onSave }) => {
                   <th className="px-2 py-1 border border-gray-200">
                     プロジェクト
                   </th>
-                  <th className="px-2 py-1 border border-gray-200">分数</th>
+                  <th className="px-2 py-1 border border-gray-200 w-20">
+                    分数
+                  </th>
                   <th className="px-2 py-1 border border-gray-200">日付</th>
                   <th className="px-2 py-1 border border-gray-200 w-1/12">
                     操作

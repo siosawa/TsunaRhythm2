@@ -65,15 +65,22 @@ const ProjectHourlyWageRanking = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-96 h-56 py-4 text-sm bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto">
-        <p className="font-bold">プロジェクト別時給平均ランキング</p>
+      <div className="w-96 h-56 text-xm bg-white shadow-custom-dark rounded-3xl flex flex-col items-center text-center overflow-auto border-2 border-orange-500">
+        <p className="w-full py-2 bg-orange-400 text-white font-bold sticky top-0 z-10">
+          プロジェクト別時給平均ランキング
+        </p>
         {error && <p className="text-red-500">{error}</p>}
-        <ul>
+        <ul className="w-full">
           {ranking.map((project, index) => (
-            <li key={index} className="flex justify-between my-1">
+            <li
+              key={index}
+              className={`flex justify-between my-1 ${
+                index % 2 === 0 ? "bg-orange-100" : "bg-orange-200"
+              }`}
+            >
               <span className="w-16 text-left px-4">{index + 1}位</span>
               <span className="flex-1 text-left">{project.name}</span>
-              <span className="w-24 text-right px-4">
+              <span className="w-28 text-right px-4">
                 {Math.floor(project.averageHourlyWage)}円
               </span>
             </li>

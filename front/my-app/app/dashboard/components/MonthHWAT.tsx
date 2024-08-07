@@ -135,8 +135,8 @@ const MonthHWAT: React.FC = () => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center">
-        <div className="w-full px-4">
+      <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center border-2 border-orange-500">
+        <div className="w-full px-3">
           <div className="flex items-center mb-2">
             <RiMoneyCnyCircleLine className="text-black mr-2 text-4xl" />
             <div className="flex flex-col text-left w-full">
@@ -145,7 +145,7 @@ const MonthHWAT: React.FC = () => {
                 <span className="text-2xl font-bold mt-1 italic underline">
                   {averageHourlyWage}
                 </span>
-                <span className="text-2xl font-bold mt-1">&nbsp;円</span>
+                <span className="text-1xl font-bold mt-2">円</span>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@ const MonthHWAT: React.FC = () => {
                 <span className="text-2xl font-bold mt-1 italic underline">
                   {totalSalary}
                 </span>
-                <span className="text-2xl font-bold mt-1">&nbsp;円</span>
+                <span className="text-1xl font-bold mt-2">円</span>
               </div>
             </div>
           </div>
@@ -165,6 +165,7 @@ const MonthHWAT: React.FC = () => {
       </div>
     </>
   );
+  
 };
 
 export default MonthHWAT;

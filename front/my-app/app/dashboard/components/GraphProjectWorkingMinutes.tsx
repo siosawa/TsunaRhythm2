@@ -198,7 +198,7 @@ const GraphProjectWorkingMinutes = () => {
   };
 
   return (
-    <div className="w-96 h-56 px-6 bg-white rounded-3xl shadow-custom-dark relative">
+    <div className="w-96 h-56 px-6 bg-white rounded-3xl shadow-custom-dark relative border-2 border-orange-500">
       <div className="absolute top-4 right-2 flex space-x-0">
         <button onClick={handlePreviousMonth}>
           <FiTriangle style={{ transform: 'rotate(270deg)' }} />
