@@ -135,6 +135,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 ### インフラ
  - WebSocket通信を行うためのredisをタスク定義で立ち上げるのではなくElastiCacheを使って立ち上げることで運用管理の負担を軽減しました。
  - GithubActionsを利用してCIを実現しました。
+ - Code Rabbitを使用してコードの変更点から何が変更されたのかの要約を自然言語処理を使ってプルリクエスト後マージ前の段階で自動生成→確認できるようにしました。
 
 # IT学習・ポートフォリオ作成工程
 ※は途中までという意味です。
