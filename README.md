@@ -1,6 +1,6 @@
 # オンラインワークスペース「つなリズム」 
 https://tsunarhythm.com <br />
-登録せずにお試しいただくことができます。
+登録せずにお試しいただくことができます。制作期間は約2ヶ月半です。
 
 Qiitaはこちら→ https://qiita.com/sawata0324　<br />
 はてなブログはこちら→ https://sawata0324.hatenablog.com/　<br />
