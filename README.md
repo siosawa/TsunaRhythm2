@@ -3,8 +3,8 @@ https://tsunarhythm.com <br />
 登録せずにお試しいただくことができます。制作期間は約2ヶ月半です。
 
 Qiitaはこちら→ [https://qiita.com/sawata0324](https://qiita.com/sawata0324)　<br />
-はてなブログはこちら→ https://sawata0324.hatenablog.com/　<br />
-Wantedlyはこちら→ https://www.wantedly.com/id/sawata_0324　
+はてなブログはこちら→ [https://sawata0324.hatenablog.com/](https://sawata0324.hatenablog.com/)　<br />
+Wantedlyはこちら→ [https://www.wantedly.com/id/sawata_0324　](https://www.wantedly.com/id/sawata_0324)　<br />
 
 ## 目次
 1. **サービス概要・制作背景**
