@@ -4,23 +4,36 @@ import Image from "next/image";
 import cable from "@/utils/cable"; // Action Cableのセットアップが含まれていることを前提
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// StandardCafeコンポーネントの定義
-const StandardCafe = () => {
-  const [seats, setSeats] = useState({}); // 座席情報を保持するステート
-  const [users, setUsers] = useState({}); // ユーザー情報を保持するステート
-  const [currentUser, setCurrentUser] = useState(null); // 現在のユーザー情報を保持するステート
+// User 型の定義
+interface User {
+  id: number;
+  name: string;
+  avatar: {
+    url: string;
+  };
+}
+
+// Seat 型の定義
+interface Seat {
+  id: number;
+  room_id: number;
+  seat_id: number;
+  user_id: number;
+}
+
+// CountryHouseコンポーネントの定義
+const CountryHouse = (): JSX.Element => {
+  const [seats, setSeats] = useState<Record<number, number>>({}); // 座席情報を保持するステート
+  const [users, setUsers] = useState<Record<number, User>>({}); // ユーザー情報を保持するステート
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // 現在のユーザー情報を保持するステート
 
   // 座席の位置情報を定義
   const seatPositions = [
-    { id: 1, top: "45%", right: "48%" },
-    { id: 2, top: "39%", right: "28%" },
-    { id: 3, top: "30%", right: "39%" },
-    { id: 4, top: "57%", right: "32%" },
-    { id: 5, top: "67%", right: "46%" },
+    { id: 1, top: "49%", right: "34%" },
   ];
 
   // 座席情報とユーザー情報をフェッチする関数
-  const fetchSeatsAndUsers = async (seatsData) => {
+  const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
@@ -32,7 +45,7 @@ const StandardCafe = () => {
         })
       )
     );
-    const userData = await Promise.all(userResponses.map((res) => res.json()));
+    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
@@ -40,7 +53,7 @@ const StandardCafe = () => {
   const fetchSeats = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=6`,
         {
           method: "GET",
           credentials: "include",
@@ -50,7 +63,7 @@ const StandardCafe = () => {
         }
       );
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         setSeats(
           data.reduce(
             (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
@@ -73,9 +86,9 @@ const StandardCafe = () => {
 
       // Action Cableの購読を作成
       const subscription = cable.subscriptions.create(
-        { channel: "SeatChannel", room: 1 },
+        { channel: "SeatChannel", room: 6 },
         {
-          received(data) {
+          received(data: Seat) {
             // 座席情報を更新
             setSeats((prevSeats) => ({
               ...prevSeats,
@@ -90,8 +103,8 @@ const StandardCafe = () => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((response) => response.json())
-                .then((user) => {
+                .then((response) => response.json() as Promise<User>)
+                .then((user: User) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
@@ -113,72 +126,45 @@ const StandardCafe = () => {
   }, [currentUser, seats]); // seatsを依存関係に追加
 
   // 座席クリック時のハンドラ関数
-  const handleSeatClick = async (seatId) => {
+  const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
     }
 
+    // 座席が既に埋まっている場合はクリックを無効化
+    if (seats[seatId]) {
+      console.error("Seat already reserved");
+      return;
+    }
+
     try {
-      // 既存の座席情報を取得
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=1`, {
-        method: "GET",
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
+        method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          seat: { seat_id: seatId, room_id: 6, user_id: currentUser.id },
+        }),
       });
-
       if (response.ok) {
-        const data = await response.json();
-        // 現在のユーザーが既に座席を持っているかチェック
-        const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
-
-        if (currentUserSeat) {
-          // 現在のユーザーの座席情報を削除
-          await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${currentUserSeat.id}`, {
-            method: "DELETE",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          // 座席情報を更新して再レンダリングをトリガー
-          setSeats((prevSeats) => {
-            const updatedSeats = { ...prevSeats };
-            delete updatedSeats[currentUserSeat.seat_id];
-            return updatedSeats;
-          });
-        }
-
-        // 新しい座席を予約
-        const reserveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            seat: { seat_id: seatId, room_id: 1, user_id: currentUser.id },
-          }),
-        });
-
-        if (reserveResponse.ok) {
-          // 座席情報を更新して再レンダリングをトリガー
-          setSeats((prevSeats) => ({
-            ...prevSeats,
-            [seatId]: currentUser.id,
-          }));
-        } else {
-          console.error("Failed to reserve seat");
-        }
+        // 座席情報を更新して再レンダリングをトリガー
+        setSeats((prevSeats) => ({
+          ...prevSeats,
+          [seatId]: currentUser.id,
+        }));
       } else {
-        console.error("Failed to fetch seats");
+        console.error("Failed to reserve seat");
       }
     } catch (error) {
-      console.error("Error handling seat click:", error);
+      console.error("Error reserving seat:", error);
     }
   };
+
+  // 現在のユーザーが既に座席を割り当てられているかをチェック
+  const isCurrentUserAssigned = currentUser ? Object.values(seats).includes(currentUser.id) : false;
 
   return (
     <>
@@ -187,11 +173,12 @@ const StandardCafe = () => {
       <div className="flex items-center justify-center fixed inset-0 z-10">
         <div className="relative w-[500px] md:w-[700px]">
           <Image
-            src="/StandardCafe.PNG"
-            alt="Standard Cafe"
-            width={750}
+            src="/CountryHouse.PNG"
+            alt="Country House"
+            width={900}
             height={500}
-            layout="intrinsic"
+            style={{ objectFit: "cover" }}
+            priority
           />
           {seatPositions.map((seat) => (
             <div
@@ -202,7 +189,7 @@ const StandardCafe = () => {
               <button
                 className="bg-white bg-opacity-50 w-11 h-11 md:w-14 md:h-14 rounded-full ml-2"
                 onClick={() => handleSeatClick(seat.id)}
-                disabled={seats[seat.id] && seats[seat.id] !== currentUser?.id} // 自分以外のユーザーが座っている場合に無効化
+                disabled={isCurrentUserAssigned || Boolean(seats[seat.id])} // 座席が既に埋まっている場合に無効化
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
@@ -220,4 +207,4 @@ const StandardCafe = () => {
   );
 };
 
-export default StandardCafe;
+export default CountryHouse;

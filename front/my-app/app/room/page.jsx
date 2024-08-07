@@ -68,10 +68,12 @@ const Room = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <FetchCurrentUser setCurrentUser={setCurrentUser} />
-        <div className="flex flex-col items-center justify-center w-3/4 max-w-3xl p-12 bg-gray-300 rounded-full">
-          <h1 className="text-4xl mb-8">現在入室中のルームはありません！</h1>
+        <div className="flex flex-col items-center justify-center w-3/4 max-w-3xl p-12 bg-gray-300 rounded-full mt-[-165px]">
+          <h1 className="text-2xl md:text-3xl mb-4 text-center">
+            現在入室中のルームはありません！
+          </h1>
           <Link href="/rooms">
-            <p className="px-8 py-4 bg-purple-500 text-white text-xl rounded-full border-2 border-purple-500 hover:bg-purple-700 hover:border-purple-700 transition">
+            <p className="px-8 py-4 bg-purple-500 text-white text-center text-base md:text-xl rounded-full border-2 border-purple-500 hover:bg-purple-700 hover:border-purple-700 transition">
               ルーム一覧ページへ！
             </p>
           </Link>

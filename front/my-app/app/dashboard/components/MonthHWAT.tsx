@@ -43,7 +43,7 @@ interface CurrentUser {
   };
 }
 
-const MonthHWAT: React.FC = () => {
+const MonthHWAT = (): JSX.Element => {
   const [averageHourlyWage, setAverageHourlyWage] = useState<number>(0);
   const [totalSalary, setTotalSalary] = useState<number>(0);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);

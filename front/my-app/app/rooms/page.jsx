@@ -172,7 +172,9 @@ const Index = () => {
                     />
                   </div>
                   <div className="flex flex-col items-center text-center mt-auto">
-                    <h2 className="text-lg sm:text-xl mb-1">{room.name}</h2>
+                    <h2 className="text-lg md:text-base xl:text-sm 2xl:text-xs mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
+                      {room.name}
+                    </h2>
                     <div className="flex items-center text-gray-500">
                       <RiTeamFill className="mr-1" />
                       {getCurrentMembersCount(room.id)}/{room.maxMembers}

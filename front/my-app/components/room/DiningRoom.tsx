@@ -4,21 +4,41 @@ import Image from "next/image";
 import cable from "@/utils/cable"; // Action Cableのセットアップが含まれていることを前提
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// ModernLivingコンポーネントの定義
-const ModernLiving = () => {
-  const [seats, setSeats] = useState({}); // 座席情報を保持するステート
-  const [users, setUsers] = useState({}); // ユーザー情報を保持するステート
-  const [currentUser, setCurrentUser] = useState(null); // 現在のユーザー情報を保持するステート
+// User 型の定義
+interface User {
+  id: number;
+  name: string;
+  avatar: {
+    url: string;
+  };
+}
+
+// Seat 型の定義
+interface Seat {
+  id: number;
+  room_id: number;
+  seat_id: number;
+  user_id: number;
+}
+
+// DiningRoomコンポーネントの定義
+const DiningRoom = (): JSX.Element => {
+  const [seats, setSeats] = useState<Record<number, number>>({}); // 座席情報を保持するステート
+  const [users, setUsers] = useState<Record<number, User>>({}); // ユーザー情報を保持するステート
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // 現在のユーザー情報を保持するステート
 
   // 座席の位置情報を定義
   const seatPositions = [
-    { id: 1, top: "17%", right: "47%" },
-    { id: 2, top: "22%", right: "76%" },
-    { id: 3, top: "55%", right: "54%" },
+    { id: 1, top: "46%", right: "57%" },
+    { id: 2, top: "52%", right: "50%" },
+    { id: 3, top: "58%", right: "43%" },
+    { id: 4, top: "71%", right: "51%" },
+    { id: 5, top: "65%", right: "58%" },
+    { id: 6, top: "59%", right: "65%" },
   ];
 
   // 座席情報とユーザー情報をフェッチする関数
-  const fetchSeatsAndUsers = async (seatsData) => {
+  const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
@@ -30,7 +50,7 @@ const ModernLiving = () => {
         })
       )
     );
-    const userData = await Promise.all(userResponses.map((res) => res.json()));
+    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
@@ -38,7 +58,7 @@ const ModernLiving = () => {
   const fetchSeats = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=8`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=9`,
         {
           method: "GET",
           credentials: "include",
@@ -48,7 +68,7 @@ const ModernLiving = () => {
         }
       );
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         setSeats(
           data.reduce(
             (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
@@ -71,9 +91,9 @@ const ModernLiving = () => {
 
       // Action Cableの購読を作成
       const subscription = cable.subscriptions.create(
-        { channel: "SeatChannel", room: 8 },
+        { channel: "SeatChannel", room: 9 },
         {
-          received(data) {
+          received(data: Seat) {
             // 座席情報を更新
             setSeats((prevSeats) => ({
               ...prevSeats,
@@ -88,8 +108,8 @@ const ModernLiving = () => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((response) => response.json())
-                .then((user) => {
+                .then((response) => response.json() as Promise<User>)
+                .then((user: User) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
@@ -111,7 +131,7 @@ const ModernLiving = () => {
   }, [currentUser, seats]); // seatsを依存関係に追加
 
   // 座席クリック時のハンドラ関数
-  const handleSeatClick = async (seatId) => {
+  const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
@@ -119,7 +139,7 @@ const ModernLiving = () => {
 
     try {
       // 既存の座席情報を取得
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=8`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=9`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -128,7 +148,7 @@ const ModernLiving = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         // 現在のユーザーが既に座席を持っているかチェック
         const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
 
@@ -157,7 +177,7 @@ const ModernLiving = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            seat: { seat_id: seatId, room_id: 8, user_id: currentUser.id },
+            seat: { seat_id: seatId, room_id: 9, user_id: currentUser.id },
           }),
         });
 
@@ -183,12 +203,12 @@ const ModernLiving = () => {
       {/* 現在のユーザー情報を取得するためのコンポーネント */}
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="flex items-center justify-center fixed inset-0 z-10">
-        <div className="relative w-[500px] md:w-[700px]">
+        <div className="relative md:w-[1000px]">
           <Image
-            src="/ModernLiving.PNG"
-            alt="Calm Cafe"
-            width={900}
-            height={500}
+            src="/DiningRoom.PNG"
+            alt="Dining Room"
+            width={1000}
+            height={700}
             style={{ objectFit: "cover" }}
             priority
           />
@@ -201,7 +221,7 @@ const ModernLiving = () => {
               <button
                 className="bg-white bg-opacity-50 w-11 h-11 md:w-14 md:h-14 rounded-full ml-2"
                 onClick={() => handleSeatClick(seat.id)}
-                disabled={seats[seat.id] && seats[seat.id] !== currentUser?.id} // 自分以外のユーザーが座っている場合に無効化
+                disabled={Boolean(seats[seat.id] && seats[seat.id] !== currentUser?.id)} // 自分以外のユーザーが座っている場合に無効化
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img
@@ -219,4 +239,4 @@ const ModernLiving = () => {
   );
 };
 
-export default ModernLiving;
+export default DiningRoom;
