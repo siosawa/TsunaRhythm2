@@ -113,7 +113,9 @@ https://github.com/user-attachments/assets/93b019d8-d0e3-4558-8caa-24c98a57110a
 ----|
 | Docker/docker-compose |
 | AWS（ECS,ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ElastiCache） |
-| GitHub Actions(RSpec自動テスト,Rubocopコード整形) |
+| GitHub Actions(RSpec自動テスト,Rubocop静的コード解析) |
+| CodeRabbit |
+
 
 <br />
 
