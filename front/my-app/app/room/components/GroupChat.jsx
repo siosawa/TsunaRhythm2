@@ -191,19 +191,20 @@ const GroupChat = ({ room_id }) => {
                       }
                     >
                       {chat.user_id === currentUser?.id
-                        ? currentUser.name
+                        ? ""
                         : otherUsers[chat.user_id]?.name || "User"}
                     </strong>
                     <div
-                      className={`text-sm rounded-lg p-2 mt-1 ${
+                      className={`text-sm p-2 mt-1 ${
                         chat.user_id === currentUser?.id
-                          ? "bg-blue-100 text-left"
-                          : "bg-gray-100"
+                          ? "bg-blue-100 text-left rounded-tl-lg rounded-br-lg rounded-bl-lg"
+                          : "bg-gray-100 rounded-tr-lg rounded-bl-lg rounded-br-lg"
                       }`}
                     >
                       {chat.content}
                     </div>
                   </div>
+
                   {chat.user_id === currentUser?.id && (
                     <img
                       src={`${process.env.NEXT_PUBLIC_RAILS_URL}${currentUser.avatar.url}`}
