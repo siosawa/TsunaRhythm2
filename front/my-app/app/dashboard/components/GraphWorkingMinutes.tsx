@@ -23,7 +23,6 @@ ChartJS.register(
   Legend
 );
 
-// Recordの型を定義
 interface Record {
   id: number;
   user_id: number;
@@ -50,7 +49,7 @@ interface CurrentUser {
 }
 
 const GraphWorkingMinutes = () => {
-  const currentMonth = new Date().getMonth(); // 現在の月を取得
+  const currentMonth = new Date().getMonth(); 
   const [chartData, setChartData] = useState({
     labels: [] as string[],
     datasets: [
@@ -60,12 +59,12 @@ const GraphWorkingMinutes = () => {
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
-        borderDash: [5, 5], // 破線の設定
+        borderDash: [5, 5],
       },
     ],
   });
 
-  const [monthIndex, setMonthIndex] = useState<number>(currentMonth); // 初期値を現在の月に設定
+  const [monthIndex, setMonthIndex] = useState<number>(currentMonth);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
@@ -95,7 +94,7 @@ const GraphWorkingMinutes = () => {
         (sum, record) => sum + record.minutes,
         0
       );
-      const totalHours = (totalMinutes / 60).toFixed(1); // 小数点第一位まで表示
+      const totalHours = (totalMinutes / 60).toFixed(1); 
 
       const year = new Date().getFullYear();
 
@@ -113,7 +112,7 @@ const GraphWorkingMinutes = () => {
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
-            borderDash: [5, 5], // 破線の設定
+            borderDash: [5, 5], 
           },
         ],
       });
@@ -125,7 +124,7 @@ const GraphWorkingMinutes = () => {
 
   useEffect(() => {
     if (currentUser) {
-      fetchData(currentUser.id, currentMonth); // 初回ロード時に現在の月のデータを取得
+      fetchData(currentUser.id, currentMonth); 
     }
   }, [currentUser]);
 
@@ -171,7 +170,7 @@ const GraphWorkingMinutes = () => {
             legend: {
               labels: {
                 font: {
-                  weight: "bold", // 太文字に設定
+                  weight: "bold", 
                 },
               },
             },

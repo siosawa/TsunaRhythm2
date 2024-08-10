@@ -1,21 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, FormEvent, ChangeEvent } from "react";
 
-const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.content);
-  const [error, setError] = useState("");
-  const contentRef = useRef(null);
-  const titleRef = useRef(null);
-  const submitButtonRef = useRef(null);
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+}
+
+interface EditPostModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  post: Post;
+  onSave: (id: number, title: string, content: string) => Promise<void>;
+}
+
+const EditPostModal = ({ isOpen, onClose, post, onSave }: EditPostModalProps): JSX.Element | null => {
+  const [title, setTitle] = useState<string>(post.title);
+  const [content, setContent] = useState<string>(post.content);
+  const [error, setError] = useState<string>("");
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isOpen && contentRef.current) {
       contentRef.current.focus();
     }
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
         if (submitButtonRef.current) {
@@ -35,7 +48,7 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
     };
   }, [isOpen]);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
     if (title.length > 56) {
@@ -57,7 +70,7 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
     }
   };
 
-  const handleTitleChange = (e) => {
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     if (e.target.value.length > 56) {
       setError("タイトル文は56文字までです");
@@ -66,7 +79,7 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
     }
   };
 
-  const handleContentChange = (e) => {
+  const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     if (e.target.value.length > 2050) {
       setError("投稿は2050文字までです");
@@ -113,7 +126,7 @@ const EditPostModal = ({ isOpen, onClose, post, onSave }) => {
             <button
               type="submit"
               ref={submitButtonRef}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-3xl"
+              className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-3xl"
             >
               保存
             </button>

@@ -88,7 +88,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
           },
         },
         {
-          withCredentials: true, // クッキーを含める設定
+          withCredentials: true,
         }
       );
 
@@ -96,8 +96,8 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
         setTitle("");
         setContent("");
         setError("");
-        onPostSuccess(); // 投稿成功時に親コンポーネントの状態を更新
-        onClose(); // モーダルを閉じる
+        onPostSuccess();
+        onClose();
       } else {
         setError("ポストに失敗しました。");
       }

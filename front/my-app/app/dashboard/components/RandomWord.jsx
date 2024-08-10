@@ -1,8 +1,6 @@
 import * as React from "react";
 
 const RandomWord = () => {
-  // 静的なランダムメッセージの配列
-  // VSコードがstingと理解しているのでコロンStrongは不要。基本的に型推論がつかないときだけ型を明示するようにする。
   const randomWords = [
     "自分を信じて、一歩一歩進んでいこう。",
     "小さな進歩も大きな成果につながる。",
@@ -26,7 +24,6 @@ const RandomWord = () => {
     "リフレッシュして、新しい気持ちで頑張ろう。",
   ];
 
-  // ランダムなインデックスを生成
   const randomIndex = Math.floor(Math.random() * randomWords.length);
   const word = randomWords[randomIndex];
 

@@ -3,9 +3,28 @@ import axios from "axios";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-const PostDelete = ({ postId, posts, setPosts }) => {
+interface Post {
+  id: number;
+  content: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  title: string;
+  user: {
+    name: string;
+  };
+  current_user_id: number;
+}
+
+interface PostDeleteProps {
+  postId: number;
+  posts: Post[];
+  setPosts: (posts: Post[]) => void;
+}
+
+const PostDelete = ({ postId, posts, setPosts }: PostDeleteProps): JSX.Element => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
   const handleDelete = async () => {
     try {
@@ -17,7 +36,7 @@ const PostDelete = ({ postId, posts, setPosts }) => {
       );
       setPosts(posts.filter((post) => post.id !== postId));
       closeDialog();
-    } catch (error) {
+    } catch (error: any) {
       console.error("ポストの削除に失敗しました:", error);
       setError("ポストの削除に失敗しました。");
     }
@@ -33,7 +52,7 @@ const PostDelete = ({ postId, posts, setPosts }) => {
     <>
       <Button
         onClick={openDialog}
-        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-3xl"
+        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-3xl"
       >
         削除
       </Button>
@@ -50,14 +69,14 @@ const PostDelete = ({ postId, posts, setPosts }) => {
             <div className="mt-4 flex justify-end space-x-2">
               <Button
                 variant="secondary"
-                className="bg-gray-200 hover:bg-gray-300 rounded-3xl"
+                className="bg-gray-500 hover:bg-gray-600 text-white rounded-3xl"
                 onClick={closeDialog}
               >
                 キャンセル
               </Button>
               <Button
                 variant="destructive"
-                className="rounded-3xl  bg-red-600 hover:bg-red-700 text-white"
+                className="rounded-3xl bg-red-500 hover:bg-red-700 text-white"
                 onClick={handleDelete}
               >
                 削除する

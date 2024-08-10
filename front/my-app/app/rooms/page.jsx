@@ -14,7 +14,6 @@ const Index = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    // roomsData からルームのデータを設定
     setRooms(roomsData);
 
     const fetchRoomMembers = async () => {
@@ -28,7 +27,6 @@ const Index = () => {
         );
         const data = await response.json();
 
-        // 3時間以上経過したメンバーのleaved_atを更新
         const now = new Date();
         const updatedMembers = await Promise.all(
           data.map(async (member) => {
@@ -90,14 +88,12 @@ const Index = () => {
 
     if (existingMember) {
       try {
-        // PATCHリクエストでleaved_atを更新
         await axios.patch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members/${existingMember.id}`,
           { leaved_at: new Date().toISOString() },
           { withCredentials: true }
         );
 
-        // room_id に基づいて seats を取得し、user_id が currentUser.id と一致するレコードを削除
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=${existingMember.room_id}`,
           { withCredentials: true }

@@ -17,7 +17,7 @@ const SignUp = () => {
 
   const handleKeyDown = (event, ref) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // Enterキーのデフォルト動作を防ぐ
+      event.preventDefault();
       ref.current.focus();
     }
   };
@@ -81,7 +81,6 @@ const SignUp = () => {
           setError(loginResponseData.error || "ログインに失敗しました");
           return;
         }
-        // アカウント作成時にダッシュボードページへ遷移
         window.location.href = "/dashboard";
       } catch (error) {
         setError("ログインに失敗しました");
@@ -126,7 +125,7 @@ const SignUp = () => {
           ref={confirmPasswordRef}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              e.preventDefault(); // Enterキーのデフォルト動作を防ぐ
+              e.preventDefault();
               handleSubmit(e);
             }
           }}

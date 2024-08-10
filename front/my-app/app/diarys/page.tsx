@@ -3,8 +3,8 @@ import PostInput from "./components/PostInput";
 import PostView from "./components/PostView";
 import { useState } from "react";
 
-const Post = () => {
-  const [reload, setReload] = useState(false);
+const Post = (): JSX.Element => {
+  const [reload, setReload] = useState<boolean>(false);
 
   const handleReload = () => {
     setReload(!reload);

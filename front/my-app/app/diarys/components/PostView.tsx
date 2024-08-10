@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { format } from "date-fns";
-import ja from "date-fns/locale/ja";
+import { format, Locale } from "date-fns";
+import { ja } from "date-fns/locale";
 import Link from "next/link";
 import EditPostModal from "@/app/diarys/components/EditPostModal";
 import PostDelete from "@/app/diarys/components/PostDelete";
@@ -9,24 +9,46 @@ import PostPagination from "@/app/diarys/components/PostPagination";
 import { Button } from "@/components/ui/button";
 import FetchPosts from "./FetchPosts";
 
-const PostView = ({ reload }) => {
-  const [posts, setPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [editingPost, setEditingPost] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [avatars, setAvatars] = useState({});
+// 型定義
+interface Post {
+  id: number;
+  content: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  title: string;
+  user: {
+    name: string;
+  };
+  current_user_id: number;
+}
 
-  const handlePageChange = (page) => {
+interface AvatarMap {
+  [userId: number]: string | null;
+}
+
+interface PostViewProps {
+  reload: boolean;
+}
+
+const PostView = ({ reload }: PostViewProps): JSX.Element => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [avatars, setAvatars] = useState<AvatarMap>({});
+
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handleEditClick = (post) => {
+  const handleEditClick = (post: Post) => {
     setEditingPost(post);
     setIsModalOpen(true);
   };
 
-  const handleSave = async (postId, title, content) => {
+  const handleSave = async (postId: number, title: string, content: string) => {
     try {
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/${postId}`,
@@ -53,7 +75,7 @@ const PostView = ({ reload }) => {
     }
   };
 
-  const fetchUserAvatar = async (userId) => {
+  const fetchUserAvatar = async (userId: number): Promise<string | null> => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`
@@ -67,7 +89,7 @@ const PostView = ({ reload }) => {
 
   useEffect(() => {
     const fetchAvatars = async () => {
-      const newAvatars = {};
+      const newAvatars: AvatarMap = {};
       for (const post of posts) {
         if (!avatars[post.user_id]) {
           const avatarUrl = await fetchUserAvatar(post.user_id);
@@ -83,15 +105,16 @@ const PostView = ({ reload }) => {
   }, [posts]);
 
   return (
-    <div className="max-w-2xl p-4 bg-white rounded-3xl shadow-custom-dark mx-4 md:mx-auto mb-20">
-      {posts.map((post) => {
+    <div className="mx-3">
+      <div className="max-w-2xl p-4 bg-white rounded-3xl shadow-custom-dark mb-20 mx-auto">
+        {posts.map((post) => {
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
-          { locale: ja }
-        );
-        return (
-          <div key={post.id} className="border-b border-gray-200 py-4">
+          { locale: ja as Locale }
+          );
+          return (
+            <div key={post.id} className="border-b border-gray-200 py-4">
             <div className="flex items-center mb-2">
               {avatars[post.user_id] ? (
                 <Link href={`http://localhost:8000/users/${post.user_id}`}>
@@ -101,14 +124,14 @@ const PostView = ({ reload }) => {
                     width={60}
                     height={60}
                     className="rounded-full mr-4"
-                  />
+                    />
                 </Link>
               ) : (
                 <Link href={`http://localhost:8000/users/${post.user_id}`}>
                   <div
                     className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full mr-4"
                     style={{ width: 60, height: 60, whiteSpace: "nowrap" }}
-                  >
+                    >
                     NO IMAGE
                   </div>
                 </Link>
@@ -135,16 +158,16 @@ const PostView = ({ reload }) => {
               {post.user_id === post.current_user_id && (
                 <div className="flex justify-end space-x-3 mr-3">
                   <Button
-                    className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                    className="bg-sky-500 hover:bg-sky-600 text-white mx-2"
                     onClick={() => handleEditClick(post)}
-                  >
+                    >
                     編集
                   </Button>
                   <PostDelete
                     postId={post.id}
                     posts={posts}
                     setPosts={setPosts}
-                  />
+                    />
                 </div>
               )}
             </div>
@@ -156,21 +179,22 @@ const PostView = ({ reload }) => {
         setPosts={setPosts}
         setTotalPages={setTotalPages}
         reload={reload}
-      />
+        />
       <PostPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
-      />
+        />
       {editingPost && (
         <EditPostModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          post={editingPost}
-          onSave={handleSave}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        post={editingPost}
+        onSave={handleSave}
         />
-      )}
+        )}
     </div>
+  </div>
   );
 };
 

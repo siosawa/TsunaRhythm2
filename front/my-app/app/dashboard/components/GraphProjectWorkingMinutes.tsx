@@ -14,7 +14,6 @@ import { Bar } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// Chart.jsの設定を登録
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,7 +23,6 @@ ChartJS.register(
   Legend
 );
 
-// ProjectとRecordの型を定義
 interface Project {
   id: number;
   user_id: number;
@@ -64,7 +62,7 @@ interface CurrentUser {
 }
 
 const GraphProjectWorkingMinutes = () => {
-  const currentMonth = new Date().getMonth(); // 現在の月を取得
+  const currentMonth = new Date().getMonth(); 
   const [chartData, setChartData] = useState({
     labels: [] as string[],
     datasets: [
@@ -74,15 +72,15 @@ const GraphProjectWorkingMinutes = () => {
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
-        borderDash: [5, 5], // 破線の設定
+        borderDash: [5, 5], 
       },
     ],
   });
 
-  const [monthIndex, setMonthIndex] = useState<number>(currentMonth); // 初期値を現在の月に設定
+  const [monthIndex, setMonthIndex] = useState<number>(currentMonth);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]); // プロジェクトデータを保存
+  const [projects, setProjects] = useState<Project[]>([]); 
   const [selectedProject, setSelectedProject] = useState<string>(
     "案件別作業時間：案件を選択"
   );
@@ -100,7 +98,7 @@ const GraphProjectWorkingMinutes = () => {
 
       const records = recordsResponse.data || [];
       const projects = projectsResponse.data || [];
-      setProjects(projects); // プロジェクトデータを保存
+      setProjects(projects);
 
       updateChartData(records, projects, month, selectedProject);
     } catch (error) {
@@ -139,11 +137,10 @@ const GraphProjectWorkingMinutes = () => {
       (sum, record) => sum + record.minutes,
       0
     );
-    const totalHours = (totalMinutes / 60).toFixed(1); // 小数点第一位まで表示
+    const totalHours = (totalMinutes / 60).toFixed(1); 
 
     const year = new Date().getFullYear();
 
-    // 日付順にソート
     const sortedDates = Object.keys(minutesPerDay).sort((a, b) => {
       return new Date(a).getTime() - new Date(b).getTime();
     });
@@ -157,7 +154,7 @@ const GraphProjectWorkingMinutes = () => {
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
-          borderDash: [5, 5], // 破線の設定
+          borderDash: [5, 5], 
         },
       ],
     });
@@ -165,7 +162,7 @@ const GraphProjectWorkingMinutes = () => {
 
   useEffect(() => {
     if (currentUser) {
-      fetchData(currentUser.id, currentMonth); // 初回ロード時に現在の月のデータを取得
+      fetchData(currentUser.id, currentMonth); 
     }
   }, [currentUser]);
 
@@ -237,14 +234,14 @@ const GraphProjectWorkingMinutes = () => {
             legend: {
               labels: {
                 font: {
-                  weight: "bold", // 太文字に設定
+                  weight: "bold", 
                 },
               },
             },
           },
           layout: {
             padding: {
-              bottom: 20, // 下のパディングを20ピクセルに設定
+              bottom: 20,
             },
           },
         }}

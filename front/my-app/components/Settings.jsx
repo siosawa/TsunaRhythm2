@@ -22,16 +22,14 @@ const Setting = () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`,
         {
           method: "DELETE",
-          credentials: "include", // 必要に応じてクッキーを含める
+          credentials: "include", 
         }
       );
 
       if (res.ok) {
-        // クッキーを削除
         nookies.destroy(null, "session_token");
         nookies.destroy(null, "user_id");
 
-        // ログアウト成功後にホームページにリダイレクト
         window.location.href = "/";
       } else {
         const errorData = await res.json();

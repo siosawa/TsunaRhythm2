@@ -24,14 +24,12 @@ export default function RoomExitButton({ room_id }) {
         setRoomMembers(data);
       } catch (error) {
         console.error("Error fetching room members:", error);
-        // エラー通知を追加する場合はここに記述
       }
     }
 
     fetchData();
   }, []);
 
-  // 退出ボタンが押された時の処理
   const handleExit = async () => {
     const now = new Date().toISOString();
 
@@ -43,7 +41,6 @@ export default function RoomExitButton({ room_id }) {
       );
 
       if (matchingMember) {
-        // 該当するレコードを更新
         await axios.patch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members/${matchingMember.id}`,
           { leaved_at: now },
@@ -52,7 +49,6 @@ export default function RoomExitButton({ room_id }) {
           }
         );
 
-        // 座席レコードを削除
         const seatsResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=${room_id}`,
           {
@@ -72,7 +68,6 @@ export default function RoomExitButton({ room_id }) {
           );
         }
 
-        // 状態を更新
         setRoomMembers((prevMembers) =>
           prevMembers.map((member) =>
             member.id === matchingMember.id
@@ -81,14 +76,12 @@ export default function RoomExitButton({ room_id }) {
           )
         );
 
-        // /rooms に遷移
         window.location.href = "/rooms";
       } else {
         console.error("Matching member not found or already left");
       }
     } catch (error) {
       console.error("Error updating room member or deleting seats:", error);
-      // エラー通知を追加する場合はここに記述
     }
   };
 

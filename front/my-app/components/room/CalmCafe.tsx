@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import cable from "@/utils/cable"; // Action Cableのセットアップが含まれていることを前提
+import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// User 型の定義
 interface User {
   id: number;
   name: string;
@@ -13,7 +12,6 @@ interface User {
   };
 }
 
-// Seat 型の定義
 interface Seat {
   id: number;
   room_id: number;
@@ -21,11 +19,10 @@ interface Seat {
   user_id: number;
 }
 
-// CalmCafeコンポーネントの定義
 const CalmCafe = (): JSX.Element => {
-  const [seats, setSeats] = useState<Record<number, number>>({}); // 座席情報を保持するステート
-  const [users, setUsers] = useState<Record<number, User>>({}); // ユーザー情報を保持するステート
-  const [currentUser, setCurrentUser] = useState<User | null>(null); // 現在のユーザー情報を保持するステート
+  const [seats, setSeats] = useState<Record<number, number>>({}); 
+  const [users, setUsers] = useState<Record<number, User>>({});
+  const [currentUser, setCurrentUser] = useState<User | null>(null); 
 
   // 座席の位置情報を定義
   const seatPositions = [
@@ -36,7 +33,6 @@ const CalmCafe = (): JSX.Element => {
     { id: 5, top: "69%", right: "35%" },
   ];
 
-  // 座席情報とユーザー情報をフェッチする関数
   const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
@@ -53,7 +49,6 @@ const CalmCafe = (): JSX.Element => {
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
-  // 座席情報をフェッチする関数
   const fetchSeats = async () => {
     try {
       const response = await fetch(
@@ -83,22 +78,18 @@ const CalmCafe = (): JSX.Element => {
     }
   };
 
-  // useEffectフックを使用して、コンポーネントがマウントされたときとcurrentUserやseatsが変更されたときに実行
   useEffect(() => {
     if (currentUser) {
       fetchSeats();
 
-      // Action Cableの購読を作成
       const subscription = cable.subscriptions.create(
         { channel: "SeatChannel", room: 2 },
         {
           received(data: Seat) {
-            // 座席情報を更新
             setSeats((prevSeats) => ({
               ...prevSeats,
               [data.seat_id]: data.user_id,
             }));
-            // 新しいユーザー情報をフェッチ
             if (!users[data.user_id]) {
               fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`, {
                 method: "GET",
@@ -127,9 +118,8 @@ const CalmCafe = (): JSX.Element => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser, seats]); // seatsを依存関係に追加
+  }, [currentUser, seats]); 
 
-  // 座席クリック時のハンドラ関数
   const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
@@ -137,7 +127,6 @@ const CalmCafe = (): JSX.Element => {
     }
 
     try {
-      // 既存の座席情報を取得
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=2`, {
         method: "GET",
         credentials: "include",
@@ -148,11 +137,9 @@ const CalmCafe = (): JSX.Element => {
 
       if (response.ok) {
         const data: Seat[] = await response.json();
-        // 現在のユーザーが既に座席を持っているかチェック
         const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
 
         if (currentUserSeat) {
-          // 現在のユーザーの座席情報を削除
           await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${currentUserSeat.id}`, {
             method: "DELETE",
             credentials: "include",
@@ -160,7 +147,6 @@ const CalmCafe = (): JSX.Element => {
               "Content-Type": "application/json",
             },
           });
-          // 座席情報を更新して再レンダリングをトリガー
           setSeats((prevSeats) => {
             const updatedSeats = { ...prevSeats };
             delete updatedSeats[currentUserSeat.seat_id];
@@ -168,7 +154,6 @@ const CalmCafe = (): JSX.Element => {
           });
         }
 
-        // 新しい座席を予約
         const reserveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
           method: "POST",
           credentials: "include",
@@ -181,7 +166,6 @@ const CalmCafe = (): JSX.Element => {
         });
 
         if (reserveResponse.ok) {
-          // 座席情報を更新して再レンダリングをトリガー
           setSeats((prevSeats) => ({
             ...prevSeats,
             [seatId]: currentUser.id,
@@ -199,7 +183,6 @@ const CalmCafe = (): JSX.Element => {
 
   return (
     <>
-      {/* 現在のユーザー情報を取得するためのコンポーネント */}
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="flex items-center justify-center fixed inset-0 z-10">
         <div className="relative w-[500px] md:w-[700px]">

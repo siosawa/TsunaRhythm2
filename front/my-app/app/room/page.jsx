@@ -15,7 +15,6 @@ const Room = () => {
       }
 
       try {
-        // ルームメンバーのデータを取得
         const roomMembersResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
           { credentials: "include" }
@@ -23,30 +22,25 @@ const Room = () => {
         const roomMembers = await roomMembersResponse.json();
         console.log("ルームメンバー:", roomMembers);
 
-        // 現在のユーザーがどのルームに入室中かをチェック（leaved_atがnull）
         const currentRoomMember = roomMembers.find(
           (member) =>
             member.user_id === currentUser.id && member.leaved_at === null
         );
 
         if (currentRoomMember) {
-          // roomsData からルームのデータを取得
           const rooms = roomsData;
           console.log("ルームデータ:", rooms);
 
-          // 入室中のルームのpathを見つける
           const currentRoom = rooms.find(
             (room) => room.id === currentRoomMember.room_id
           );
 
           if (currentRoom) {
-            // リダイレクト先のルームパスを設定
             setCurrentUserRoomPath(`/room/${currentRoom.id}`);
             console.log("リダイレクト先のパス:", `/room/${currentRoom.id}`);
           }
         }
       } catch (error) {
-        // エラーハンドリング
         console.error(
           "現在のユーザールームのチェック中にエラーが発生しました:",
           error
@@ -59,7 +53,6 @@ const Room = () => {
 
   useEffect(() => {
     if (currentUserRoomPath) {
-      // ユーザーを現在のルームにリダイレクト
       window.location.href = currentUserRoomPath;
     }
   }, [currentUserRoomPath]);

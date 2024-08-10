@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { FiTriangle } from "react-icons/fi";
-import axios from "axios"; // 退会処理のためにaxiosを使用
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
@@ -32,7 +32,7 @@ const ProfileReadPage = () => {
   const handleEditClick = () => {
     setIsEditable(true);
     setTimeout(() => {
-      nameInputRef.current?.focus(); // ユーザー名入力フィールドにフォーカスを設定
+      nameInputRef.current?.focus();
     }, 0);
   };
 
@@ -60,7 +60,7 @@ const ProfileReadPage = () => {
         const updatedUserData = await response.json();
         console.log("ユーザーデータを更新しました:", updatedUserData);
         setIsEditable(false);
-        await fetchUserData(); // データを再取得して再レンダリング
+        await fetchUserData();
       } else {
         console.error("ユーザーデータの更新に失敗しました");
       }
@@ -85,7 +85,6 @@ const ProfileReadPage = () => {
     const file = e.target.files[0];
     setAvatar(file);
 
-    // 画像変更後に自動的に保存
     const formData = new FormData();
     formData.append("user[avatar]", file);
 
@@ -102,8 +101,8 @@ const ProfileReadPage = () => {
       if (response.ok) {
         const updatedUserData = await response.json();
         console.log("アバターを更新しました:", updatedUserData);
-        setAvatar(null); // 一時的なステートをクリア
-        await fetchUserData(); // データを再取得して再レンダリング
+        setAvatar(null);
+        await fetchUserData();
       } else {
         console.error("アバターの更新に失敗しました");
       }
@@ -115,7 +114,7 @@ const ProfileReadPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const openDialog = () => {
-    setError(""); // ダイアログを開く際にエラーメッセージをリセット
+    setError("");
     setIsDialogOpen(true);
   };
   const closeDialog = () => setIsDialogOpen(false);
@@ -135,7 +134,6 @@ const ProfileReadPage = () => {
       );
       console.log("退会処理が実行されました:", response.data);
 
-      // クッキー情報を削除
       document.cookie.split(";").forEach((cookie) => {
         const [name] = cookie.split("=");
         document.cookie = `${name}=;expires=${new Date(0).toUTCString()};path=/`;
@@ -144,7 +142,6 @@ const ProfileReadPage = () => {
       // ダイアログを閉じる(念のため)
       closeDialog();
 
-      // ルートURLにリダイレクト
       window.location.href = "/";
     } catch (error) {
       console.error("退会処理に失敗しました:", error);

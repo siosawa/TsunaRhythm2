@@ -10,7 +10,7 @@ const ViewTimerRecord = ({ dataUpdated }) => {
   const [projects, setProjects] = useState({});
   const [loading, setLoading] = useState(true);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true); // トグル用の状態を追加
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     fetchRecords();
@@ -52,21 +52,21 @@ const ViewTimerRecord = ({ dataUpdated }) => {
   }
 
   const handleEditClick = () => {
-    setIsEditOpen(true); // 編集モーダルを表示する
+    setIsEditOpen(true);
   };
 
   const handleClose = () => {
-    setIsEditOpen(false); // 編集モーダルを閉じる
+    setIsEditOpen(false);
   };
 
   const handleSave = async () => {
     setLoading(true);
-    await fetchRecords(); // データを再フェッチして最新の状態に更新
+    await fetchRecords();
     setIsEditOpen(false);
   };
 
   const toggleVisibility = () => {
-    setIsVisible(!isVisible); // 表示/非表示をトグルする
+    setIsVisible(!isVisible);
   };
 
   return (

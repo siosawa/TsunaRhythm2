@@ -32,11 +32,9 @@ const FetchCurrentUser = ({ setCurrentUser }: FetchCurrentUserProps): null => {
           }
         );
 
-        console.log("取得したデータ:", response.data); // ここでデータをコンソールに出力
         setCurrentUser(response.data);
       } catch (error) {
         console.error("データの取得に失敗しました:", error);
-        // 現在のパスがルートURLでない場合にリダイレクト
         if (window.location.pathname !== "/") {
           window.location.href = "/";
         }

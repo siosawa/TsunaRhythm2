@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
-import FetchCurrentUser from "@/components/FetchCurrentUser"; // FetchCurrentUserをインポート
+import FetchCurrentUser from "@/components/FetchCurrentUser"; 
 
 ChartJS.register(
   CategoryScale,
@@ -25,7 +25,6 @@ ChartJS.register(
   Legend
 );
 
-// ProjectとRecordの型を定義
 interface Project {
   id: number;
   user_id: number;
@@ -65,7 +64,7 @@ interface CurrentUser {
 }
 
 const GraphHourlyRate = () => {
-  const currentMonth = new Date().getMonth(); // 現在の月を取得
+  const currentMonth = new Date().getMonth(); 
   const [chartData, setChartData] = useState({
     labels: [] as string[],
     datasets: [
@@ -75,14 +74,14 @@ const GraphHourlyRate = () => {
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
-        tension: 0.4, // ラインのテンションを設定して波線にする
+        tension: 0.4, 
       },
     ],
   });
 
-  const [monthIndex, setMonthIndex] = useState<number>(currentMonth); // 初期値を現在の月に設定
+  const [monthIndex, setMonthIndex] = useState<number>(currentMonth);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); // currentUserの状態を追加
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); 
 
   const fetchData = async (userId: number, month: number) => {
     try {
@@ -97,8 +96,8 @@ const GraphHourlyRate = () => {
       const projects = projectsResponse.data || [];
       const records = recordsResponse.data || [];
       const hourlyRatePerDay: { [key: string]: number } = {};
-      const earningsPerDay: { [key: string]: number } = {}; // 日毎の稼いだ金額
-      const workMinutesPerDay: { [key: string]: number } = {}; // 日毎の作業時間
+      const earningsPerDay: { [key: string]: number } = {}; 
+      const workMinutesPerDay: { [key: string]: number } = {}; 
       const selectedMonthRecords = records.filter(
         (record) => new Date(record.date).getMonth() === month
       );
@@ -157,7 +156,7 @@ const GraphHourlyRate = () => {
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
-            tension: 0.4, // ラインのテンションを設定して波線にする
+            tension: 0.4,
           },
         ],
       });
@@ -175,7 +174,7 @@ const GraphHourlyRate = () => {
 
   useEffect(() => {
     if (currentUser) {
-      fetchData(currentUser.id, currentMonth); // 初回ロード時に現在の月のデータを取得
+      fetchData(currentUser.id, currentMonth); 
     }
   }, [currentUser]);
 
@@ -215,14 +214,14 @@ const GraphHourlyRate = () => {
             legend: {
               labels: {
                 font: {
-                  weight: "bold", // 太文字に設定
+                  weight: "bold", 
                 },
               },
             },
           },
           elements: {
             line: {
-              tension: 0.4, // ラインのテンションを設定して波線にする
+              tension: 0.4,
             },
           },
         }}
