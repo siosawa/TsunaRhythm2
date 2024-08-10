@@ -3,8 +3,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// TypeScriptの型定義を削除し、通常のJavaScriptに変更
-
 const WorkTypeHourlyWageRanking = () => {
   const [ranking, setRanking] = useState([]);
   const [error, setError] = useState(null);

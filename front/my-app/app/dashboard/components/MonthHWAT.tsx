@@ -4,7 +4,6 @@ import axios from "axios";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 import { RiMoneyCnyCircleLine, RiMoneyCnyCircleFill } from "react-icons/ri";
 
-// ProjectとRecordの型を定義
 interface Project {
   id: number;
   user_id: number;
@@ -68,18 +67,13 @@ const MonthHWAT = (): JSX.Element => {
       const projects = projectsResponse.data || [];
       console.log("Projects:", projects);
 
-      // 現在の月を取得
       const currentMonth = new Date().getMonth();
 
-      // 初期設定
       let totalSalary = 0;
       let totalMinutes = 0;
 
-      // プロジェクトごとにループ処理を行う
       projects.forEach((project) => {
-        // すでに完了しているプロジェクトだけを抽出
         if (project.is_completed) {
-          // そのプロジェクトに関連するrecordsテーブルのレコードを取得
           const projectRecords = records.filter(
             (record) => record.project_id === project.id
           );
@@ -109,7 +103,7 @@ const MonthHWAT = (): JSX.Element => {
           // プロジェクトの平均時給に現在の月の総作業時間を掛けて給与総額を算出
           totalSalary +=
             projectAverageHourlyWage * (currentMonthProjectMinutes / 60);
-          totalMinutes += currentMonthProjectMinutes; // 現在の月の総作業時間を累計
+          totalMinutes += currentMonthProjectMinutes;
         }
       });
 
@@ -118,9 +112,8 @@ const MonthHWAT = (): JSX.Element => {
         ? (totalSalary / totalMinutes) * 60
         : 0;
 
-      // 結果をステートに設定
-      setAverageHourlyWage(Math.floor(averageHourlyWage)); // 端数を切り捨て
-      setTotalSalary(Math.floor(totalSalary)); // 総給与を設定
+      setAverageHourlyWage(Math.floor(averageHourlyWage)); 
+      setTotalSalary(Math.floor(totalSalary));
     } catch (error) {
       console.error("Error fetching data:", error);
     }

@@ -111,7 +111,7 @@ const PostView = ({ reload }: PostViewProps): JSX.Element => {
         const formattedDate = format(
           new Date(post.created_at),
           "yyyy/M/d HH:mm",
-          { locale: ja as Locale } // ここで型キャストを追加
+          { locale: ja as Locale }
           );
           return (
             <div key={post.id} className="border-b border-gray-200 py-4">

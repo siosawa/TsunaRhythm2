@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ProjectEditTable from "./ProjectEditTable"; // EditTableコンポーネントのパスを適切に設定してください
+import ProjectEditTable from "./ProjectEditTable";
 import { FiTriangle } from "react-icons/fi";
 
 const ProjectViewTable = () => {
@@ -27,8 +27,8 @@ const ProjectViewTable = () => {
   }, []);
 
   const handleSave = async () => {
-    await fetchProjects(); // データを再取得
-    setShowEditTable(false); // モーダルを閉じる
+    await fetchProjects();
+    setShowEditTable(false);
   };
 
   return (

@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import cable from "@/utils/cable"; // Action Cableのセットアップが含まれていることを前提
+import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// User 型の定義
 interface User {
   id: number;
   name: string;
@@ -13,7 +12,6 @@ interface User {
   };
 }
 
-// Seat 型の定義
 interface Seat {
   id: number;
   room_id: number;
@@ -21,18 +19,15 @@ interface Seat {
   user_id: number;
 }
 
-// CountryHouseコンポーネントの定義
 const CountryHouse = (): JSX.Element => {
-  const [seats, setSeats] = useState<Record<number, number>>({}); // 座席情報を保持するステート
-  const [users, setUsers] = useState<Record<number, User>>({}); // ユーザー情報を保持するステート
-  const [currentUser, setCurrentUser] = useState<User | null>(null); // 現在のユーザー情報を保持するステート
+  const [seats, setSeats] = useState<Record<number, number>>({}); 
+  const [users, setUsers] = useState<Record<number, User>>({}); 
+  const [currentUser, setCurrentUser] = useState<User | null>(null); 
 
-  // 座席の位置情報を定義
   const seatPositions = [
     { id: 1, top: "49%", right: "34%" },
   ];
 
-  // 座席情報とユーザー情報をフェッチする関数
   const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
@@ -49,7 +44,6 @@ const CountryHouse = (): JSX.Element => {
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
-  // 座席情報をフェッチする関数
   const fetchSeats = async () => {
     try {
       const response = await fetch(
@@ -79,22 +73,18 @@ const CountryHouse = (): JSX.Element => {
     }
   };
 
-  // useEffectフックを使用して、コンポーネントがマウントされたときとcurrentUserやseatsが変更されたときに実行
   useEffect(() => {
     if (currentUser) {
       fetchSeats();
 
-      // Action Cableの購読を作成
       const subscription = cable.subscriptions.create(
         { channel: "SeatChannel", room: 6 },
         {
           received(data: Seat) {
-            // 座席情報を更新
             setSeats((prevSeats) => ({
               ...prevSeats,
               [data.seat_id]: data.user_id,
             }));
-            // 新しいユーザー情報をフェッチ
             if (!users[data.user_id]) {
               fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`, {
                 method: "GET",
@@ -123,16 +113,13 @@ const CountryHouse = (): JSX.Element => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser, seats]); // seatsを依存関係に追加
-
-  // 座席クリック時のハンドラ関数
+  }, [currentUser, seats]); 
   const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
     }
 
-    // 座席が既に埋まっている場合はクリックを無効化
     if (seats[seatId]) {
       console.error("Seat already reserved");
       return;
@@ -150,7 +137,6 @@ const CountryHouse = (): JSX.Element => {
         }),
       });
       if (response.ok) {
-        // 座席情報を更新して再レンダリングをトリガー
         setSeats((prevSeats) => ({
           ...prevSeats,
           [seatId]: currentUser.id,
@@ -163,12 +149,10 @@ const CountryHouse = (): JSX.Element => {
     }
   };
 
-  // 現在のユーザーが既に座席を割り当てられているかをチェック
   const isCurrentUserAssigned = currentUser ? Object.values(seats).includes(currentUser.id) : false;
 
   return (
     <>
-      {/* 現在のユーザー情報を取得するためのコンポーネント */}
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
       <div className="flex items-center justify-center fixed inset-0 z-10">
         <div className="relative w-[500px] md:w-[700px]">

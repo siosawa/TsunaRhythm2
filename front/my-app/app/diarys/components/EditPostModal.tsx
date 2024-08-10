@@ -2,14 +2,12 @@
 
 import { useEffect, useRef, useState, FormEvent, ChangeEvent } from "react";
 
-// Postの型定義
 interface Post {
   id: number;
   title: string;
   content: string;
 }
 
-// EditPostModalのpropsの型定義
 interface EditPostModalProps {
   isOpen: boolean;
   onClose: () => void;

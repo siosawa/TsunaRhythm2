@@ -1,20 +1,15 @@
-# ベースイメージを指定（x86_64プラットフォームを指定）
 FROM --platform=linux/amd64 node:20.11.1-alpine
 
-# 環境変数の設定
 ENV HOME=/app \
     LANG=C.UTF-8 \
     TZ=Asia/Tokyo \
     HOST=0.0.0.0 \
     NODE_OPTIONS=--openssl-legacy-provider
 
-# 作業ディレクトリの設定
 WORKDIR ${HOME}
 
-# package.jsonとpackage-lock.jsonをコピー
 COPY package*.json ./
 
-# 依存関係をインストール
 RUN apk update && \
     apk upgrade && \
     npm install -g npm@latest --unsafe-perm && \
@@ -25,14 +20,10 @@ RUN apk update && \
     npm ci --unsafe-perm || npm ci --unsafe-perm && \
     rm -rf /var/cache/apk/*
 
-# 全てのファイルをコピー
 COPY . ./
 
-# ポートを公開
 EXPOSE 80
 
-# アプリケーションをビルド
 RUN npm run build
 
-# アプリケーションを起動
 CMD ["npm", "start"]

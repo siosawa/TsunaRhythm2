@@ -3,7 +3,6 @@ import axios from "axios";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-// Post型の定義
 interface Post {
   id: number;
   content: string;

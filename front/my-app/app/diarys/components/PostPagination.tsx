@@ -7,7 +7,7 @@ interface PostPaginationProps {
 const PostPagination: React.FC<PostPaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
   const renderPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
-    const maxPagesToShow = 5; // 表示するページ数を制限
+    const maxPagesToShow = 5; 
     const halfWindow = Math.floor(maxPagesToShow / 2);
     let startPage = Math.max(currentPage - halfWindow, 1);
     let endPage = Math.min(currentPage + halfWindow, totalPages);

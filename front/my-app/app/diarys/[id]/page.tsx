@@ -5,7 +5,6 @@ import { format, Locale } from "date-fns";
 import { ja as localeJa } from "date-fns/locale";
 import { useParams } from "next/navigation";
 
-// PostとUserの型定義
 interface User {
   id: number;
   name: string;
@@ -51,7 +50,6 @@ const PostDetail = (): JSX.Element => {
         setPost(postRes.data);
         const userId = postRes.data.user_id;
 
-        // Fetch user data
         const userRes = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`,
           {

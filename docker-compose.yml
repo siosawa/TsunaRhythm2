@@ -13,7 +13,7 @@ services:
     tty: true
     depends_on:
       - db
-      - redis  # Redisに依存させる
+      - redis  
     build:
       context: ./back/
       dockerfile: Dockerfile
@@ -22,7 +22,7 @@ services:
     volumes:
       - ./back:/back
       - gem_data:/usr/local/bundle
-    command: bundle exec rails server -b 0.0.0.0 -p 3000  # この行を追加
+    command: bundle exec rails server -b 0.0.0.0 -p 3000  
   
   frontend:
     build:
@@ -37,7 +37,7 @@ services:
   redis:
     image: redis:6.2
     ports:
-      - 6379:6379  # 必要に応じてポートを公開する
+      - 6379:6379 
     volumes:
       - redis_data:/data
 

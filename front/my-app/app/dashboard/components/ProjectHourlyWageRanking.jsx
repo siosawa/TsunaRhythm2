@@ -22,7 +22,6 @@ const ProjectHourlyWageRanking = () => {
       const records = recordsResponse.data || [];
       const projects = projectsResponse.data || [];
 
-      // projectごとの時給平均を計算
       const projectHourlyWages = {};
 
       records.forEach((record) => {

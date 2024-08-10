@@ -23,8 +23,8 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".", // 追加
-    "paths": {      // 追加
+    "baseUrl": ".", 
+    "paths": {      
       "@/*": ["./*"]
     }
   },

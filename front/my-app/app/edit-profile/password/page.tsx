@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef, FormEvent, ChangeEvent } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-// User型の定義
 interface User {
   id: number;
   name: string;
@@ -26,7 +25,6 @@ const EditPassword = (): JSX.Element => {
 
   const currentPasswordRef = useRef<HTMLInputElement | null>(null);
 
-  // コンポーネントがマウントされたときにカーソルを自動的に付ける
   useEffect(() => {
     if (currentPasswordRef.current) {
       currentPasswordRef.current.focus();

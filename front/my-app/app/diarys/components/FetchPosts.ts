@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
 
-// PostとUserの型定義
 interface User {
   name: string;
 }

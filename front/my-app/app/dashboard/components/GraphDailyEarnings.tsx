@@ -12,9 +12,8 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { FiTriangle } from "react-icons/fi";
-import FetchCurrentUser from "@/components/FetchCurrentUser"; // FetchCurrentUserをインポート
+import FetchCurrentUser from "@/components/FetchCurrentUser"; 
 
-// Chart.jsの設定を登録
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,7 +23,6 @@ ChartJS.register(
   Legend
 );
 
-// ProjectとRecordの型を定義
 interface Project {
   id: number;
   user_id: number;
@@ -64,7 +62,7 @@ interface CurrentUser {
 }
 
 const GraphDailyEarnings = () => {
-  const currentMonth = new Date().getMonth(); // 現在の月を取得
+  const currentMonth = new Date().getMonth();
   const [chartData, setChartData] = useState({
     labels: [] as string[],
     datasets: [
@@ -77,9 +75,9 @@ const GraphDailyEarnings = () => {
       },
     ],
   });
-  const [monthIndex, setMonthIndex] = useState<number>(currentMonth); // 初期値を現在の月に設定
+  const [monthIndex, setMonthIndex] = useState<number>(currentMonth);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); // currentUserの状態を追加
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); 
 
   const fetchData = async (userId: number, month: number) => {
     try {
@@ -94,7 +92,6 @@ const GraphDailyEarnings = () => {
       const projects = projectsResponse.data || [];
       const records = recordsResponse.data || [];
 
-      // 完了済みのprojectを取得
       const completedProjects = projects.filter(
         (project) => project.is_completed
       );
@@ -102,22 +99,18 @@ const GraphDailyEarnings = () => {
       const earningsPerDay: { [key: string]: number } = {};
       const year = new Date().getFullYear();
 
-      // 今月のrecordsデータを取得
       const selectedMonthRecords = records.filter(
         (record) => new Date(record.date).getMonth() === month
       );
 
       completedProjects.forEach((project) => {
-        // project_idが一致するrecordsデータを取得して
         const projectRecords = records.filter(
           (record) => record.project_id === project.id
         );
-        // トータル作業分数も取得
         const totalWorkMinutes = projectRecords.reduce(
           (total, record) => total + record.minutes,
           0
         );
-        // 案件別自給平均を算出
         const averageHourlyWage =
           (project.unit_price * project.quantity) / (totalWorkMinutes / 60);
 
@@ -128,16 +121,13 @@ const GraphDailyEarnings = () => {
               earningsPerDay[date] = 0;
             }
 
-            // recordsの作業分数と時給を分給に直したものをかけて稼いだ金額を出力
             const dailyEarnings = record.minutes * (averageHourlyWage / 60);
 
-            // 日付ごとに稼いだ金額を加算していくことで日毎の稼いだ金額合計を出力
             earningsPerDay[date] += dailyEarnings;
           }
         });
       });
 
-      // 日付順にソート
       const sortedDates = Object.keys(earningsPerDay).sort((a, b) => {
         return new Date(a).getTime() - new Date(b).getTime();
       });
@@ -168,7 +158,7 @@ const GraphDailyEarnings = () => {
 
   useEffect(() => {
     if (currentUser) {
-      fetchData(currentUser.id, currentMonth); // 初回ロード時に現在の月のデータを取得
+      fetchData(currentUser.id, currentMonth); 
     }
   }, [currentUser]);
 
@@ -208,7 +198,7 @@ const GraphDailyEarnings = () => {
             legend: {
               labels: {
                 font: {
-                  weight: "bold", // 太文字に設定
+                  weight: "bold",
                 },
               },
             },

@@ -3,18 +3,17 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./"), // プロジェクトのルートディレクトリをエイリアスにマッピング
+      "@": path.resolve(__dirname, "./"), 
     },
   },
   test: {
-    globals: true, // これにより、`test`や`expect`がグローバルに利用可能になります
-    environment: "jsdom", // Reactコンポーネントをテストするために必要です
+    globals: true, // これにより`test`や`expect`がグローバルに利用可能
+    environment: "jsdom", // Reactコンポーネントをテストするために必要
     include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    setupFiles: "./setupTests.js", // 追加
+    setupFiles: "./setupTests.js",
   },
 });

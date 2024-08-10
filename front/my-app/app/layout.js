@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Settings from "@/components/Settings";
-import { TbMenu } from "react-icons/tb"; // ハンバーガーメニューアイコンをインポート
+import { TbMenu } from "react-icons/tb"; 
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`, {
         method: "DELETE",
-        credentials: "include", // 必要に応じてクッキーを含める
+        credentials: "include", 
       });
 
       if (res.ok) {
@@ -72,7 +72,7 @@ export default function RootLayout({ children }) {
               width={60}
               height={60}
               className="rounded-xl"
-              style={{ width: '100px', height: '40px', objectFit: 'cover' }} // アスペクト比を保つようにしつつ、サイズを固定
+              style={{ width: '100px', height: '40px', objectFit: 'cover' }} 
             />
           </div>
             {currentUser && (

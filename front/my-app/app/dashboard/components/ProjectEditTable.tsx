@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import { CiCirclePlus } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 
-// Projectインターフェースを定義
 interface Project {
   id: number;
   originalId: number;
@@ -21,7 +20,6 @@ interface Project {
   updated_at?: string;
 }
 
-// コンポーネントのプロパティの型を定義
 interface EditTableProps {
   onClose: () => void;
   onSave: () => void;
