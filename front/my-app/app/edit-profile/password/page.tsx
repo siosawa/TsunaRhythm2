@@ -1,16 +1,30 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, FormEvent, ChangeEvent } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const EditPassword = () => {
-  const [user, setUser] = useState(null);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("");
+// User型の定義
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  posts_count: number;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+}
 
-  const currentPasswordRef = useRef(null);
+const EditPassword = (): JSX.Element => {
+  const [user, setUser] = useState<User | null>(null);
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
+
+  const currentPasswordRef = useRef<HTMLInputElement | null>(null);
 
   // コンポーネントがマウントされたときにカーソルを自動的に付ける
   useEffect(() => {
@@ -19,7 +33,7 @@ const EditPassword = () => {
     }
   }, []);
 
-  const handleSaveClick = async (event) => {
+  const handleSaveClick = async (event: FormEvent) => {
     event.preventDefault();
 
     const formData = {
@@ -33,20 +47,20 @@ const EditPassword = () => {
     setConfirmPassword("");
 
     if (user && user.id === 2) {
-      setMessage("ゲストアカウントはパスワードを変更できません");
+      setMessage("ゲストアカウントはパスワードを変更できません。");
       setMessageType("error");
       return;
     }
 
     if (formData.new_password !== formData.confirm_password) {
-      setMessage("新しいパスワードと確認用パスワードが一致しません");
+      setMessage("新しいパスワードと確認用パスワードが一致しません。");
       setMessageType("error");
       return;
     }
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}/update_password`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user?.id}/update_password`,
         {
           method: "PATCH",
           headers: {
@@ -62,7 +76,7 @@ const EditPassword = () => {
 
       if (response.ok) {
         const updatedUserData = await response.json();
-        setMessage("パスワードが正常に更新されました");
+        setMessage("パスワードが正常に更新されました。");
         setMessageType("success");
       } else {
         const errorData = await response.json();
@@ -71,10 +85,15 @@ const EditPassword = () => {
       }
     } catch (error) {
       console.error("ユーザーデータの更新中にエラーが発生しました:", error);
-      setMessage("パスワードの更新中にエラーが発生しました");
+      setMessage("パスワードの更新中にエラーが発生しました。");
       setMessageType("error");
     }
   };
+
+  const handlePasswordChange = (setter: React.Dispatch<React.SetStateAction<string>>) => 
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value);
+    };
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-24">
@@ -92,7 +111,7 @@ const EditPassword = () => {
               <input
                 type="password"
                 value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
+                onChange={handlePasswordChange(setCurrentPassword)}
                 ref={currentPasswordRef}
                 className="w-full px-4 py-2 border rounded-lg text-right"
               />
@@ -106,7 +125,7 @@ const EditPassword = () => {
               <input
                 type="password"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={handlePasswordChange(setNewPassword)}
                 className="w-full px-4 py-2 border rounded-lg text-right"
               />
             </div>
@@ -119,7 +138,7 @@ const EditPassword = () => {
               <input
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handlePasswordChange(setConfirmPassword)}
                 className="w-full px-4 py-2 border rounded-lg text-right"
               />
             </div>
