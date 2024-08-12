@@ -2,7 +2,31 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
 
-const FetchFollowing = ({
+interface User {
+  id: number;
+  name: string;
+  avatar: {
+    url: string;
+  } | null;
+  following_count: number;
+  followers_count: number;
+  work: string;
+  profile_text: string;
+  relationship_id: number;
+  posts_count: number;
+}
+
+interface FetchFollowersProps {
+  currentPage: number;
+  currentUserId: number | null;
+  setUsers: (users: User[]) => void;
+  setTotalPages: (totalPages: number) => void;
+  setFollowings: (followings: Set<number>) => void;
+  setFollowStates: (followStates: Record<string, boolean | number>) => void;
+  setError: (error: string) => void;
+}
+
+const FetchFollowers = ({
   currentPage,
   currentUserId,
   setUsers,
@@ -10,18 +34,17 @@ const FetchFollowing = ({
   setFollowings,
   setFollowStates,
   setError,
-}) => {
-  const { userId } = useParams();
-  console.log(userId);
+}: FetchFollowersProps) => {
+  const { userId } = useParams() as { userId: string };
 
   useEffect(() => {
-    const fetchFollowing = async () => {
+    const fetchFollowers = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}/following?page=${currentPage}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}/followers?page=${currentPage}`,
           {
             withCredentials: true,
-          },
+          }
         );
 
         if (res.data && Array.isArray(res.data.users)) {
@@ -44,17 +67,17 @@ const FetchFollowing = ({
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${currentUserId}/following`,
             {
               withCredentials: true,
-            },
+            }
           );
           const data = response.data;
-
-          const followingSet = new Set(data.users.map((user) => user.id));
-          const followingStates = {};
-          data.users.forEach((user) => {
+    
+          const followingSet: Set<number> = new Set(data.users.map((user: User) => user.id));
+          const followingStates: Record<string, boolean | number> = {};
+          data.users.forEach((user: User) => {
             followingStates[user.id] = true;
             followingStates[`relationship_${user.id}`] = user.relationship_id;
           });
-
+    
           setFollowings(followingSet);
           setFollowStates(followingStates);
         } catch (error) {
@@ -64,7 +87,7 @@ const FetchFollowing = ({
     };
 
     if (userId) {
-      fetchFollowing();
+      fetchFollowers();
     }
     if (currentUserId) {
       fetchFollowingId();
@@ -74,4 +97,4 @@ const FetchFollowing = ({
   return null;
 };
 
-export default FetchFollowing;
+export default FetchFollowers;

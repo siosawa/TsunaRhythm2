@@ -1,5 +1,19 @@
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { Dispatch, SetStateAction } from "react";
+
+interface FollowStates {
+  [key: string]: boolean | number | null;
+  [key: number]: boolean;
+}
+
+interface FollowUnfollowButtonProps {
+  userId: number;
+  isFollowing: boolean;
+  followStates: FollowStates;
+  setFollowStates: Dispatch<SetStateAction<FollowStates>>;
+  setFollowings: Dispatch<SetStateAction<Set<number>>>;
+}
 
 const FollowUnfollowButton = ({
   userId,
@@ -7,8 +21,8 @@ const FollowUnfollowButton = ({
   followStates,
   setFollowStates,
   setFollowings,
-}) => {
-  const updateFollowState = (followed, relationshipId = null) => {
+}: FollowUnfollowButtonProps) => {
+  const updateFollowState = (followed: boolean, relationshipId: number | null = null) => {
     setFollowStates({
       ...followStates,
       [userId]: followed,
@@ -22,7 +36,7 @@ const FollowUnfollowButton = ({
   };
 
   const handleUnfollow = async () => {
-    const relationshipId = followStates[`relationship_${userId}`];
+    const relationshipId = followStates[`relationship_${userId}`] as number;
     try {
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/relationships/${relationshipId}`,

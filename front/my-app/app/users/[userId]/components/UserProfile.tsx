@@ -2,7 +2,23 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const UserProfile = ({ user }) => {
+interface User {
+  id: number;
+  name: string;
+  avatar: {
+    url: string;
+  } | null;
+  following_count: number;
+  followers_count: number;
+  work: string;
+  profile_text: string;
+}
+
+interface UserProfileProps {
+  user: User | null;
+}
+
+const UserProfile = ({ user }: UserProfileProps) => {
   if (!user) return <div>ローディング中...</div>;
 
   return (

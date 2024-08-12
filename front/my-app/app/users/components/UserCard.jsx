@@ -22,13 +22,15 @@ const UserCard = ({
       className="bg-white shadow-md rounded-3xl p-6 mb-5 mx-3 flex items-center md:mx-20 lg:mx-52 2xl:mx-96"
     >
       {user && user.avatar && user.avatar.url ? (
-        <img
-          src={`${process.env.NEXT_PUBLIC_RAILS_URL}${user.avatar.url}`}
-          alt={user.name}
-          width={70}
-          height={70}
-          className="rounded-full relative -top-5"
-        />
+        <Link href={`/users/${user.id}`}>
+          <img
+            src={`${process.env.NEXT_PUBLIC_RAILS_URL}${user.avatar.url}`}
+            alt={user.name}
+            width={70}
+            height={70}
+            className="rounded-full relative -top-5 hover:opacity-80"
+          />
+        </Link>
       ) : (
         <div
           className="flex items-center justify-center bg-gray-300 text-white text-xs font-bold rounded-full relative -top-5"
