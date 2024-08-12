@@ -4,7 +4,7 @@ interface PostPaginationProps {
   onPageChange: (page: number) => void;
 }
 
-const PostPagination: React.FC<PostPaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const PostPagination = ({ currentPage, totalPages, onPageChange }: PostPaginationProps) => {
   const renderPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
     const maxPagesToShow = 5; 

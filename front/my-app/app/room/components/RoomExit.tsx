@@ -3,9 +3,44 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-export default function RoomExitButton({ room_id }) {
-  const [roomMembers, setRoomMembers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+interface RoomMember {
+  id: number;
+  user_id: number;
+  room_id: number;
+  entered_at: string;
+  leaved_at: string | null;
+}
+
+interface Seat {
+  id: number;
+  user_id: number;
+  room_id: number;
+  seat_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+}
+
+interface RoomExitButtonProps {
+  room_id: number;
+}
+
+export default function RoomExitButton({ room_id }: RoomExitButtonProps) {
+  const [roomMembers, setRoomMembers] = useState<RoomMember[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -20,7 +55,7 @@ export default function RoomExitButton({ room_id }) {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
+        const data: RoomMember[] = await response.json();
         setRoomMembers(data);
       } catch (error) {
         console.error("Error fetching room members:", error);
@@ -34,7 +69,6 @@ export default function RoomExitButton({ room_id }) {
     const now = new Date().toISOString();
 
     try {
-      // leaved_at が null で currentUser.id と user_id が一致するレコードを探す
       const matchingMember = roomMembers.find(
         (member) =>
           member.user_id === currentUser?.id && member.leaved_at === null
@@ -55,9 +89,9 @@ export default function RoomExitButton({ room_id }) {
             withCredentials: true,
           }
         );
-        const seats = seatsResponse.data;
+        const seats: Seat[] = seatsResponse.data;
         const matchingSeats = seats.filter(
-          (seat) => seat.user_id === currentUser.id
+          (seat) => seat.user_id === currentUser?.id
         );
         for (const seat of matchingSeats) {
           await axios.delete(
@@ -88,10 +122,10 @@ export default function RoomExitButton({ room_id }) {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="fixed bottom-32 right-12 z-30 flex items-center">
+      <div className="fixed bottom-20 right-4 mb-4 mr-4 z-30 flex items-center">
         <Button
           variant="ghost"
-          className="bg-slate-500 text-white hover:text-white hover:bg-slate-600 px-4 py-2 rounded-xl"
+          className="bg-gray-500 text-white hover:text-white hover:bg-gray-600 px-4 py-2 rounded-xl"
           onClick={handleExit}
         >
           ルームを退出する

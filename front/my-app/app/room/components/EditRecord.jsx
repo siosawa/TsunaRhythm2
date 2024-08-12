@@ -170,9 +170,7 @@ const EditRecord = ({ onClose, onSave }) => {
             <table className="min-w-full table-auto border-collapse border border-gray-200">
               <thead className="bg-gray-100 whitespace-nowrap">
                 <tr>
-                  <th className="px-2 py-1 border border-gray-200">
-                    プロジェクト
-                  </th>
+                  <th className="px-2 py-1 border border-gray-200">案件名</th>
                   <th className="px-2 py-1 border border-gray-200 w-20">
                     分数
                   </th>

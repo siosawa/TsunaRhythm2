@@ -106,12 +106,13 @@ const ProjectEditTable = ({ onClose, onSave }: EditTableProps): JSX.Element => {
   };
 
   const saveData = async () => {
-    const projectNames = data.map((item) => item.name);
-    const uniqueProjectNames = new Set(projectNames);
-    if (projectNames.length !== uniqueProjectNames.size) {
-      setErrorMessage("同じ案件名は使えません");
-      return;
-    }
+    // 案件名を一意にしたいならコメントアウトを外す
+    // const projectNames = data.map((item) => item.name);
+    // const uniqueProjectNames = new Set(projectNames);
+    // if (projectNames.length !== uniqueProjectNames.size) {
+    //   setErrorMessage("同じ案件名は使えません");
+    //   return;
+    // }
 
     const originalIds = originalData.map((item) => item.id);
     const currentIds = data.map((item) => item.id);

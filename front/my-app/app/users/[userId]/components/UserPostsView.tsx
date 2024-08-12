@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
-import ja from "date-fns/locale/ja";
+import { ja } from "date-fns/locale";
 import Link from "next/link";
 import EditPostModal from "@/app/diarys/components/EditPostModal";
 import PostDelete from "@/app/diarys/components/PostDelete";
@@ -11,19 +11,53 @@ import PostPagination from "@/app/diarys/components/PostPagination";
 import { Button } from "@/components/ui/button";
 import UserProfile from "./UserProfile";
 
-const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
-  const [posts, setPosts] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [editingPost, setEditingPost] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [avatars, setAvatars] = useState({});
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user_id: number;
+  current_user_id: number;
+  user: {
+    name: string;
+  };
+}
 
-  const handleEditClick = (post) => {
+interface User {
+  id: number;
+  name: string;
+  created_at: string;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+  posts_count: number;
+  followers_count: number;
+  following_count: number;
+}
+
+interface UserPostsViewProps {
+  reload: boolean;
+  user: User;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+}
+
+const UserPostsView = ({ reload, user, currentPage, onPageChange }: UserPostsViewProps) => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [avatars, setAvatars] = useState<Record<number, string | null>>({});
+
+  const handleEditClick = (post: Post) => {
     setEditingPost(post);
     setIsModalOpen(true);
   };
 
-  const handleSave = async (postId, title, content) => {
+  const handleSave = async (postId: number, title: string, content: string) => {
     try {
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/${postId}`,
@@ -50,7 +84,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
     }
   };
 
-  const fetchUserAvatar = async (userId) => {
+  const fetchUserAvatar = async (userId: number) => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`
@@ -75,7 +109,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
         setPosts(userPosts.posts || []);
         setTotalPages(userPosts.total_pages || 1);
 
-        const newAvatars = {};
+        const newAvatars: Record<number, string | null> = {};
         for (const post of userPosts.posts) {
           if (!avatars[post.user_id]) {
             const avatarUrl = await fetchUserAvatar(post.user_id);
@@ -143,16 +177,18 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }) => {
                 </div>
               </div>
             </div>
-            <div className="ml-14">
+            <div className="mx-10">
               <Link href={`/diarys/${post.id}`}>
-                <p className="mb-2 text-gray-800 text-xl font-bold">
+                <p className="mb-2 text-gray-800 text-xl font-bold hover:underline">
                   {post.title}
                 </p>
               </Link>
-              <div className="max-h-post-content overflow-auto mb-4 text-gray-600 whitespace-pre-line">
-                {post.content.length > 40
-                  ? `${post.content.slice(0, 430)}...`
-                  : post.content}
+              <div className="overflow-auto mb-4 text-gray-600 whitespace-pre-line">
+                <Link href={`/diarys/${post.id}`} className="hover:underline">
+                  {post.content.length > 40
+                    ? `${post.content.slice(0, 290)}...`
+                    : post.content}
+                </Link>
               </div>
             </div>
           </div>
