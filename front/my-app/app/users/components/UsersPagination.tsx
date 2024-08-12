@@ -1,9 +1,19 @@
 "use client";
 import React from "react";
 
-const UsersPagination = ({ currentPage, totalPages, onPageChange }) => {
-  const renderPageNumbers = () => {
-    const pages = [];
+interface UsersPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const UsersPagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: UsersPaginationProps) => {
+  const renderPageNumbers = (): (number | string)[] => {
+    const pages: (number | string)[] = [];
     const maxPagesToShow = 5; // 表示するページ数を制限
     const halfWindow = Math.floor(maxPagesToShow / 2);
     let startPage = Math.max(currentPage - halfWindow, 1);
@@ -35,8 +45,8 @@ const UsersPagination = ({ currentPage, totalPages, onPageChange }) => {
       {renderPageNumbers().map((page, index) => (
         <button
           key={index}
-          onClick={() => onPageChange(page)}
-          className={`mx-1 px-3 py-1 border rounded ${
+          onClick={() => typeof page === "number" && onPageChange(page)}
+          className={`mx-2 px-3 py-1 border rounded ${
             page === currentPage
               ? "bg-blue-500 text-white"
               : "bg-white text-blue-500"
