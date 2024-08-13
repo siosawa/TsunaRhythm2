@@ -106,7 +106,7 @@ const GraphHourlyRate = () => {
 
       projects.forEach((project) => {
         if (project.is_completed) {
-          // 完了しているプロジェクトのみ考慮
+          // 完了している案件のみ考慮
           const projectRecords = selectedMonthRecords.filter(
             (record) => record.project_id === project.id
           );
