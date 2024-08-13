@@ -1,11 +1,22 @@
 # オンラインワークスペース「つなリズム」
 
 https://tsunarhythm.com <br />
-登録せずにお試しいただくことができます。
+登録せずにお試しいただくことができます。制作期間は約2ヶ月半です。(※TypeScript化は別)
 
-Qiita はこちら → https://qiita.com/sawata0324　<br />
-はてなブログはこちら → https://sawata0324.hatenablog.com/　<br />
-Wantedly はこちら → https://www.wantedly.com/id/sawata_0324
+Qiitaはこちら→ [https://qiita.com/sawata0324](https://qiita.com/sawata0324)　<br />
+はてなブログはこちら→ [https://sawata0324.hatenablog.com/](https://sawata0324.hatenablog.com/)　<br />
+Wantedlyはこちら→ [https://www.wantedly.com/id/sawata_0324　](https://www.wantedly.com/id/sawata_0324)　<br />
+
+## 目次
+1. **サービス概要・制作背景**
+1. **アプリケーションのイメージ**
+1. **機能一覧**
+1. **使用技術**
+1. **画面設計図/画面遷移圖(figma)**
+1. **ER図**
+1. **インフラ構成図**
+1. **工夫した点**
+1. **IT学習・ポートフォリオ作成工程詳細**
 
 # サービス概要・制作背景
 
@@ -113,11 +124,12 @@ https://github.com/user-attachments/assets/93b019d8-d0e3-4558-8caa-24c98a57110a
 
 <br />
 
-| インフラ                                                             |
-| -------------------------------------------------------------------- |
-| Docker/docker-compose                                                |
-| AWS（ECS,ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ElastiCache） |
-| GitHub Actions(RSpec 自動テスト,Rubocop コード整形)                  |
+| インフラ |
+----|
+| Docker/docker-compose |
+| AWS（ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ACM,ElastiCache） |
+| GitHub Actions(RSpec自動テスト,Rubocop静的コード解析) |
+| CodeRabbit |
 
 <br />
 
@@ -137,14 +149,13 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 # 工夫した点
 
 ### フロントエンド
-
-- Next14 による完全 SPA 化を行い、最新の AppRouter を使った画面遷移で設計しました。
-- TypeScript をダッシュボード機能の実装過程において導入しました。
-- レスポンシブ対応にしました。※現状ダッシュボードページのみスマホ対応できていませんが随時修正予定です。
-- ユーザー一覧ページとフォローしているユーザー一覧ページ、フォローされているユーザー一覧ページでのユーザーの表示形式を同じコンポーネントを使って作成することで保守回収がしやすい設計にしました。
-- ルームでの座席着席機能が自然と行えるようにアカウント作成時に自動でランダムにアイコンが設定されるようにしました。
-- ストップウォッチ機能でブラウザを閉じても再度開いたときには途中からスタートするように作成しました。
-- 長期間入室しているユーザーを一定期間で退室させるようにして、入室情報にバグが発生しても早期に改善されやすくなるように設計しました。
+ - Next14による完全SPA化を行い、最新のAppRouterを使った画面遷移で設計しました。
+ - TypeScriptをダッシュボード機能の実装過程において導入しました。
+ - レスポンシブ対応にしました。
+ - ユーザー一覧ページとフォローしているユーザー一覧ページ、フォローされているユーザー一覧ページでのユーザーの表示形式を同じコンポーネントを使って作成することで保守回収がしやすい設計にしました。
+ - ルームでの座席着席機能が自然と行えるようにアカウント作成時に自動でランダムにアイコンが設定されるようにしました。
+ - ストップウォッチ機能でブラウザを閉じても再度開いたときには途中からスタートするように作成しました。
+ - 長期間入室しているユーザーを一定期間で退室させるようにして、入室情報にバグが発生しても早期に改善されやすくなるように設計しました。
 
 ### バックエンド
 
@@ -156,12 +167,11 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 - ロケールファイルを利用して、表示文言を一元管理しました。
 
 ### インフラ
+ - WebSocket通信を行うためのredisをタスク定義で立ち上げるのではなくElastiCacheを使って立ち上げることで運用管理の負担を軽減しました。
+ - GithubActionsを利用してCIを実現しました。
+ - Code Rabbitを使用してコードの変更点から何が変更されたのかの要約を自然言語処理を使ってプルリクエスト後マージ前の段階で自動生成→確認できるようにしました。
 
-- WebSocket 通信を行うための redis をタスク定義で立ち上げるのではなく ElastiCache を使って立ち上げることで運用管理の負担を軽減しました。
-- GithubActions を利用して CI を実現しました。
-
-# IT 学習・ポートフォリオ作成工程
-
+# IT学習・ポートフォリオ作成工程詳細
 ※は途中までという意味です。
 
 1. 2022/10~11:
@@ -188,7 +198,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
    - Prettier の導入
    - ESlint の導入
    - GithubActions による CI 設定
-   - AWS
+    - AWS
      - Udemy「AWS コンテナサービス入門 しま(5 時間)」修了
      - Udemy「GithubActions で学ぶ CI/CD 入門 しま(4 時間)」修了
      - RDS,S3,ACM,ECR,VPS を使用して EC2 によるデプロイ
@@ -204,12 +214,10 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
    - 基本機能の実装修了(~6/11)
    - GithubActions で CI 設計(Rubocop,Rspec)
    - アカウント作成/ログイン/ログアウト/ゲストログイン/退会
-   - プロフィール編集機能
-     - 名前,ワーク,パスワード,メールアドレス,プロフィール文章
+   - プロフィール編集機能(名前,ワーク,パスワード,メールアドレス,プロフィール文章)
    - 日記機能(CRUD 処理)
    - フォローフォロワー機能
-   - 各種ページネイション機能
-     - フォロー一覧,フォロワー一覧,日記一覧,ユーザー一覧
+   - 各種ページネイション機能(フォロー一覧,フォロワー一覧,日記一覧,ユーザー一覧)
 7. 2024/6/11~6/26:
    - 一意なルームへの入室・退出機能
    - リアルタイムな座席着席機能
