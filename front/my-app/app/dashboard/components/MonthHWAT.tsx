@@ -78,13 +78,13 @@ const MonthHWAT = (): JSX.Element => {
             (record) => record.project_id === project.id
           );
 
-          // プロジェクトの総作業時間を計算
+          // 案件の総作業時間を計算
           const totalProjectMinutes = projectRecords.reduce(
             (acc, record) => acc + record.minutes,
             0
           );
 
-          // プロジェクトの平均時給を計算
+          // 案件の平均時給を計算
           const projectAverageHourlyWage =
             (project.unit_price * project.quantity) /
             (totalProjectMinutes / 60);
@@ -94,13 +94,13 @@ const MonthHWAT = (): JSX.Element => {
             (record) => new Date(record.date).getMonth() === currentMonth
           );
 
-          // 現在の月のプロジェクトの総作業時間を計算
+          // 現在の月の案件の総作業時間を計算
           const currentMonthProjectMinutes = currentMonthRecords.reduce(
             (acc, record) => acc + record.minutes,
             0
           );
 
-          // プロジェクトの平均時給に現在の月の総作業時間を掛けて給与総額を算出
+          // 案件の平均時給に現在の月の総作業時間を掛けて給与総額を算出
           totalSalary +=
             projectAverageHourlyWage * (currentMonthProjectMinutes / 60);
           totalMinutes += currentMonthProjectMinutes;

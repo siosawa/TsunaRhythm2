@@ -151,7 +151,7 @@ export function SetTimer() {
         console.error("記録の送信に失敗しました", error);
       }
     } else {
-      console.error("プロジェクトまたはユーザーが選択されていません");
+      console.error("案件名またはユーザーが選択されていません");
     }
     start();
   };

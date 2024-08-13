@@ -27,15 +27,15 @@ interface Post {
 interface User {
   id: number;
   name: string;
-  email: string;
-  following: number;
-  followers: number;
-  posts_count: number;
+  created_at: string;
   work: string;
   profile_text: string;
   avatar: {
     url: string;
   };
+  posts_count: number;
+  followers_count: number;
+  following_count: number;
 }
 
 interface UserPostsViewProps {
