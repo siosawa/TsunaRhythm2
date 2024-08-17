@@ -7,10 +7,11 @@ interface User {
   id: number;
   name: string;
   work: string;
-  profile_text: string;
+  profile_text: string | null;
   avatar: {
-    url: string;
-  };
+    url: string | null;
+  } 
+
   posts_count: number;
   followers_count: number;
   following_count: number;

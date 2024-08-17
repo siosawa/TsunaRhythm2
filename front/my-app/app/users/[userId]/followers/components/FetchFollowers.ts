@@ -6,12 +6,12 @@ interface User {
   id: number;
   name: string;
   avatar: {
-    url: string;
-  } | null;
+    url: string | null;
+  } 
   following_count: number;
   followers_count: number;
-  work: string;
-  profile_text: string;
+  work: string | null;
+  profile_text: string | null;
   relationship_id: number;
   posts_count: number;
 }
