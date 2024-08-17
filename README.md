@@ -198,6 +198,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
    - Prettier の導入
    - ESlint の導入
    - GithubActions による CI 設定
+   - 
   　　- AWS
      - Udemy「AWS コンテナサービス入門 しま(5 時間)」修了
      - Udemy「GithubActions で学ぶ CI/CD 入門 しま(4 時間)」修了
