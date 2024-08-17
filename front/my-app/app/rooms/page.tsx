@@ -7,14 +7,35 @@ import axios from "axios";
 import roomsData from "@/db/rooms.json";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const Index = () => {
-  const [rooms, setRooms] = useState([]);
-  const [roomMembers, setRoomMembers] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+interface Room {
+  id: number;
+  name: string;
+  image: string;
+  maxMembers: number;
+}
+
+interface RoomMember {
+  id: number;
+  user_id: number;
+  room_id: number;
+  entered_at: string;
+  leaved_at: string | null;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const Index = (): JSX.Element => {
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [roomMembers, setRoomMembers] = useState<RoomMember[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    setRooms(roomsData);
+    setRooms(roomsData as Room[]);
 
     const fetchRoomMembers = async () => {
       try {
@@ -25,14 +46,15 @@ const Index = () => {
             credentials: "include",
           }
         );
-        const data = await response.json();
+        const data: RoomMember[] = await response.json();
 
         const now = new Date();
         const updatedMembers = await Promise.all(
           data.map(async (member) => {
             if (
               member.leaved_at === null &&
-              (now - new Date(member.entered_at)) / (1000 * 60 * 60) >= 3 //3日以上入室しているユーザーがいたら強制退出処置
+              (now.getTime() - new Date(member.entered_at).getTime()) /
+                (1000 * 60 * 60 * 24) >= 3 // 3日以上入室しているユーザーがいたら強制退出処置
             ) {
               try {
                 await axios.patch(
@@ -59,7 +81,7 @@ const Index = () => {
     fetchRoomMembers();
   }, []);
 
-  const getCurrentMembersCount = (roomId) => {
+  const getCurrentMembersCount = (roomId: number): number => {
     const now = new Date();
     return roomMembers.filter(
       (member) =>
@@ -69,7 +91,7 @@ const Index = () => {
     ).length;
   };
 
-  const handleRoomClick = (room) => {
+  const handleRoomClick = (room: Room) => {
     if (getCurrentMembersCount(room.id) < room.maxMembers) {
       setSelectedRoom(room);
     }
@@ -101,8 +123,8 @@ const Index = () => {
         const seats = response.data;
 
         const deletePromises = seats
-          .filter((seat) => seat.user_id === currentUser.id)
-          .map((seat) =>
+          .filter((seat: { user_id: number }) => seat.user_id === currentUser.id)
+          .map((seat: { id: number }) =>
             axios.delete(
               `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${seat.id}`,
               {
@@ -118,7 +140,7 @@ const Index = () => {
       }
     }
 
-    const newRoomMember = {
+    const newRoomMember: Omit<RoomMember, 'id'> = {
       user_id: currentUser.id,
       room_id: selectedRoom.id,
       entered_at: new Date().toISOString(),
@@ -126,13 +148,13 @@ const Index = () => {
     };
 
     try {
-      await axios.post(
+      const response = await axios.post<RoomMember>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
         newRoomMember,
         { withCredentials: true }
       );
-      setRoomMembers([newRoomMember, ...roomMembers]);
-      console.log(selectedRoom);
+      const createdMember = response.data;
+      setRoomMembers([createdMember, ...roomMembers]);
       window.location.href = `/room/${selectedRoom.id}`;
     } catch (error) {
       console.error("Error joining room:", error);

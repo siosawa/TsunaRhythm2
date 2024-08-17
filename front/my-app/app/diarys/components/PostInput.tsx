@@ -3,8 +3,18 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 
-const PostInput = ({ onPostSuccess }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface PostInputProps {
+  onPostSuccess: () => void;
+}
+
+interface PostInputModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onPostSuccess: () => void;
+}
+
+const PostInput = ({ onPostSuccess }: PostInputProps): JSX.Element => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -28,15 +38,17 @@ const PostInput = ({ onPostSuccess }) => {
   );
 };
 
-export default PostInput;
-
-const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [error, setError] = useState("");
-  const contentRef = useRef(null);
-  const titleRef = useRef(null);
-  const submitButtonRef = useRef(null);
+const PostInputModal = ({
+  isOpen,
+  onClose,
+  onPostSuccess,
+}: PostInputModalProps): JSX.Element | null => {
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isOpen && contentRef.current) {
@@ -44,7 +56,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     }
 
     // モーダルが開いているときにコマンド+エンターで投稿ボタンを発火するイベントリスナーを追加
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
         if (submitButtonRef.current) {
@@ -64,7 +76,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     };
   }, [isOpen]);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (title.length > 56) {
@@ -108,7 +120,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   };
 
   // タイトルの文字が長すぎる時にエラーを出力
-  const handleTitleChange = (e) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     if (e.target.value.length > 56) {
       setError("タイトル文は56文字までです");
@@ -118,7 +130,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   };
 
   // 投稿内容の文字が長すぎる時にエラーを出力
-  const handleContentChange = (e) => {
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
     if (e.target.value.length > 2050) {
       setError("投稿は2050文字までです");
@@ -128,7 +140,7 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
   };
 
   // タイトルでエンターキーを押した時に投稿ボタンが発火しないように設定
-  const handleTitleKeyPress = (e) => {
+  const handleTitleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
     }
@@ -183,3 +195,5 @@ const PostInputModal = ({ isOpen, onClose, onPostSuccess }) => {
     </div>
   );
 };
+
+export default PostInput;

@@ -1,7 +1,7 @@
 import * as React from "react";
 
-const RandomWord = () => {
-  const randomWords = [
+const RandomWord = (): JSX.Element => {
+  const randomWords: string[] = [
     "自分を信じて、一歩一歩進んでいこう。",
     "小さな進歩も大きな成果につながる。",
     "休むことも大切。リフレッシュしてまた頑張ろう。",
@@ -24,11 +24,11 @@ const RandomWord = () => {
     "リフレッシュして、新しい気持ちで頑張ろう。",
   ];
 
-  const randomIndex = Math.floor(Math.random() * randomWords.length);
-  const word = randomWords[randomIndex];
+  const randomIndex: number = Math.floor(Math.random() * randomWords.length);
+  const word: string = randomWords[randomIndex];
 
   return (
-    <div className="px-4 w-48 h-52 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center border-2 border-orange-500">
+    <div className="px-4 w-48 h-56 bg-white shadow-custom-dark rounded-3xl flex items-center justify-center text-center border-2 border-orange-500">
       <p className="font-bold">{word}</p>
     </div>
   );

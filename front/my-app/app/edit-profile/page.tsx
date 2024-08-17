@@ -1,17 +1,29 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { FiTriangle } from "react-icons/fi";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const ProfileReadPage = () => {
-  const [user, setUser] = useState(null);
-  const [isEditable, setIsEditable] = useState(false);
-  const [error, setError] = useState("");
-  const nameInputRef = useRef(null);
-  const [avatar, setAvatar] = useState(null);
-  const fileInputRef = useRef(null);
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  work: string;
+  profile_text: string | null;
+  avatar: {
+    url: string | null;
+  } 
+}
+
+const ProfileReadPage = (): JSX.Element => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchUserData();
@@ -19,7 +31,7 @@ const ProfileReadPage = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<User>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/current_user`,
         { withCredentials: true }
       );
@@ -37,11 +49,13 @@ const ProfileReadPage = () => {
   };
 
   const handleSaveClick = async () => {
+    if (!user) return;
+
     const formData = new FormData();
     formData.append("user[name]", user.name);
     formData.append("user[email]", user.email);
     formData.append("user[work]", user.work);
-    formData.append("user[profile_text]", user.profile_text);
+    formData.append("user[profile_text]", user.profile_text || "");
     if (avatar) {
       formData.append("user[avatar]", avatar);
     }
@@ -73,15 +87,14 @@ const ProfileReadPage = () => {
     window.location.href = "/edit-profile/password";
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({
-      ...prevUser,
-      [name]: value,
-    }));
+    setUser((prevUser) => prevUser ? { ...prevUser, [name]: value } : prevUser);
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!user || !e.target.files) return;
+
     const file = e.target.files[0];
     setAvatar(file);
 
@@ -111,21 +124,22 @@ const ProfileReadPage = () => {
     }
   };
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const openDialog = () => {
     setError("");
     setIsDialogOpen(true);
   };
+
   const closeDialog = () => setIsDialogOpen(false);
 
   const handleDeleteAccount = async () => {
-    if (user?.id == 2) {
+    if (user?.id === 2) {
       setError("ゲストアカウントは退会できません。");
       return;
     }
 
     try {
+      if (!user) return;
+
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}`,
         {
@@ -150,11 +164,11 @@ const ProfileReadPage = () => {
   };
 
   const handleNoImageClick = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center pt-24 ">
+    <div className="min-h-screen flex items-start justify-center pt-24">
       <FetchCurrentUser setCurrentUser={setUser} />
       <div className="bg-white p-6 rounded-3xl shadow-lg w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
@@ -293,7 +307,7 @@ const ProfileReadPage = () => {
                   onChange={handleInputChange}
                   readOnly={!isEditable}
                   className="w-full px-4 py-2 border rounded-xl text-right pr-7 pt-8"
-                  rows="4"
+                  rows={4}
                   autoComplete="off"
                 />
               </div>

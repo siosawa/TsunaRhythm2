@@ -1,28 +1,31 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, KeyboardEvent, ChangeEvent, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const SignUp = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+const SignUp = (): JSX.Element => {
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
-  const submitButtonRef = useRef(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const handleKeyDown = (event, ref) => {
+  const handleKeyDown = (
+    event: KeyboardEvent<HTMLInputElement>,
+    ref: React.RefObject<HTMLInputElement>
+  ) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      ref.current.focus();
+      ref.current?.focus();
     }
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
@@ -96,16 +99,17 @@ const SignUp = () => {
       <form onSubmit={handleSubmit} className="w-full space-y-4">
         {error && <div className="text-red-500">{error}</div>}
         <Input
+          type="text"
           placeholder="アカウントネーム"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, emailRef)}
         />
         <Input
           type="email"
           placeholder="メールアドレス"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           ref={emailRef}
           onKeyDown={(e) => handleKeyDown(e, passwordRef)}
         />
@@ -113,7 +117,7 @@ const SignUp = () => {
           type="password"
           placeholder="パスワード"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           ref={passwordRef}
           onKeyDown={(e) => handleKeyDown(e, confirmPasswordRef)}
         />
@@ -121,12 +125,12 @@ const SignUp = () => {
           type="password"
           placeholder="確認用パスワード"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
           ref={confirmPasswordRef}
-          onKeyDown={(e) => {
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              handleSubmit(e);
+              handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
             }
           }}
         />

@@ -4,13 +4,26 @@ import axios from "axios";
 import ProjectEditTable from "./ProjectEditTable";
 import { FiTriangle } from "react-icons/fi";
 
-const ProjectViewTable = () => {
-  const [projects, setProjects] = useState([]);
-  const [showEditTable, setShowEditTable] = useState(false);
+interface Project {
+  id: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+const ProjectViewTable = (): JSX.Element => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showEditTable, setShowEditTable] = useState<boolean>(false);
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<Project[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         {
           withCredentials: true,
@@ -33,7 +46,7 @@ const ProjectViewTable = () => {
 
   return (
     <div>
-      <div className="mt-9 w-96 h-56 bg-white rounded-3xl shadow-custom-dark max-w-2xl overflow-y-auto border-2 border-orange-500">
+      <div className="mt-5 w-96 h-56 bg-white rounded-3xl shadow-custom-dark max-w-2xl overflow-y-auto border-2 border-orange-500">
         <table className="min-w-full table-auto">
           <thead className="bg-orange-400 text-white sticky top-0 z-10">
             <tr>
