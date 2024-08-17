@@ -198,7 +198,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
    - Prettier の導入
    - ESlint の導入
    - GithubActions による CI 設定
-    - AWS
+  　　- AWS
      - Udemy「AWS コンテナサービス入門 しま(5 時間)」修了
      - Udemy「GithubActions で学ぶ CI/CD 入門 しま(4 時間)」修了
      - RDS,S3,ACM,ECR,VPS を使用して EC2 によるデプロイ
@@ -233,10 +233,9 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
    - ランダム応援ひとこと機能
    - 案件別時給平均ランキング機能
    - ワークの種類別の時給平均ランキング機能
-   - カレンダー機能
    - 各案件のテーブル形式での追加・編集・削除機能
 8. 2024/6/26~7/11:
    - ECS,ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ElastiCache を使用しデプロイ
 9. 7/11~:
    - 軽微なバグ改善、軽微な UI/UX の改善
-   - ダッシュボード機能の TypeScript 化
+   - 部分的なTypeScript化
