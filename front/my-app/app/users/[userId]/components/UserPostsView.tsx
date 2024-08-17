@@ -28,11 +28,12 @@ interface User {
   id: number;
   name: string;
   created_at: string;
-  work: string;
-  profile_text: string;
+  work: string | null;
+  profile_text: string | null;
   avatar: {
-    url: string;
-  };
+    url: string | null;
+  } 
+
   posts_count: number;
   followers_count: number;
   following_count: number;

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 
 interface Avatar {
-  url: string;
+  url: string | null;
 }
 
 interface CurrentUser {
@@ -13,7 +13,7 @@ interface CurrentUser {
   followers: number;
   posts_count: number;
   work: string;
-  profile_text: string;
+  profile_text: string | null;
   avatar: Avatar;
 }
 

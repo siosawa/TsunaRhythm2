@@ -42,10 +42,11 @@ interface CurrentUser {
   followers: number;
   posts_count: number;
   work: string;
-  profile_text: string;
+  profile_text: string | null;
   avatar: {
-    url: string;
-  };
+    url: string | null;
+  } 
+
 }
 
 const GraphWorkingMinutes = () => {

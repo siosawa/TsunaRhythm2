@@ -5,11 +5,12 @@ import { useParams } from "next/navigation";
 interface User {
   id: number;
   name: string;
-  work: string;
-  profile_text: string;
+  work: string | null;
+  profile_text: string | null;
   avatar: {
-    url: string;
-  };
+    url: string | null;
+  } 
+
   relationship_id: number;
   followers_count: number;
   following_count: number;

@@ -36,10 +36,11 @@ interface CurrentUser {
   followers: number;
   posts_count: number;
   work: string;
-  profile_text: string;
+  profile_text: string | null;
   avatar: {
-    url: string;
-  };
+    url: string | null;
+  } 
+
 }
 
 const MonthHWAT = (): JSX.Element => {
@@ -128,9 +129,9 @@ const MonthHWAT = (): JSX.Element => {
   return (
     <>
       <FetchCurrentUser setCurrentUser={setCurrentUser} />
-      <div className="w-44 h-52 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center border-2 border-orange-500">
+      <div className="w-44 h-56 bg-white shadow-custom-dark rounded-3xl flex flex-col items-center justify-center text-center border-2 border-orange-500">
         <div className="w-full px-3">
-          <div className="flex items-center mb-2">
+          <div className="flex items-center">
             <RiMoneyCnyCircleLine className="text-black mr-2 text-4xl" />
             <div className="flex flex-col text-left w-full">
               <p className="text-xs font-normal text-black">今月の平均時給は</p>

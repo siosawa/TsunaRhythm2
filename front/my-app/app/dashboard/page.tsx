@@ -8,7 +8,7 @@ import ProjectHourlyWageRanking from "./components/ProjectHourlyWageRanking";
 import WorkTypeHourlyWageRanking from "./components/WorkTypeHourlyWageRanking";
 import ProjectViewTable from "./components/ProjectViewTable";
 
-const Dashboard = () => {
+const Dashboard = (): JSX.Element => {
   return (
     <>
       <div className="mx-7 grid 845s:grid-cols-2 1600s:grid-cols-4 gap-5 place-items-center mt-12">

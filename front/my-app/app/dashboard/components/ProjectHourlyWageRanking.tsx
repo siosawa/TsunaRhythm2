@@ -3,26 +3,79 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const ProjectHourlyWageRanking = () => {
-  const [ranking, setRanking] = useState([]);
-  const [error, setError] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+interface Record {
+  id: number;
+  user_id: number;
+  project_id: number;
+  minutes: number;
+  date: string;
+  created_at: string;
+  updated_at: string;
+  work_end: string;
+}
 
-  const fetchRankingData = async (userId) => {
+interface Project {
+  id: number;
+  user_id: number;
+  company: string;
+  name: string;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ProjectHourlyWage {
+  name: string;
+  averageHourlyWage: number;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string | null;
+  avatar: {
+    url: string | null;
+  } 
+
+}
+
+const ProjectHourlyWageRanking = (): JSX.Element => {
+  const [ranking, setRanking] = useState<ProjectHourlyWage[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  const fetchRankingData = async (userId: number) => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
+        axios.get<Record[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
           withCredentials: true,
         }),
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
-          withCredentials: true,
-        }),
+        axios.get<Project[]>(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
+          {
+            withCredentials: true,
+          }
+        ),
       ]);
 
       const records = recordsResponse.data || [];
       const projects = projectsResponse.data || [];
 
-      const projectHourlyWages = {};
+      const projectHourlyWages: {
+        [key: number]: {
+          totalUnitPriceTimesQuantity: number;
+          totalMinutes: number;
+          projectName: string;
+        };
+      } = {};
 
       records.forEach((record) => {
         const project = projects.find((p) => p.id === record.project_id);

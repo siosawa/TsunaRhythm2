@@ -3,23 +3,49 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const WorkTypeHourlyWageRanking = () => {
-  const [ranking, setRanking] = useState([]);
-  const [error, setError] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+interface Record {
+  id: number;
+  project_id: number;
+  minutes: number;
+}
 
-  const fetchRankingData = async (userId) => {
+interface Project {
+  id: number;
+  work_type: string;
+  unit_price: number;
+  quantity: number;
+  is_completed: boolean;
+}
+
+interface WorkTypeHourlyWage {
+  name: string;
+  averageHourlyWage: number;
+}
+
+interface CurrentUser {
+  id: number;
+}
+
+const WorkTypeHourlyWageRanking = (): JSX.Element => {
+  const [ranking, setRanking] = useState<WorkTypeHourlyWage[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  const fetchRankingData = async (userId: number) => {
     try {
-      const { data: records } = await axios.get(
+      const { data: records } = await axios.get<Record[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/records`,
         { withCredentials: true }
       );
-      const { data: projects } = await axios.get(
+      const { data: projects } = await axios.get<Project[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`,
         { withCredentials: true }
       );
 
-      const workTypeHourlyWages = {};
+      const workTypeHourlyWages: globalThis.Record<
+        string,
+        { totalUnitPriceTimesQuantity: number; totalMinutes: number }
+      > = {};
 
       records.forEach((record) => {
         const project = projects.find((p) => p.id === record.project_id);
@@ -32,7 +58,8 @@ const WorkTypeHourlyWageRanking = () => {
           }
           workTypeHourlyWages[project.work_type].totalUnitPriceTimesQuantity +=
             project.unit_price * project.quantity;
-          workTypeHourlyWages[project.work_type].totalMinutes += record.minutes;
+          workTypeHourlyWages[project.work_type].totalMinutes += 
+            record.minutes;
         }
       });
 
