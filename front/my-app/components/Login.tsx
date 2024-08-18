@@ -1,26 +1,26 @@
 "use client";
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, KeyboardEvent, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const passwordInputRef = useRef(null);
-  const [isGuestLogin, setIsGuestLogin] = useState(false);
+const Login = (): JSX.Element => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+  const passwordInputRef = useRef<HTMLInputElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const [isGuestLogin, setIsGuestLogin] = useState<boolean>(false);
 
-  // emailフォームでエンターキーを押した時にpasswordフォームにカーソルが移動
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === "Enter") {
       event.preventDefault(); // Enterキーのデフォルト動作を防ぐ
-      passwordInputRef.current.focus();
+      passwordInputRef.current?.focus();
     }
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     try {
       const response = await fetch(
@@ -55,15 +55,16 @@ const Login = () => {
     }
   };
 
-  const handleGuestLogin = () => {
+  const handleGuestLogin = (): void => {
     setEmail("guest@example.com");
     setPassword("foobar");
     setIsGuestLogin(true);
   };
 
   useLayoutEffect(() => {
-    if (isGuestLogin) {
-      handleSubmit(new Event("submit", { bubbles: true, cancelable: true }));
+    if (isGuestLogin && formRef.current) {
+      const submitEvent = new Event("submit", { bubbles: true, cancelable: true });
+      formRef.current.dispatchEvent(submitEvent);
       setIsGuestLogin(false);
     }
   }, [email, password, isGuestLogin]);
@@ -74,7 +75,7 @@ const Login = () => {
         <p></p>
         <h1 className="text-4xl">ようこそ！</h1>
         <p></p>
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
+        <form onSubmit={handleSubmit} className="w-full space-y-4" ref={formRef}>
           {error && <div className="text-red-500">{error}</div>}
           {success && <div className="text-green-500">{success}</div>}
           <Input
