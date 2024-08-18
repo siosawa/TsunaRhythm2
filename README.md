@@ -116,11 +116,12 @@ https://github.com/user-attachments/assets/93b019d8-d0e3-4558-8caa-24c98a57110a
 | Ruby 3.3.0                        |
 | Rails 7.0.4.3                     |
 | MySQL8.0.36                       |
+| Redis6.2                          |
 | ActionCable                       |
-| RuboCop(静的解析、フォーマッター) |
-| RSpec(自動テスト)                 |
-| Nginx(Web サーバー)               |
-| Puma(AP サーバー)                 |
+| RuboCop(静的解析、フォーマッター)       |
+| RSpec(自動テスト)                   |
+| Nginx(Web サーバー)                |
+| Puma(AP サーバー)                  |
 
 <br />
 
