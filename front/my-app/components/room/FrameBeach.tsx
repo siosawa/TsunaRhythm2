@@ -8,7 +8,7 @@ interface User {
   id: number;
   name: string;
   avatar: {
-    url: string;
+    url: string | null;
   };
 }
 
@@ -29,19 +29,23 @@ const FrameBeach = (): JSX.Element => {
   ];
 
   const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
-    const userResponses = await Promise.all(
-      seatsData.map((seat) =>
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-      )
-    );
-    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
-    setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
+    try {
+      const userResponses = await Promise.all(
+        seatsData.map((seat) =>
+          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        )
+      );
+      const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
+      setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
   const fetchSeats = async () => {
@@ -112,19 +116,19 @@ const FrameBeach = (): JSX.Element => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser, seats]); 
+  }, [currentUser]); 
 
   const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
     }
-
+  
     if (seats[seatId]) {
       console.error("Seat already reserved");
       return;
     }
-
+  
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
         method: "POST",
@@ -137,10 +141,7 @@ const FrameBeach = (): JSX.Element => {
         }),
       });
       if (response.ok) {
-        setSeats((prevSeats) => ({
-          ...prevSeats,
-          [seatId]: currentUser.id,
-        }));
+        await fetchSeats();  // ここで最新の座席情報を再取得して再レンダリング
       } else {
         console.error("Failed to reserve seat");
       }
@@ -148,7 +149,7 @@ const FrameBeach = (): JSX.Element => {
       console.error("Error reserving seat:", error);
     }
   };
-
+  
   const isCurrentUserAssigned = Object.values(seats).includes(currentUser?.id ?? -1);
 
   return (

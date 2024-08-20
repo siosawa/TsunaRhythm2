@@ -4,11 +4,11 @@ import Image from "next/image";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-interface User {
+interface CurrentUser {
   id: number;
   name: string;
   avatar: {
-    url: string;
+    url: string | null;
   };
 }
 
@@ -20,9 +20,9 @@ interface Seat {
 }
 
 const CalmCafe = (): JSX.Element => {
-  const [seats, setSeats] = useState<Record<number, number>>({}); 
-  const [users, setUsers] = useState<Record<number, User>>({});
-  const [currentUser, setCurrentUser] = useState<User | null>(null); 
+  const [seats, setSeats] = useState<Record<number, number>>({});
+  const [users, setUsers] = useState<Record<number, CurrentUser>>({});
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   // 座席の位置情報を定義
   const seatPositions = [
@@ -35,17 +35,26 @@ const CalmCafe = (): JSX.Element => {
 
   const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
-      seatsData.map((seat) =>
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
+      seatsData.map((seat) => {
+        if (!seat.user_id) {
+          console.error("user_idが未定義です:", seat);
+          return Promise.resolve(null); // user_idが未定義の場合はリクエストをスキップ
+        }
+        return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
           method: "GET",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
-        })
-      )
+        });
+      })
     );
-    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
+
+    const userData = await Promise.all(
+      userResponses
+        .filter((res) => res !== null) // nullのレスポンスを除外
+        .map((res) => res!.json() as Promise<CurrentUser>)
+    );
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
@@ -71,10 +80,10 @@ const CalmCafe = (): JSX.Element => {
         );
         await fetchSeatsAndUsers(data);
       } else {
-        console.error("Failed to fetch seats");
+        console.error("座席の取得に失敗しました");
       }
     } catch (error) {
-      console.error("Error fetching seats:", error);
+      console.error("座席の取得中にエラーが発生しました:", error);
     }
   };
 
@@ -98,15 +107,15 @@ const CalmCafe = (): JSX.Element => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((response) => response.json())
-                .then((user: User) => {
+                .then((response) => response.json() as Promise<CurrentUser>)
+                .then((user: CurrentUser) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
                   }));
                 })
                 .catch((error) =>
-                  console.error("Error fetching user:", error)
+                  console.error("ユーザー情報の取得中にエラーが発生しました:", error)
                 );
             }
           },
@@ -118,11 +127,11 @@ const CalmCafe = (): JSX.Element => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser, seats]); 
+  }, [currentUser, seats]);
 
   const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
-      console.error("User not logged in");
+      console.error("ユーザーがログインしていません");
       return;
     }
 
@@ -137,7 +146,7 @@ const CalmCafe = (): JSX.Element => {
 
       if (response.ok) {
         const data: Seat[] = await response.json();
-        const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
+        const currentUserSeat = data.find((seat) => seat.user_id === currentUser.id);
 
         if (currentUserSeat) {
           await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${currentUserSeat.id}`, {
@@ -171,13 +180,14 @@ const CalmCafe = (): JSX.Element => {
             [seatId]: currentUser.id,
           }));
         } else {
-          console.error("Failed to reserve seat");
+          const errorData = await reserveResponse.json();
+          console.error("座席の予約に失敗しました。エラー内容:", errorData);
         }
       } else {
-        console.error("Failed to fetch seats");
+        console.error("座席の取得に失敗しました");
       }
     } catch (error) {
-      console.error("Error handling seat click:", error);
+      console.error("座席クリック処理中にエラーが発生しました:", error);
     }
   };
 
