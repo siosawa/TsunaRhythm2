@@ -14,52 +14,74 @@ import {
 import ViewTimerRecord from "./ViewTimerRecord";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-export function SetTimer() {
-  const [startTime, setStartTime] = useState(null);
-  const [startTimestamp, setStartTimestamp] = useState("");
-  const [currentUser, setCurrentUser] = useState(null);
-  const [records, setRecords] = useState([]);
-  const [projects, setProjects] = useState({});
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [currentRecordId, setCurrentRecordId] = useState(null);
-  const [dataUpdated, setDataUpdated] = useState(false);
+interface User {
+  id: number;
+  name: string;
+}
+
+interface Project {
+  id: number;
+  name: string;
+}
+
+// recordsテーブルからのデータをWorkLogとして型指定する。これはTypeScript備え付けのRecordと名前が重複してしまうため
+interface WorkLog {
+  id: number;
+  project_id: number;
+  minutes: number;
+  date: string;
+  work_end: string | null;
+}
+
+export function SetTimer(): JSX.Element {
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [startTimestamp, setStartTimestamp] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [workLogs, setWorkLogs] = useState<WorkLog[]>([]);
+  const [projects, setProjects] = useState<Record<number, Project>>({});
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentWorkLogId, setCurrentWorkLogId] = useState<number | null>(null);
+  const [dataUpdated, setDataUpdated] = useState<boolean>(false);
 
   const { seconds, minutes, hours, start, pause, reset, isRunning } =
     useStopwatch({ autoStart: false });
 
   useEffect(() => {
-    const fetchRecords = async () => {
+    const fetchWorkLogs = async () => {
       try {
-        const [recordsResponse, projectsResponse] = await Promise.all([
-          axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
+        const [workLogsResponse, projectsResponse] = await Promise.all([
+          axios.get<WorkLog[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
             withCredentials: true,
           }),
-          axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
+          axios.get<Project[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
             withCredentials: true,
           }),
         ]);
 
-        const projectsMap = projectsResponse.data.reduce((acc, project) => {
-          acc[project.id] = project;
-          return acc;
-        }, {});
+        const projectsMap: Record<number, Project> = projectsResponse.data.reduce(
+          (acc, project) => {
+            acc[project.id] = project;
+            return acc;
+          },
+          {} as Record<number, Project>
+        );
 
-        const fetchedRecords = recordsResponse.data;
+        const fetchedWorkLogs = workLogsResponse.data;
 
-        if (fetchedRecords.length > 0 && fetchedRecords[0].work_end === null) {
-          const firstRecord = fetchedRecords[0];
-          const recordDate = new Date(firstRecord.date);
+        if (fetchedWorkLogs.length > 0 && fetchedWorkLogs[0].work_end === null) {
+          const firstWorkLog = fetchedWorkLogs[0];
+          const workLogDate = new Date(firstWorkLog.date);
           const now = new Date();
-          const diff = now.getTime() - recordDate.getTime();
+          const diff = now.getTime() - workLogDate.getTime();
 
           if (diff > 16 * 60 * 60 * 1000) {
             const workEndDate = new Date(
-              recordDate.getTime() + 16 * 60 * 60 * 1000
+              workLogDate.getTime() + 16 * 60 * 60 * 1000
             );
             try {
               await axios.patch(
-                `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${firstRecord.id}`,
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${firstWorkLog.id}`,
                 {
                   work_end: workEndDate.toISOString(),
                   minutes: 960,
@@ -75,19 +97,19 @@ export function SetTimer() {
               console.error("記録の更新に失敗しました", error);
             }
           } else {
-            setStartTime(recordDate);
-            setStartTimestamp(formatTimestamp(recordDate));
-            setCurrentRecordId(firstRecord.id);
+            setStartTime(workLogDate);
+            setStartTimestamp(formatTimestamp(workLogDate));
+            setCurrentWorkLogId(firstWorkLog.id);
             const offset = new Date();
             offset.setSeconds(offset.getSeconds() + Math.floor(diff / 1000));
             offset.setMinutes(offset.getMinutes() + Math.floor(diff / 60000));
             offset.setHours(offset.getHours() + Math.floor(diff / 3600000));
-            reset(offset, false); // 差分を秒単位でリセット
+            reset(offset, false);
             start();
           }
         }
 
-        setRecords(fetchedRecords);
+        setWorkLogs(fetchedWorkLogs);
         setProjects(projectsMap);
       } catch (error) {
         console.error("データの取得に失敗しました", error);
@@ -96,10 +118,10 @@ export function SetTimer() {
       }
     };
 
-    fetchRecords();
+    fetchWorkLogs();
   }, []);
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = (timestamp: Date | null): string => {
     if (!timestamp) return "";
     const month = timestamp.getMonth() + 1;
     const day = timestamp.getDate();
@@ -114,7 +136,7 @@ export function SetTimer() {
       stopTimer();
     } else {
       if (startTime) {
-        reset(0, false);
+        reset(new Date(0), false);
         startTimer();
       } else {
         startTimer();
@@ -146,7 +168,7 @@ export function SetTimer() {
             withCredentials: true,
           }
         );
-        setCurrentRecordId(response.data.id);
+        setCurrentWorkLogId(response.data.id);
       } catch (error) {
         console.error("記録の送信に失敗しました", error);
       }
@@ -172,22 +194,22 @@ export function SetTimer() {
 
     setStartTime(null);
     setStartTimestamp("");
-    reset(null, false);
+    reset(undefined, false);
 
-    const recordTime = {
+    const workLogTime = {
       minutes: Math.floor(elapsedTime / 60000),
     };
 
-    if (!currentRecordId) {
+    if (!currentWorkLogId) {
       console.error("現在のレコードIDが存在しません");
       return;
     }
 
     try {
       const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${currentRecordId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/records/${currentWorkLogId}`,
         {
-          minutes: recordTime.minutes,
+          minutes: workLogTime.minutes,
           work_end: now.toISOString(),
         },
         {
@@ -235,14 +257,14 @@ export function SetTimer() {
         </div>
       </div>
       <div className="mt-4 flex">
-        <Select onValueChange={(value) => setSelectedProject(projects[value])}>
+        <Select onValueChange={(value) => setSelectedProject(projects[parseInt(value)])}>
           <SelectTrigger className="truncate max-w-52 whitespace-nowrap">
             <SelectValue placeholder="案件名" />
           </SelectTrigger>
           <SelectContent>
             {Object.keys(projects).length > 0 ? (
               Object.values(projects).map((project) => (
-                <SelectItem key={project.id} value={project.id}>
+                <SelectItem key={project.id} value={project.id.toString()}>
                   {project.name}
                 </SelectItem>
               ))

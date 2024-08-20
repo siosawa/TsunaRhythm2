@@ -4,11 +4,11 @@ import Image from "next/image";
 import cable from "@/utils/cable"; 
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-interface User {
+interface CurrentUser {
   id: number;
   name: string;
   avatar: {
-    url: string;
+    url: string | null;
   };
 }
 
@@ -21,8 +21,8 @@ interface Seat {
 
 const ModernCafe = (): JSX.Element => {
   const [seats, setSeats] = useState<Record<number, number>>({}); // 座席情報を保持するステート
-  const [users, setUsers] = useState<Record<number, User>>({}); // ユーザー情報を保持するステート
-  const [currentUser, setCurrentUser] = useState<User | null>(null); // 現在のユーザー情報を保持するステート
+  const [users, setUsers] = useState<Record<number, CurrentUser>>({}); // ユーザー情報を保持するステート
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); // 現在のユーザー情報を保持するステート
 
   const seatPositions = [
     { id: 1, top: "58%", right: "39%" },
@@ -44,7 +44,7 @@ const ModernCafe = (): JSX.Element => {
         })
       )
     );
-    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
+    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<CurrentUser>));
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
@@ -97,8 +97,8 @@ const ModernCafe = (): JSX.Element => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((response) => response.json() as Promise<User>)
-                .then((user: User) => {
+                .then((response) => response.json() as Promise<CurrentUser>)
+                .then((user: CurrentUser) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,

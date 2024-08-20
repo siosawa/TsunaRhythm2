@@ -1,13 +1,27 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import cable from "@/utils/cable"; 
+import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const Universe = () => {
-  const [seats, setSeats] = useState({}); 
-  const [users, setUsers] = useState({}); 
-  const [currentUser, setCurrentUser] = useState(null); 
+interface User {
+  id: number;
+  name: string;
+  avatar: {
+    url: string | null;
+  };
+}
+
+interface Seat {
+  id: number;
+  seat_id: number;
+  user_id: number;
+}
+
+const Universe = (): JSX.Element => {
+  const [seats, setSeats] = useState<Record<number, number>>({});
+  const [users, setUsers] = useState<Record<number, User>>({});
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const seatPositions = [
     { id: 1, top: "43%", right: "46%" },
@@ -17,7 +31,7 @@ const Universe = () => {
     { id: 5, top: "63%", right: "35%" },
   ];
 
-  const fetchSeatsAndUsers = async (seatsData) => {
+  const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
     const userResponses = await Promise.all(
       seatsData.map((seat) =>
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
@@ -42,11 +56,11 @@ const Universe = () => {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-          },
+          }
         }
       );
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         setSeats(
           data.reduce(
             (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
@@ -69,7 +83,7 @@ const Universe = () => {
       const subscription = cable.subscriptions.create(
         { channel: "SeatChannel", room: 3 },
         {
-          received(data) {
+          received(data: Seat) {
             setSeats((prevSeats) => ({
               ...prevSeats,
               [data.seat_id]: data.user_id,
@@ -83,7 +97,7 @@ const Universe = () => {
                 },
               })
                 .then((response) => response.json())
-                .then((user) => {
+                .then((user: User) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
@@ -101,9 +115,9 @@ const Universe = () => {
         subscription.unsubscribe();
       };
     }
-  }, [currentUser, seats]); 
+  }, [currentUser, seats]);
 
-  const handleSeatClick = async (seatId) => {
+  const handleSeatClick = async (seatId: number) => {
     if (!currentUser) {
       console.error("User not logged in");
       return;
@@ -119,7 +133,7 @@ const Universe = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data: Seat[] = await response.json();
         const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
 
         if (currentUserSeat) {
@@ -185,7 +199,7 @@ const Universe = () => {
               <button
                 className="bg-white bg-opacity-50 w-11 h-11 md:w-14 md:h-14 rounded-full ml-2 animate-spin-slow"
                 onClick={() => handleSeatClick(seat.id)}
-                disabled={seats[seat.id] && seats[seat.id] !== currentUser?.id} // 自分以外のユーザーが座っている場合に無効化
+                disabled={!!seats[seat.id] && seats[seat.id] !== currentUser?.id}
               >
                 {seats[seat.id] && users[seats[seat.id]] && (
                   <img

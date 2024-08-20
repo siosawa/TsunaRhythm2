@@ -4,11 +4,11 @@ import Image from "next/image";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-interface User {
+interface CurrentUser {
   id: number;
   name: string;
   avatar: {
-    url: string;
+    url: string | null;
   };
 }
 
@@ -21,8 +21,8 @@ interface Seat {
 
 const CountryHouse = (): JSX.Element => {
   const [seats, setSeats] = useState<Record<number, number>>({}); 
-  const [users, setUsers] = useState<Record<number, User>>({}); 
-  const [currentUser, setCurrentUser] = useState<User | null>(null); 
+  const [users, setUsers] = useState<Record<number, CurrentUser>>({}); 
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); 
 
   const seatPositions = [
     { id: 1, top: "49%", right: "34%" },
@@ -40,7 +40,7 @@ const CountryHouse = (): JSX.Element => {
         })
       )
     );
-    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
+    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<CurrentUser>));
     setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
   };
 
@@ -93,8 +93,8 @@ const CountryHouse = (): JSX.Element => {
                   "Content-Type": "application/json",
                 },
               })
-                .then((response) => response.json() as Promise<User>)
-                .then((user: User) => {
+                .then((response) => response.json() as Promise<CurrentUser>)
+                .then((user: CurrentUser) => {
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,

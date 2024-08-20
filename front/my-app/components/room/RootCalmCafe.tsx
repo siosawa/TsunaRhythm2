@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-const RootCalmCafe = () => {
+const RootCalmCafe = (): JSX.Element => {
   return (
     <div className="flex items-center justify-center fixed inset-0 z-10">
       <div className="hidden md:block">
