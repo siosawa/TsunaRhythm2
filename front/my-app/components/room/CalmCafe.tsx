@@ -95,6 +95,9 @@ const CalmCafe = (): JSX.Element => {
         { channel: "SeatChannel", room: 2 },
         {
           received(data: Seat) {
+            if (!data.user_id) {
+              return; // user_id が undefined の場合、処理をスキップ
+            }
             setSeats((prevSeats) => ({
               ...prevSeats,
               [data.seat_id]: data.user_id,
@@ -114,9 +117,6 @@ const CalmCafe = (): JSX.Element => {
                     [user.id]: user,
                   }));
                 })
-                .catch((error) =>
-                  console.error("ユーザー情報の取得中にエラーが発生しました:", error)
-                );
             }
           },
         }
