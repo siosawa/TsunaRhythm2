@@ -57,27 +57,38 @@ const ProjectViewTable = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            {projects.map((project, index) => (
-              <tr
-                key={project.id}
-                className={`text-center ${
-                  index % 2 === 0 ? "bg-orange-100" : "bg-orange-200"
-                }`}
-              >
-                <td className="px-1 py-1 border border-gray-200 text-sm">
-                  {project.name}
-                </td>
-                <td className="px-1 py-1 border border-gray-200 text-sm">
-                  {project.unit_price}
-                </td>
-                <td className="px-1 py-1 border border-gray-200 text-sm">
-                  {project.quantity}
-                </td>
-                <td className="px-1 py-1 border border-gray-200 text-sm">
-                  {project.is_completed ? "完" : "未"}
+            {projects.length > 0 ? (
+              projects.map((project, index) => (
+                <tr
+                  key={project.id}
+                  className={`text-center ${
+                    index % 2 === 0 ? "bg-orange-100" : "bg-orange-200"
+                  }`}
+                >
+                  <td className="px-1 py-1 border border-gray-200 text-sm">
+                    {project.name}
+                  </td>
+                  <td className="px-1 py-1 border border-gray-200 text-sm">
+                    {project.unit_price}
+                  </td>
+                  <td className="px-1 py-1 border border-gray-200 text-sm">
+                    {project.quantity}
+                  </td>
+                  <td className="px-1 py-1 border border-gray-200 text-sm">
+                    {project.is_completed ? "完" : "未"}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="p-2 text-sm text-center opacity-60"
+                >
+                  アカウントを作成したら案件情報を記入しよう！
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
           <tfoot className="bg-gray-100 sticky bottom-0 z-10">
             <tr>
