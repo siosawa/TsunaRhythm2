@@ -1,20 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Settings from "@/components/Settings";
-import { TbMenu } from "react-icons/tb"; 
+import { TbMenu } from "react-icons/tb";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ children }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [error, setError] = useState("");
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [error, setError] = useState<string>("");
 
   const navList = [
     { label: "ルーム", href: "/room" },
@@ -31,7 +41,7 @@ export default function RootLayout({ children }) {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`, {
         method: "DELETE",
-        credentials: "include", 
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -65,16 +75,16 @@ export default function RootLayout({ children }) {
         </video>
         <div className="relative z-50">
           <header className="fixed top-0 left-0 right-0 h-16 pr-16 pl-8 flex items-center border-b justify-between rounded-3xl mx-12 my-3 bg-white backdrop-filter backdrop-blur-sm z-50">
-          <div className="">
-            <img
-              src="/TsunaRhythm_header.JPG"
-              alt="TsunaRhythm"
-              width={60}
-              height={60}
-              className="rounded-xl"
-              style={{ width: '100px', height: '40px', objectFit: 'cover' }} 
-            />
-          </div>
+            <div className="">
+              <img
+                src="/TsunaRhythm_header.JPG"
+                alt="TsunaRhythm"
+                width={60}
+                height={60}
+                className="rounded-xl"
+                style={{ width: '100px', height: '40px', objectFit: 'cover' }}
+              />
+            </div>
             {currentUser && (
               <>
                 <div className="md:hidden">
@@ -114,7 +124,7 @@ export default function RootLayout({ children }) {
                 <Button
                   key={item.label}
                   variant="ghost"
-                  className="hover:hover:bg-sky-400 hover:text-white"
+                  className="hover:bg-sky-400 hover:text-white"
                   asChild
                   onClick={handleMenuClick}
                 >

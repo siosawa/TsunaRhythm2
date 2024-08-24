@@ -1,7 +1,7 @@
 import Login from "@/components/Login";
 import RootCalmCafe from "@/components/room/RootCalmCafe";
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <div>
       <RootCalmCafe />
