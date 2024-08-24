@@ -84,6 +84,9 @@ const NewNomalCafe = (): JSX.Element => {
         { channel: "SeatChannel", room: 5 },
         {
           received(data: Seat) {
+            if (!data.user_id) {
+              return; // user_id が undefined の場合、処理をスキップ
+            }
             setSeats((prevSeats) => ({
               ...prevSeats,
               [data.seat_id]: data.user_id,

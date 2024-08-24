@@ -80,7 +80,7 @@ const FollowUnfollowButton = ({
       className="bg-emerald-500 text-white rounded-3xl hover:bg-emerald-600 hover:text-white w-28"
       onClick={() => (isFollowing ? handleUnfollow() : handleFollow())}
     >
-      {isFollowing ? "フォロー解除" : "フォロー"}
+      {isFollowing ? "フォロー中" : "フォロー"}
     </Button>
   );
 };

@@ -1,6 +1,16 @@
 import React from "react";
 
-const WaitingUserAvatar = ({ userAvatars }) => {
+interface UserAvatar {
+  id: number;
+  name: string;
+  avatarUrl?: string | null;
+}
+
+interface WaitingUserAvatarProps {
+  userAvatars: UserAvatar[];
+}
+
+const WaitingUserAvatar = ({ userAvatars }: WaitingUserAvatarProps) => {
   return (
     <div
       className="absolute right-48 flex -space-x-4 z-30 p-4 opacity-70"

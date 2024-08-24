@@ -5,9 +5,25 @@ import EditRecord from "./EditRecord";
 import { IoNewspaperOutline, IoNewspaper } from "react-icons/io5";
 import { FiTriangle } from "react-icons/fi";
 
-const ViewTimerRecord = ({ dataUpdated }) => {
-  const [records, setRecords] = useState([]);
-  const [projects, setProjects] = useState({});
+interface TimerRecord {
+  id: number;
+  date: string;
+  minutes: number;
+  project_id: number;
+}
+
+interface Project {
+  id: number;
+  name: string;
+}
+
+interface ViewTimerRecordProps {
+  dataUpdated: boolean;
+}
+
+export default function ViewTimerRecord({ dataUpdated }: ViewTimerRecordProps): React.JSX.Element {
+  const [records, setRecords] = useState<TimerRecord[]>([]);
+  const [projects, setProjects] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(true);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -19,18 +35,18 @@ const ViewTimerRecord = ({ dataUpdated }) => {
   const fetchRecords = async () => {
     try {
       const [recordsResponse, projectsResponse] = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
+        axios.get<TimerRecord[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/records`, {
           withCredentials: true,
         }),
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
+        axios.get<Project[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
           withCredentials: true,
         }),
       ]);
 
-      const projectsMap = projectsResponse.data.reduce((acc, project) => {
+      const projectsMap: Record<number, string> = projectsResponse.data.reduce((acc, project) => {
         acc[project.id] = project.name;
         return acc;
-      }, {});
+      }, {} as Record<number, string>);
 
       setRecords(recordsResponse.data);
       setProjects(projectsMap);
@@ -94,10 +110,16 @@ const ViewTimerRecord = ({ dataUpdated }) => {
       {isEditOpen && <EditRecord onClose={handleClose} onSave={handleSave} />}
     </div>
   );
-};
+}
 
-const ModalTimerRecord = ({ records, projects, handleEditClick }) => {
-  const formatDate = (dateString) => {
+interface ModalTimerRecordProps {
+  records: TimerRecord[];
+  projects: Record<number, string>;
+  handleEditClick: () => void;
+}
+
+export function ModalTimerRecord({ records, projects, handleEditClick }: ModalTimerRecordProps): React.JSX.Element {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(
       date.getMinutes()
@@ -139,7 +161,7 @@ const ModalTimerRecord = ({ records, projects, handleEditClick }) => {
           <tfoot className="bg-gray-100 sticky bottom-0 z-10">
             <tr>
               <td
-                colSpan="3"
+                colSpan={3}
                 className="px-1 py-1 border border-gray-200 text-center"
               >
                 <button
@@ -156,6 +178,4 @@ const ModalTimerRecord = ({ records, projects, handleEditClick }) => {
       </div>
     </div>
   );
-};
-
-export default ViewTimerRecord;
+}
