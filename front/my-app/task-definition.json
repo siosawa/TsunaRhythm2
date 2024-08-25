@@ -5,7 +5,7 @@
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "${{ FRONTEND_CONTAINER }}",
+      "name": "frontend-container",
       "image": "${{ FRONTEND_ECR_REPOSITORY }}:${{ IMAGE_TAG }}",
       "essential": true,
       "portMappings": [
