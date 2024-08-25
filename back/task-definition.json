@@ -4,9 +4,9 @@
         {
             "name": "backend-container",
             "image": "<RAILS_IMAGE_TAG>",
-            "cpu": 0,
-            "memory": 1024,
-            "memoryReservation": 1024,
+            "cpu": 256,
+            "memory": 512,
+            "memoryReservation": 512,
             "portMappings": [
                 {
                     "name": "backend-container-3000-tcp",
@@ -100,7 +100,9 @@
         {
             "name": "nginx",
             "image": "<NGINX_IMAGE_TAG>",
-            "cpu": 0,
+            "cpu": 256,
+            "memory": 512,
+            "memoryReservation": 512,
             "portMappings": [
                 {
                     "name": "nginx-80-tcp",
@@ -155,7 +157,7 @@
         "FARGATE"
     ],
     "cpu": "256",
-    "memory": "1024",
+    "memory": "512",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
