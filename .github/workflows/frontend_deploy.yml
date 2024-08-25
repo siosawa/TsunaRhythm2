@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   deploy:
-    name: デプロイ
+    name: フロントエンドデプロイ
     runs-on: ubuntu-latest
     environment: production
 
