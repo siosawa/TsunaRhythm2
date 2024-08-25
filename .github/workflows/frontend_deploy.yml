@@ -23,7 +23,7 @@
 # 4. IAMユーザーアクセスキーをGitHub Actionsのシークレットとして `AWS_ACCESS_KEY_ID` と `AWS_SECRET_ACCESS_KEY` の名前で保存します。
 #    各アクションの推奨IAMポリシーとアクセスキーの資格情報の取り扱いに関するベストプラクティスは、以下のドキュメントを参照してください。
 
-name: Deploy to Amazon ECS FRONTEND
+name: Amazon ECSフロントエンドデプロイ
 
 on:
   push:
@@ -44,46 +44,45 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy
+    name: デプロイ
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-      - name: Checkout
+      - name: リポジトリのチェックアウト
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: AWS認証情報の設定
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
+      - name: Amazon ECRへのログイン
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: イメージをビルドし、Amazon ECRにタグ付けしてプッシュ
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
+          # Dockerコンテナをビルドし、
+          # ECRにプッシュしてからECSにデプロイします。
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./front/my-app/Dockerfile.prod ./front/my-app
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Replace variables in task definition
+      - name: タスク定義内の変数を置き換え
         run: |
           sed -i 's|${AWS_ACCOUNT_ID}|'"${{ secrets.AWS_ACCOUNT_ID }}"'|g' front/my-app/task-definition.json
           sed -i 's|${FRONTEND_CONTAINER}|'"${{ secrets.FRONTEND_CONTAINER }}"'|g' front/my-app/task-definition.json
           sed -i 's|${FRONTEND_ECR_REPOSITORY}|'"${{ secrets.FRONTEND_ECR_REPOSITORY }}"'|g' front/my-app/task-definition.json
           sed -i 's|${IMAGE_TAG}|'"${{ github.sha }}"'|g' front/my-app/task-definition.json
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
+      - name: Amazon ECSタスク定義に新しいイメージIDを反映
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -91,7 +90,7 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
+      - name: Amazon ECSタスク定義のデプロイ
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
