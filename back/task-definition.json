@@ -1,0 +1,163 @@
+{
+    "family": "tsunarhythm2-task-definition-backend",
+    "containerDefinitions": [
+        {
+            "name": "backend-container",
+            "image": "<RAILS_IMAGE_TAG>",
+            "cpu": 0,
+            "memory": 1024,
+            "memoryReservation": 1024,
+            "portMappings": [
+                {
+                    "name": "backend-container-3000-tcp",
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "RAILS_LOG_TO_STDOUT",
+                    "value": "1"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "value": "${{ secrets.REDIS_HOST }}"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "ap-northeast-1"
+                },
+                {
+                    "name": "MYSQL_PASSWORD",
+                    "value": "${{ secrets.MYSQL_PASSWORD }}"
+                },
+                {
+                    "name": "RAILS_ENV",
+                    "value": "production"
+                },
+                {
+                    "name": "MYSQL_NAME",
+                    "value": "${{ secrets.MYSQL_NAME }}"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "value": "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+                },
+                {
+                    "name": "AWS_BUCKET",
+                    "value": "${{ secrets.AWS_BUCKET }}"
+                },
+                {
+                    "name": "MYSQL_HOST",
+                    "value": "${{ secrets.MYSQL_HOST }}"
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "value": "6379"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "value": "${{ secrets.AWS_ACCESS_KEY_ID }}"
+                },
+                {
+                    "name": "RAILS_SERVE_STATIC_FILES",
+                    "value": "1"
+                },
+                {
+                    "name": "RAILS_MASTER_KEY",
+                    "value": "${{ secrets.RAILS_MASTER_KEY }}"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/tsunarhythm2-task-definition-backend",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-northeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl --unix-socket /myapp/tmp/sockets/puma.sock localhost/api/v1/health_check || exit 1"
+                ],
+                "interval": 30,
+                "timeout": 5,
+                "retries": 3,
+                "startPeriod": 30
+            },
+            "systemControls": []
+        },
+        {
+            "name": "nginx",
+            "image": "<NGINX_IMAGE_TAG>",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "nginx-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [
+                {
+                    "sourceContainer": "backend-container",
+                    "readOnly": false
+                }
+            ],
+            "dependsOn": [
+                {
+                    "containerName": "backend-container",
+                    "condition": "HEALTHY"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/tsunarhythm2-task-definition-backend",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-northeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl -f http://localhost/api/v1/health_check || exit 1"
+                ],
+                "interval": 30,
+                "timeout": 5,
+                "retries": 3
+            },
+            "systemControls": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::504252798833:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::504252798833:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
