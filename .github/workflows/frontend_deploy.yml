@@ -1,28 +1,3 @@
-# このワークフローは、"main"ブランチへのプッシュがあった際に、
-# 新しいコンテナイメージをAmazon ECRにビルドしてプッシュし、
-# その後、新しいタスク定義をAmazon ECSにデプロイします。
-#
-# このワークフローを使用するには、以下のセットアップ手順を完了する必要があります：
-#
-# 1. イメージを保存するためのECRリポジトリを作成します。
-#    例: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`
-#    ワークフロー内の `ECR_REPOSITORY` 環境変数の値を、リポジトリの名前に置き換えてください。
-#    ワークフロー内の `AWS_REGION` 環境変数の値を、リポジトリのリージョンに置き換えてください。
-#
-# 2. ECSタスク定義、ECSクラスター、およびECSサービスを作成します。
-#    例: ECSコンソールの開始ガイドに従ってください：
-#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
-#    ワークフロー内の `ECS_SERVICE` 環境変数の値を、Amazon ECSサービスの名前に置き換えてください。
-#    ワークフロー内の `ECS_CLUSTER` 環境変数の値を、クラスターの名前に置き換えてください。
-#
-# 3. ECSタスク定義をJSONファイルとしてリポジトリに保存します。
-#    フォーマットは `aws ecs register-task-definition --generate-cli-skeleton` の出力に従う必要があります。
-#    ワークフロー内の `ECS_TASK_DEFINITION` 環境変数の値を、JSONファイルのパスに置き換えてください。
-#    ワークフロー内の `CONTAINER_NAME` 環境変数の値を、タスク定義の `containerDefinitions` セクションにあるコンテナ名に置き換えてください。
-#
-# 4. IAMユーザーアクセスキーをGitHub Actionsのシークレットとして `AWS_ACCESS_KEY_ID` と `AWS_SECRET_ACCESS_KEY` の名前で保存します。
-#    各アクションの推奨IAMポリシーとアクセスキーの資格情報の取り扱いに関するベストプラクティスは、以下のドキュメントを参照してください。
-
 name: Amazon ECSフロントエンドデプロイ
 
 on:
@@ -53,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: AWS認証情報の設定
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
