@@ -77,9 +77,6 @@ jobs:
 
       - name: タスク定義内の変数を置き換え
         run: |
-          sed -i 's|${AWS_ACCOUNT_ID}|'"${{ secrets.AWS_ACCOUNT_ID }}"'|g' front/my-app/task-definition.json
-          sed -i 's|${FRONTEND_CONTAINER}|'"${{ secrets.FRONTEND_CONTAINER }}"'|g' front/my-app/task-definition.json
-          sed -i 's|${FRONTEND_ECR_REPOSITORY}|'"${{ secrets.FRONTEND_ECR_REPOSITORY }}"'|g' front/my-app/task-definition.json
           sed -i 's|${IMAGE_TAG}|'"${{ github.sha }}"'|g' front/my-app/task-definition.json
 
       - name: Amazon ECSタスク定義に新しいイメージIDを反映
