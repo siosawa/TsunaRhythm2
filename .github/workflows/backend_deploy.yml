@@ -40,23 +40,17 @@ jobs:
 
       - name: バックエンドコンテナのイメージをビルドし、Amazon ECRにタグ付けしてプッシュ
         id: build-backend-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/tsunarhythm2-backend:${{ env.IMAGE_TAG }} -f ./back/Dockerfile.prod ./back
-          docker push ${{ env.ECR_REGISTRY }}/tsunarhythm2-backend:${{ env.IMAGE_TAG }}
-          echo "BACKEND_IMAGE=${{ env.ECR_REGISTRY }}/tsunarhythm2-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          docker build -t 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-backend:${{ env.IMAGE_TAG }} -f ./back/Dockerfile.prod ./back
+          docker push 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-backend:${{ env.IMAGE_TAG }}
+          echo "BACKEND_IMAGE=504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
 
       - name: Nginxコンテナのイメージをビルドし、Amazon ECRにタグ付けしてプッシュ
         id: build-nginx-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/tsunarhythm2-nginx:${{ env.IMAGE_TAG }} --no-cache -f ./back/nginx/Dockerfile ./back/nginx
-          docker push ${{ env.ECR_REGISTRY }}/tsunarhythm2-nginx:${{ env.IMAGE_TAG }}
-          echo "NGINX_IMAGE=${{ env.ECR_REGISTRY }}/tsunarhythm2-nginx:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          docker build -t 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-nginx:${{ env.IMAGE_TAG }} --no-cache -f ./back/nginx/Dockerfile ./back/nginx
+          docker push 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-nginx:${{ env.IMAGE_TAG }}
+          echo "NGINX_IMAGE=504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-nginx:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
 
       - name: 環境変数の確認
         run: |
