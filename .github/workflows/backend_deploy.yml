@@ -11,7 +11,7 @@ env:
   BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER }}
   NGINX_CONTAINER_NAME: ${{ secrets.NGINX_CONTAINER }}
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
-  ECS_SERVICE: ${{ secrets.BACKEND_ECS_SERVICE }}
+  BACKEND_ECS_SERVICE: ${{ secrets.BACKEND_ECS_SERVICE }}
   IMAGE_TAG: ${{ github.sha }}
 
 permissions:
@@ -82,6 +82,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
+          service: ${{ env.BACKEND_ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
