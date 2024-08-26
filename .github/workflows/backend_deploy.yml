@@ -8,8 +8,6 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_REGION: ap-northeast-1
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER }}
-  NGINX_CONTAINER_NAME: ${{ secrets.NGINX_CONTAINER }}
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
   BACKEND_ECS_SERVICE: ${{ secrets.BACKEND_ECS_SERVICE }}
   IMAGE_TAG: ${{ github.sha }}
@@ -67,7 +65,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: back/task-definition.json
-          container-name: ${{ env.BACKEND_CONTAINER_NAME }}
+          container-name: backend-container
           image: $BACKEND_IMAGE
 
       - name: Amazon ECSタスク定義にNginxイメージIDを反映
@@ -75,7 +73,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: back/task-definition.json
-          container-name: ${{ env.NGINX_CONTAINER_NAME }}
+          container-name: nginx
           image: $NGINX_IMAGE
 
       - name: Amazon ECSタスク定義のデプロイ
