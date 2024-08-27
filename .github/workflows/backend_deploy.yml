@@ -57,8 +57,8 @@ jobs:
 
       - name: タスク定義内の変数を置き換え
         run: |
-          sed -i 's|<BACKEND_IMAGE_TAG>|'"$BACKEND_IMAGE"'|g' back/task-definition.json
-          sed -i 's|<NGINX_IMAGE_TAG>|'"$NGINX_IMAGE"'|g' back/task-definition.json
+          sed -i 's|$BACKEND_IMAGE|'"$BACKEND_IMAGE"'|g' back/task-definition.json
+          sed -i 's|$NGINX_IMAGE|'"$NGINX_IMAGE"'|g' back/task-definition.json
 
       - name: Amazon ECSタスク定義に新しいイメージIDを反映
         id: task-def
