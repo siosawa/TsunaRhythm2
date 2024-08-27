@@ -1,7 +1,7 @@
 # オンラインワークスペース「つなリズム」
 
 https://tsunarhythm.com <br />
-登録せずにお試しいただくことができます。制作期間は約2ヶ月半です。(※TypeScript化は別)
+登録せずにお試しいただくことができます。制作期間は約2ヶ月半です。(※TypeScript化・CD構築は別)
 
 Qiitaはこちら→ [https://qiita.com/sawata0324](https://qiita.com/sawata0324)　<br />
 はてなブログはこちら→ [https://sawata0324.hatenablog.com/](https://sawata0324.hatenablog.com/)　<br />
@@ -95,7 +95,6 @@ https://github.com/user-attachments/assets/93b019d8-d0e3-4558-8caa-24c98a57110a
   - ランダム応援ひとこと機能
   - 案件別時給平均ランキング機能
   - ワークの種類別の時給平均ランキング機能
-  - カレンダー機能
   - 各案件のテーブル形式での CRUD 処理
 
 # 使用技術
@@ -129,7 +128,7 @@ https://github.com/user-attachments/assets/93b019d8-d0e3-4558-8caa-24c98a57110a
 ----|
 | Docker/docker-compose |
 | AWS（ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ACM,ElastiCache） |
-| GitHub Actions(RSpec自動テスト,Rubocop静的コード解析) |
+| GitHub Actions(CICDパイプラインの構築) |
 | CodeRabbit |
 
 <br />
@@ -151,7 +150,7 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 
 ### フロントエンド
  - Next14による完全SPA化を行い、最新のAppRouterを使った画面遷移で設計しました。
- - TypeScriptをダッシュボード機能の実装過程において導入しました。
+ - TypeScriptを全体の84%以上のファイルで実装しました。
  - レスポンシブ対応にしました。
  - ユーザー一覧ページとフォローしているユーザー一覧ページ、フォローされているユーザー一覧ページでのユーザーの表示形式を同じコンポーネントを使って作成することで保守回収がしやすい設計にしました。
  - ルームでの座席着席機能が自然と行えるようにアカウント作成時に自動でランダムにアイコンが設定されるようにしました。
@@ -163,13 +162,13 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 - Rails を API モードで使用しました。
 - ActionCable の WebSocket 通信を使いチャット機能と座席着席機能をリアルタイムで通信させるように設計しました。
 - 各データ取得時に余計なデータの取得を行わないように目的に応じてメソッドを追加し、データ量が多くなる場合はページネイション機能と合わせることでデータの取得の最適化に勤めました。
-- 入室管理機能において、入室情報を管理するテーブルを作成するのではなく、入室時間と退室時間を記録するようにして、入室時間が記録されていて、かつ退室時間が null のユーザーを入室(着席)中と表現するという方法を使うことで、入室しているユーザーデータの確認を行い、バグを起こりにくくしました。
+- 入室管理機能において、入室情報を管理するテーブルを作成するのではなく、入室時間と退室時間を記録するようにして、入室時間が記録されていて、かつ退室時間が null のユーザーを入室(着席)中と表現するという方法を使うことで、入室しているユーザーデータの確認を行い、入室管理システムを構築しました。
 - posts_controller.rb において posts を取得する際、関連する user も同時にロードするために includes メソッドを使用し、N+1 問題を回避しました。
 - ロケールファイルを利用して、表示文言を一元管理しました。
 
 ### インフラ
  - WebSocket通信を行うためのredisをタスク定義で立ち上げるのではなくElastiCacheを使って立ち上げることで運用管理の負担を軽減しました。
- - GithubActionsを利用してCIを実現しました。
+ - GithubActionsを利用してCICDパイプラインを構築しました。
  - Code Rabbitを使用してコードの変更点から何が変更されたのかの要約を自然言語処理を使ってプルリクエスト後マージ前の段階で自動生成→確認できるようにしました。
 
 # IT学習・ポートフォリオ作成工程詳細
@@ -239,3 +238,4 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
 9. 7/11~:
    - 軽微なバグ改善、軽微な UI/UX の改善
    - 部分的なTypeScript化
+   - GithubActionsを用いたCD構築
