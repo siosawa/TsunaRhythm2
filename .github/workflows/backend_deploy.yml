@@ -38,6 +38,8 @@ jobs:
 
       - name: バックエンドコンテナのイメージをビルドし、Amazon ECRにタグ付けしてプッシュ
         id: build-backend-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-backend:$IMAGE_TAG -f ./back/Dockerfile.prod ./back
           docker push 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-backend:$IMAGE_TAG
@@ -45,6 +47,8 @@ jobs:
 
       - name: Nginxコンテナのイメージをビルドし、Amazon ECRにタグ付けしてプッシュ
         id: build-nginx-image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-nginx:$IMAGE_TAG --no-cache -f ./back/nginx/Dockerfile ./back/nginx
           docker push 504252798833.dkr.ecr.ap-northeast-1.amazonaws.com/tsunarhythm2-nginx:$IMAGE_TAG
@@ -57,8 +61,7 @@ jobs:
 
       - name: タスク定義内の変数を置き換え
         run: |
-          sed -i 's|$BACKEND_IMAGE|'"$BACKEND_IMAGE"'|g' back/task-definition.json
-          sed -i 's|$NGINX_IMAGE|'"$NGINX_IMAGE"'|g' back/task-definition.json
+          sed -i 's|${IMAGE_TAG}|'"$IMAGE_TAG"'|g' back/task-definition.json
 
       - name: Amazon ECSタスク定義に新しいイメージIDを反映
         id: task-def
