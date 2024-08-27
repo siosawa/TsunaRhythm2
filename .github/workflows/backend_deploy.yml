@@ -80,7 +80,7 @@ jobs:
         run: cat back/task-definition.json
 
       - name: Amazon ECSタスク定義のデプロイ
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.BACKEND_ECS_SERVICE }}
