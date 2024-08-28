@@ -5,14 +5,41 @@ import { IoMdSend } from "react-icons/io";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 
-const GroupChat = ({ room_id }) => {
-  const [chats, setChats] = useState([]);
-  const [newChat, setNewChat] = useState("");
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [otherUsers, setOtherUsers] = useState({});
+// 型定義
+interface Chat {
+  id: number;
+  content: string;
+  user_id: number;
+  room_id: number;
+  created_at: string;
+  updated_at: string;
+}
 
-  const chatsEndRef = useRef(null);
+interface User {
+  id: number;
+  name: string;
+  work: string;
+  profile_text: string;
+  avatar: {
+    url: string;
+  };
+  posts_count: number;
+  followers_count: number;
+  following_count: number;
+}
+
+interface GroupChatProps {
+  room_id: number;
+}
+
+const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [newChat, setNewChat] = useState<string>("");
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [otherUsers, setOtherUsers] = useState<{ [key: number]: User }>({});
+
+  const chatsEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -28,7 +55,7 @@ const GroupChat = ({ room_id }) => {
           }
         );
         if (response.ok) {
-          const data = await response.json();
+          const data: Chat[] = await response.json();
           setChats(data);
         } else {
           console.error("Failed to fetch chats");
@@ -44,7 +71,7 @@ const GroupChat = ({ room_id }) => {
       const subscription = cable.subscriptions.create(
         { channel: "ChatChannel", room: room_id },
         {
-          received(data) {
+          received(data: Chat) {
             setChats((prevChats) => [...prevChats, data]);
           },
         }
@@ -57,7 +84,7 @@ const GroupChat = ({ room_id }) => {
   }, [currentUser, room_id]);
 
   useEffect(() => {
-    const fetchOtherUser = async (userId) => {
+    const fetchOtherUser = async (userId: number) => {
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`,
@@ -70,7 +97,7 @@ const GroupChat = ({ room_id }) => {
           }
         );
         if (response.ok) {
-          const data = await response.json();
+          const data: User = await response.json();
           setOtherUsers((prev) => ({ ...prev, [userId]: data }));
         } else {
           console.error(`Failed to fetch user ${userId}`);
@@ -121,7 +148,7 @@ const GroupChat = ({ room_id }) => {
       if (!response.ok) {
         console.error("Failed to send chat", chatData);
       } else {
-        const newChat = await response.json();
+        const newChat: Chat = await response.json();
         console.log("Chat sent successfully:", newChat);
       }
     } catch (error) {
@@ -143,7 +170,7 @@ const GroupChat = ({ room_id }) => {
     setIsChatOpen(!isChatOpen);
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
       handleSendChat();
     }
