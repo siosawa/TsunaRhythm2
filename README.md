@@ -237,5 +237,5 @@ https://www.figma.com/design/iwQ8M5fM7YT9RSUpYuNyJh/%E3%81%A4%E3%81%AA%E3%83%AA%
    - ECS,ECS on Fargate,ECR,RDS,CloudFront,Route53,VPC,ElastiCache を使用しデプロイ
 9. 7/11~:
    - 軽微なバグ改善、軽微な UI/UX の改善
-   - 部分的なTypeScript化
+   - TypeScript化(85%以上)
    - GithubActionsを用いたCD構築
