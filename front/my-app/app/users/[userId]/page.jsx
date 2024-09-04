@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import PostInput from "@/app/diarys/components/PostInput";
 import UserPostsView from "@/app/users/[userId]/components/UserPostsView";
+import axios from "axios";
 
 export default function UserPage() {
   const { userId } = useParams();
@@ -21,14 +22,13 @@ export default function UserPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`,
           {
-            credentials: "include",
+            withCredentials: true,
           }
         );
-        const userData = await response.json();
-        setUser(userData);
+        setUser(response.data);
       } catch (error) {
         console.error("ユーザー情報の取得に失敗しました:", error);
       }

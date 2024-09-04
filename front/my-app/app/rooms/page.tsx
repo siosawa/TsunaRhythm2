@@ -36,18 +36,16 @@ const Index = (): JSX.Element => {
 
   useEffect(() => {
     setRooms(roomsData as Room[]);
-
     const fetchRoomMembers = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get<RoomMember[]>(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
           {
-            method: "GET",
-            credentials: "include",
+            withCredentials: true,
           }
         );
-        const data: RoomMember[] = await response.json();
-
+        const data = response.data;
+    
         const now = new Date();
         const updatedMembers = await Promise.all(
           data.map(async (member) => {
@@ -71,7 +69,7 @@ const Index = (): JSX.Element => {
             return member;
           })
         );
-
+    
         setRoomMembers(updatedMembers);
       } catch (error) {
         console.error("Error fetching room members:", error);

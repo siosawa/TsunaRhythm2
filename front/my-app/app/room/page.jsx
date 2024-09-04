@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import roomsData from "@/db/rooms.json";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 const Room = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -15,11 +16,13 @@ const Room = () => {
       }
 
       try {
-        const roomMembersResponse = await fetch(
+        const roomMembersResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
-          { credentials: "include" }
+          {
+            withCredentials: true,
+          }
         );
-        const roomMembers = await roomMembersResponse.json();
+        const roomMembers = roomMembersResponse.data;
         console.log("ルームメンバー:", roomMembers);
 
         const currentRoomMember = roomMembers.find(

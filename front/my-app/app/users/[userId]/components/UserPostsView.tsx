@@ -100,16 +100,17 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }: UserPostsVie
   useEffect(() => {
     const fetchUserPostsData = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/user/${user.id}?page=${currentPage}`,
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/user/${user.id}`,
           {
-            credentials: "include",
+            params: { page: currentPage },
+            withCredentials: true,
           }
         );
-        const userPosts = await response.json();
+        const userPosts = response.data;
         setPosts(userPosts.posts || []);
         setTotalPages(userPosts.total_pages || 1);
-
+  
         const newAvatars: Record<number, string | null> = {};
         for (const post of userPosts.posts) {
           if (!avatars[post.user_id]) {
@@ -122,7 +123,7 @@ const UserPostsView = ({ reload, user, currentPage, onPageChange }: UserPostsVie
         console.error("ユーザーポストの取得に失敗しました:", error);
       }
     };
-
+  
     fetchUserPostsData();
   }, [user.id, reload, currentPage]);
 

@@ -2,6 +2,7 @@
 import { useState, useRef, KeyboardEvent, ChangeEvent, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 const SignUp = (): JSX.Element => {
   const [name, setName] = useState<string>("");
@@ -27,63 +28,60 @@ const SignUp = (): JSX.Element => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     if (password !== confirmPassword) {
       setError("パスワードが一致しません");
       return;
     }
-
+  
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users`,
         {
-          method: "POST",
+          user: {
+            name: name,
+            email: email,
+            password: password,
+            password_confirmation: confirmPassword,
+          },
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            user: {
-              name: name,
-              email: email,
-              password: password,
-              password_confirmation: confirmPassword,
-            },
-          }),
         }
       );
-
-      const responseData = await response.json();
-      if (!response.ok) {
+  
+      if (response.status !== 201) {
         setError(
-          responseData.errors.join(", ") || "ユーザー登録に失敗しました"
+          response.data.errors?.join(", ") || "ユーザー登録に失敗しました"
         );
         return;
       }
-
+  
       try {
         // 自動ログインのためのAPI呼び出し
-        const loginResponse = await fetch(
+        const loginResponse = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/sessions`,
           {
-            method: "POST",
+            session: {
+              email: email,
+              password: password,
+            },
+          },
+          {
             headers: {
               "Content-Type": "application/json",
             },
-            credentials: "include",
-            body: JSON.stringify({
-              session: {
-                email: email,
-                password: password,
-              },
-            }),
+            withCredentials: true,
           }
         );
-
-        const loginResponseData = await loginResponse.json();
-        if (!loginResponse.ok) {
-          setError(loginResponseData.error || "ログインに失敗しました");
+  
+        if (loginResponse.status !== 200) {
+          setError(loginResponse.data.error || "ログインに失敗しました");
           return;
         }
+  
         window.location.href = "/dashboard";
       } catch (error) {
         setError("ログインに失敗しました");

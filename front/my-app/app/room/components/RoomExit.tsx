@@ -43,28 +43,23 @@ export default function RoomExitButton({ room_id }: RoomExitButtonProps) {
   const [roomMembers, setRoomMembers] = useState<RoomMember[]>([]);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+useEffect(() => {
+  async function fetchData() {
+    try {
+      const response = await axios.get<RoomMember[]>(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
+        {
+          withCredentials: true,
         }
-        const data: RoomMember[] = await response.json();
-        setRoomMembers(data);
-      } catch (error) {
-        console.error("Error fetching room members:", error);
-      }
+      );
+      setRoomMembers(response.data);
+    } catch (error) {
+      console.error("Error fetching room members:", error);
     }
+  }
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
   const handleExit = async () => {
     const now = new Date().toISOString();

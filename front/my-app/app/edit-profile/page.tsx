@@ -50,7 +50,7 @@ const ProfileReadPage = (): JSX.Element => {
 
   const handleSaveClick = async () => {
     if (!user) return;
-
+  
     const formData = new FormData();
     formData.append("user[name]", user.name);
     formData.append("user[email]", user.email);
@@ -59,19 +59,18 @@ const ProfileReadPage = (): JSX.Element => {
     if (avatar) {
       formData.append("user[avatar]", avatar);
     }
-
+  
     try {
-      const response = await fetch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}`,
+        formData,
         {
-          method: "PATCH",
-          body: formData,
-          credentials: "include",
+          withCredentials: true,
         }
       );
-
-      if (response.ok) {
-        const updatedUserData = await response.json();
+  
+      if (response.status === 200) {
+        const updatedUserData = response.data;
         console.log("ユーザーデータを更新しました:", updatedUserData);
         setIsEditable(false);
         await fetchUserData();
@@ -82,7 +81,6 @@ const ProfileReadPage = (): JSX.Element => {
       console.error("ユーザーデータの更新中にエラーが発生しました:", error);
     }
   };
-
   const handlePasswordEditClick = () => {
     window.location.href = "/edit-profile/password";
   };
@@ -94,25 +92,24 @@ const ProfileReadPage = (): JSX.Element => {
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!user || !e.target.files) return;
-
+  
     const file = e.target.files[0];
     setAvatar(file);
-
+  
     const formData = new FormData();
     formData.append("user[avatar]", file);
-
+  
     try {
-      const response = await fetch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.id}`,
+        formData,
         {
-          method: "PATCH",
-          body: formData,
-          credentials: "include",
+          withCredentials: true,
         }
       );
-
-      if (response.ok) {
-        const updatedUserData = await response.json();
+  
+      if (response.status === 200) {
+        const updatedUserData = response.data;
         console.log("アバターを更新しました:", updatedUserData);
         setAvatar(null);
         await fetchUserData();
