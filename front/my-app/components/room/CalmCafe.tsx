@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 interface CurrentUser {
   id: number;
@@ -34,28 +35,30 @@ const CalmCafe = (): JSX.Element => {
   ];
 
   const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
-    const userResponses = await Promise.all(
-      seatsData.map((seat) => {
-        if (!seat.user_id) {
-          console.error("user_idが未定義です:", seat);
-          return Promise.resolve(null); // user_idが未定義の場合はリクエストをスキップ
-        }
-        return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      })
-    );
-
-    const userData = await Promise.all(
-      userResponses
-        .filter((res) => res !== null) // nullのレスポンスを除外
-        .map((res) => res!.json() as Promise<CurrentUser>)
-    );
-    setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
+    try {
+      const userResponses = await Promise.all(
+        seatsData.map((seat) => {
+          if (!seat.user_id) {
+            console.error("user_idが未定義です:", seat);
+            return Promise.resolve(null); // user_idが未定義の場合はリクエストをスキップ
+          }
+          return axios.get<CurrentUser>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then((res) => res.data).catch((error) => {
+            console.error(`ユーザー情報の取得に失敗しました: ${seat.user_id}`, error);
+            return null;
+          });
+        })
+      );
+  
+      const userData = userResponses.filter((user) => user !== null) as CurrentUser[];
+      setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
+    } catch (error) {
+      console.error("座席とユーザー情報の取得に失敗しました:", error);
+    }
   };
 
   const fetchSeats = async () => {

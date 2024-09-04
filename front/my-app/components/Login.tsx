@@ -3,6 +3,7 @@ import { useState, useRef, useLayoutEffect, KeyboardEvent, FormEvent } from "rea
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import axios from "axios";
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>("");
@@ -23,35 +24,33 @@ const Login = (): JSX.Element => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/sessions`,
         {
-          method: "POST",
+          session: {
+            email: email,
+            password: password,
+          },
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include",
-          body: JSON.stringify({
-            session: {
-              email: email,
-              password: password,
-            },
-          }),
+          withCredentials: true,
         }
       );
-
-      const responseData = await response.json();
-      if (!response.ok) {
-        setError(responseData.error || "ログインに失敗しました");
-        setEmail("");
-        setPassword("");
-        return;
-      }
-
+  
       setSuccess("ログインに成功しました");
       window.location.href = `/rooms`;
     } catch (error) {
-      setError("ログインに失敗しました");
+      if (axios.isAxiosError(error) && error.response) {
+        const responseData = error.response.data;
+        setError(responseData.error || "ログインに失敗しました");
+      } else {
+        setError("ログインに失敗しました");
+      }
+      setEmail("");
+      setPassword("");
     }
   };
 

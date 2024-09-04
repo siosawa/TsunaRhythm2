@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 import nookies from "nookies";
+import axios from "axios";
 
 const Setting = () => {
   const [error, setError] = useState("");
@@ -18,26 +19,22 @@ const Setting = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`,
-        {
-          method: "DELETE",
-          credentials: "include", 
-        }
-      );
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`, {
+        withCredentials: true,
+      });
 
-      if (res.ok) {
-        nookies.destroy(null, "session_token");
-        nookies.destroy(null, "user_id");
+      nookies.destroy(null, "session_token");
+      nookies.destroy(null, "user_id");
 
-        window.location.href = "/";
-      } else {
-        const errorData = await res.json();
-        setError(errorData.error || "ログアウトに失敗しました。");
-      }
+      window.location.href = "/";
     } catch (err) {
-      console.error("ログアウトに失敗しました:", err);
-      setError("ログアウトに失敗しました。");
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data;
+        setError(errorData.error || "ログアウトに失敗しました。");
+      } else {
+        console.error("ログアウトに失敗しました:", err);
+        setError("ログアウトに失敗しました。");
+      }
     }
   };
 

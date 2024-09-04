@@ -5,6 +5,7 @@ import RoomExitButton from "@/app/room/components/RoomExit";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
 import WaitingUserAvatar from "@/app/room/components/WaitingUserAvatar";
 import { SetTimer } from "@/app/room/components/SetTimer";
+import axios from "axios";
 
 export default function Timer({ params }) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -14,12 +15,17 @@ export default function Timer({ params }) {
   useEffect(() => {
     const fetchRoomMembers = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/room_members`,
-          { credentials: "include" }
+          {
+            withCredentials: true,
+          }
         );
-        if (!response.ok) throw new Error("Failed to fetch room members");
-        const roomMembers = await response.json();
+
+        if (response.status !== 200)
+          throw new Error("Failed to fetch room members");
+
+        const roomMembers = response.data;
         const filteredUserIds = roomMembers
           .filter(
             (member) => member.room_id === room_id && member.leaved_at === null
@@ -33,11 +39,12 @@ export default function Timer({ params }) {
         }
 
         const userPromises = filteredUserIds.map(async (userId) => {
-          const userResponse = await fetch(
+          const userResponse = await axios.get(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`
           );
-          if (!userResponse.ok) throw new Error("Failed to fetch user data");
-          return userResponse.json();
+          if (userResponse.status !== 200)
+            throw new Error("Failed to fetch user data");
+          return userResponse.data;
         });
 
         const users = await Promise.all(userPromises);

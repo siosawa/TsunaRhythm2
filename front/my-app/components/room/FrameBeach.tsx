@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import cable from "@/utils/cable"; 
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 interface User {
   id: number;
@@ -32,16 +33,18 @@ const FrameBeach = (): JSX.Element => {
     try {
       const userResponses = await Promise.all(
         seatsData.map((seat) =>
-          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
+          axios.get<User>(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`,
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
         )
       );
-      const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<User>));
+      const userData = userResponses.map((response) => response.data);
       setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -50,28 +53,22 @@ const FrameBeach = (): JSX.Element => {
 
   const fetchSeats = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get<Seat[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=4`,
         {
-          method: "GET",
-          credentials: "include",
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      if (response.ok) {
-        const data: Seat[] = await response.json();
-        setSeats(
-          data.reduce(
-            (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
-            {}
-          )
-        );
-        await fetchSeatsAndUsers(data);
-      } else {
-        console.error("Failed to fetch seats");
-      }
+      setSeats(
+        response.data.reduce(
+          (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
+          {}
+        )
+      );
+      await fetchSeatsAndUsers(response.data);
     } catch (error) {
       console.error("Error fetching seats:", error);
     }
@@ -93,15 +90,18 @@ const FrameBeach = (): JSX.Element => {
               [data.seat_id]: data.user_id,
             }));
             if (!users[data.user_id]) {
-              fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`, {
-                method: "GET",
-                credentials: "include",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-                .then((response) => response.json() as Promise<User>)
-                .then((user: User) => {
+              axios
+                .get<User>(
+                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`,
+                  {
+                    withCredentials: true,
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                )
+                .then((response) => {
+                  const user = response.data;
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
@@ -133,17 +133,19 @@ const FrameBeach = (): JSX.Element => {
     }
   
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`,
+        {
           seat: { seat_id: seatId, room_id: 4, user_id: currentUser.id },
-        }),
-      });
-      if (response.ok) {
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
         await fetchSeats();  // ここで最新の座席情報を再取得して再レンダリング
       } else {
         console.error("Failed to reserve seat");

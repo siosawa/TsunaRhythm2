@@ -4,6 +4,7 @@ import { TbTriangleInvertedFilled } from "react-icons/tb";
 import { IoMdSend } from "react-icons/io";
 import cable from "@/utils/cable";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 // 型定義
 interface Chat {
@@ -42,20 +43,22 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
   const chatsEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+
     const fetchChats = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/chats?room_id=${room_id}`,
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/chats`,
           {
-            method: "GET",
-            credentials: "include",
+            params: { room_id },
+            withCredentials: true,
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
-        if (response.ok) {
-          const data: Chat[] = await response.json();
+    
+        if (response.status === 200) {
+          const data: Chat[] = response.data;
           setChats(data);
         } else {
           console.error("Failed to fetch chats");
@@ -86,22 +89,17 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
   useEffect(() => {
     const fetchOtherUser = async (userId: number) => {
       try {
-        const response = await fetch(
+        const response = await axios.get<User>(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${userId}`,
           {
-            method: "GET",
-            credentials: "include",
+            withCredentials: true,
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
-        if (response.ok) {
-          const data: User = await response.json();
-          setOtherUsers((prev) => ({ ...prev, [userId]: data }));
-        } else {
-          console.error(`Failed to fetch user ${userId}`);
-        }
+        
+        setOtherUsers((prev) => ({ ...prev, [userId]: response.data }));
       } catch (error) {
         console.error(`Error fetching user ${userId}:`, error);
       }
@@ -119,7 +117,7 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
       console.error("User not logged in");
       return;
     }
-
+  
     const chatData = {
       chat: {
         content: newChat,
@@ -127,30 +125,24 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
         room_id: room_id,
       },
     };
-
+  
     console.log("Sending chat:", chatData);
-
+  
     setNewChat("");
-
+  
     try {
-      const response = await fetch(
+      const response = await axios.post<Chat>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/chats`,
+        chatData,
         {
-          method: "POST",
-          credentials: "include",
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(chatData),
         }
       );
-
-      if (!response.ok) {
-        console.error("Failed to send chat", chatData);
-      } else {
-        const newChat: Chat = await response.json();
-        console.log("Chat sent successfully:", newChat);
-      }
+  
+      console.log("Chat sent successfully:", response.data);
     } catch (error) {
       console.error("Error sending chat:", error, chatData);
     }

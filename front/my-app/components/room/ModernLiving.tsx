@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import cable from "@/utils/cable"; 
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 interface CurrentUser {
   id: number;
@@ -31,45 +32,45 @@ const ModernLiving = (): JSX.Element => {
   ];
 
   const fetchSeatsAndUsers = async (seatsData: Seat[]) => {
-    const userResponses = await Promise.all(
-      seatsData.map((seat) =>
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-      )
-    );
-    const userData = await Promise.all(userResponses.map((res) => res.json() as Promise<CurrentUser>));
-    setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
+    try {
+      const userResponses = await Promise.all(
+        seatsData.map((seat) =>
+          axios.get<CurrentUser>(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${seat.user_id}`,
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+        )
+      );
+      const userData = userResponses.map((response) => response.data);
+      setUsers(userData.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
   const fetchSeats = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get<Seat[]>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=8`,
         {
-          method: "GET",
-          credentials: "include",
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      if (response.ok) {
-        const data: Seat[] = await response.json();
-        setSeats(
-          data.reduce(
-            (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
-            {}
-          )
-        );
-        await fetchSeatsAndUsers(data);
-      } else {
-        console.error("Failed to fetch seats");
-      }
+      setSeats(
+        response.data.reduce(
+          (acc, seat) => ({ ...acc, [seat.seat_id]: seat.user_id }),
+          {}
+        )
+      );
+      await fetchSeatsAndUsers(response.data);
     } catch (error) {
       console.error("Error fetching seats:", error);
     }
@@ -91,15 +92,18 @@ const ModernLiving = (): JSX.Element => {
               [data.seat_id]: data.user_id,
             }));
             if (!users[data.user_id]) {
-              fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`, {
-                method: "GET",
-                credentials: "include",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-                .then((response) => response.json() as Promise<CurrentUser>)
-                .then((user: CurrentUser) => {
+              axios
+                .get<CurrentUser>(
+                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${data.user_id}`,
+                  {
+                    withCredentials: true,
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                )
+                .then((response) => {
+                  const user = response.data;
                   setUsers((prevUsers) => ({
                     ...prevUsers,
                     [user.id]: user,
@@ -126,26 +130,30 @@ const ModernLiving = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=8`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.get<Seat[]>(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats?room_id=8`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (response.ok) {
-        const data: Seat[] = await response.json();
-        const currentUserSeat = data.find(seat => seat.user_id === currentUser.id);
+      if (response.status === 200) {
+        const data = response.data;
+        const currentUserSeat = data.find((seat) => seat.user_id === currentUser.id);
 
         if (currentUserSeat) {
-          await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${currentUserSeat.id}`, {
-            method: "DELETE",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats/${currentUserSeat.id}`,
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
           setSeats((prevSeats) => {
             const updatedSeats = { ...prevSeats };
             delete updatedSeats[currentUserSeat.seat_id];
@@ -153,18 +161,20 @@ const ModernLiving = (): JSX.Element => {
           });
         }
 
-        const reserveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        const reserveResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/seats`,
+          {
             seat: { seat_id: seatId, room_id: 8, user_id: currentUser.id },
-          }),
-        });
+          },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        if (reserveResponse.ok) {
+        if (reserveResponse.status === 200) {
           setSeats((prevSeats) => ({
             ...prevSeats,
             [seatId]: currentUser.id,

@@ -8,6 +8,7 @@ import Link from "next/link";
 import Settings from "@/components/Settings";
 import { TbMenu } from "react-icons/tb";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,24 +40,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`, {
-        method: "DELETE",
-        credentials: "include",
+      const res = await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/logout`, {
+        withCredentials: true,
       });
-
-      if (res.ok) {
+  
+      if (res.status === 200) {
         setCurrentUser(null);
         window.location.href = "/";
       } else {
-        const errorData = await res.json();
-        setError(errorData.error || "ログアウトに失敗しました。");
+        setError(res.data.error || "ログアウトに失敗しました。");
       }
     } catch (err) {
       console.error("ログアウトに失敗しました:", err);
       setError("ログアウトに失敗しました。");
     }
   };
-
+  
   const handleMenuClick = () => {
     setIsMenuOpen(false);
   };

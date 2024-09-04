@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef, FormEvent, ChangeEvent } from "react";
 import FetchCurrentUser from "@/components/FetchCurrentUser";
+import axios from "axios";
 
 interface User {
   id: number;
@@ -34,52 +35,49 @@ const EditPassword = (): JSX.Element => {
 
   const handleSaveClick = async (event: FormEvent) => {
     event.preventDefault();
-
+  
     const formData = {
       current_password: currentPassword,
       new_password: newPassword,
       confirm_password: confirmPassword,
     };
-
+  
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-
+  
     if (user && user.id === 2) {
       setMessage("ゲストアカウントはパスワードを変更できません。");
       setMessageType("error");
       return;
     }
-
+  
     if (formData.new_password !== formData.confirm_password) {
       setMessage("新しいパスワードと確認用パスワードが一致しません。");
       setMessageType("error");
       return;
     }
-
+  
     try {
-      const response = await fetch(
+      const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user?.id}/update_password`,
         {
-          method: "PATCH",
+          current_password: formData.current_password,
+          new_password: formData.new_password,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            current_password: formData.current_password,
-            new_password: formData.new_password,
-          }),
-          credentials: "include",
+          withCredentials: true,
         }
       );
-
-      if (response.ok) {
-        const updatedUserData = await response.json();
+  
+      if (response.status === 200) {
         setMessage("パスワードが正常に更新されました。");
         setMessageType("success");
       } else {
-        const errorData = await response.json();
-        setMessage(errorData.errors.join(", "));
+        setMessage(response.data.errors.join(", "));
         setMessageType("error");
       }
     } catch (error) {
