@@ -29,6 +29,20 @@ interface User {
   following_count: number;
 }
 
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  following: number;
+  followers: number;
+  posts_count: number;
+  work: string;
+  profile_text: string | null;
+  avatar: {
+    url: string | null;
+  };
+}
+
 interface GroupChatProps {
   room_id: number;
 }
@@ -37,13 +51,12 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [newChat, setNewChat] = useState<string>("");
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [otherUsers, setOtherUsers] = useState<{ [key: number]: User }>({});
 
   const chatsEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-
     const fetchChats = async () => {
       try {
         const response = await axios.get(
@@ -56,7 +69,7 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
             },
           }
         );
-    
+
         if (response.status === 200) {
           const data: Chat[] = response.data;
           setChats(data);
@@ -98,7 +111,7 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
             },
           }
         );
-        
+
         setOtherUsers((prev) => ({ ...prev, [userId]: response.data }));
       } catch (error) {
         console.error(`Error fetching user ${userId}:`, error);
@@ -117,7 +130,7 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
       console.error("User not logged in");
       return;
     }
-  
+
     const chatData = {
       chat: {
         content: newChat,
@@ -125,11 +138,11 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
         room_id: room_id,
       },
     };
-  
+
     console.log("Sending chat:", chatData);
-  
+
     setNewChat("");
-  
+
     try {
       const response = await axios.post<Chat>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/chats`,
@@ -141,7 +154,7 @@ const GroupChat = ({ room_id }: GroupChatProps): JSX.Element => {
           },
         }
       );
-  
+
       console.log("Chat sent successfully:", response.data);
     } catch (error) {
       console.error("Error sending chat:", error, chatData);
