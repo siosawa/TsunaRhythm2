@@ -8,16 +8,18 @@ module Api
       before_action :set_chat, only: [:show]
       before_action :logged_in_user, only: %i[index show create]
 
+      MAX_CHAT_COUNT = 100
+
       # GET /api/v1/chats
       def index
         @chats = Chat.where(room_id: params[:room_id].to_i).order(created_at: :asc)
 
-        if @chats.count > 100
-          excess_chats = @chats.limit(@chats.count - 100)
+        if @chats.size > MAX_CHAT_COUNT
+          excess_chats = @chats.limit(@chats.count - MAX_CHAT_COUNT)
           excess_chats.destroy_all
         end
 
-        @chats = @chats.limit(100)
+        @chats = @chats.limit(MAX_CHAT_COUNT)
         render json: @chats
       end
 
@@ -61,10 +63,10 @@ module Api
 
       def cleanup_old_chats(room_id)
         chats = Chat.where(room_id:).order(created_at: :asc)
-
-        return unless chats.count > 100
-
-        excess_chats = chats.limit(chats.count - 100)
+    
+        return unless chats.count > MAX_CHAT_COUNT
+    
+        excess_chats = chats.limit(chats.count - MAX_CHAT_COUNT)
         excess_chats.destroy_all
       end
     end
